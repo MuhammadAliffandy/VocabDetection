@@ -8,15 +8,8 @@
 import SwiftUI
 import UIKit
 
-// ==========================================
-// THE CAMERA WRAPPER COMPONENT
-// ==========================================
 struct AppCameraPicker: UIViewControllerRepresentable {
-    
-    // This will hold the photo after the user takes it
     @Binding var selectedImage: UIImage?
-    
-    // To dismiss the camera view automatically
     @Environment(\.presentationMode) var presentationMode
     
     func makeUIViewController(context: Context) -> UIImagePickerController {
@@ -33,9 +26,6 @@ struct AppCameraPicker: UIViewControllerRepresentable {
         Coordinator(self)
     }
     
-    // ==========================================
-    // THE COORDINATOR (Handles the take/cancel button)
-    // ==========================================
     class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
         let parent: AppCameraPicker
         

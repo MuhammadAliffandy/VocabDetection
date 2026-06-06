@@ -11,6 +11,8 @@ struct AppVocabCard: View {
     
     var image: String
     var title: String
+    var onTapGesture: () -> Void = {}
+    
     
     var body: some View{
         VStack(
@@ -20,14 +22,18 @@ struct AppVocabCard: View {
             ZStack {
                 Color.white
                     .clipShape(.rect(cornerRadius: 16))
-                Image(systemName: image)
+                Image(image)
                     .resizable()
                     .scaledToFit()
                     .foregroundColor(.black)
+                    .clipShape(.rect(cornerRadius: 16))
 
                       
                 }
                 .aspectRatio(1.0, contentMode: .fit)
+                .onTapGesture {
+                    onTapGesture()
+                }
             
             AppText(
                 text: title,
@@ -50,23 +56,23 @@ struct AppVocabCard: View {
         LazyVGrid(columns: gridColumns, spacing: 16) {
             
             AppVocabCard(
-                image: "person.fill",
-                title: "Orang"
+                image: AppImageAsset.dummyImage,
+                title: "Orang",
+                onTapGesture: {
+                    print("test")
+                }
             )
-            
             AppVocabCard(
-                image: "house.fill",
-                title: "Rumah"
+                image: AppImageAsset.dummyImage,
+                title: "Orang",
             )
-
             AppVocabCard(
-                image: "car.fill",
-                title: "Mobil"
+                image: AppImageAsset.dummyImage,
+                title: "Orang",
             )
-    
             AppVocabCard(
-                image: "tree.fill",
-                title: "Pohon"
+                image: AppImageAsset.dummyImage,
+                title: "Orang",
             )
             
         }

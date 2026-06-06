@@ -7,40 +7,50 @@
 import SwiftUI
 
 struct OnboardingView: View{
+    
+    @State private var navigateToDemo = false
+    
     var body: some View{
-        VStack(){
-            AppImage(
-                image: AppImageAsset.onboardingImage
-            )
-            .frame(width : 480 , height: 480 )
-            
-        
-            Spacer()
-            
-            VStack(spacing: 30){
-                AppHeadline(
-                    title: "Ambil foto untuk mengetahui kosakata baru!" ,
-                    subtitle : "Foto benda di sekitarmu untuk temukan kosakata baru, dan lihat bagaimana cara menggunakannya dalam kalimat!",
-                    titleStyle: .appTitle,
-                    subtitleStyle: .appHeadline,
-                    aligment: .leading,
-                    spacing: 12,
-                    isFullWidth: true
+        NavigationStack{
+            VStack(){
+                AppImage(
+                    image: AppImageAsset.onboardingImage
                 )
+                .frame(maxWidth: .infinity)
+                .frame( height: 500 )
                 
+            
+                Spacer()
                 
-                AppButton(
-                    textButton: "Mulai",
-                    textColor: .white,
-                    backgroundColor: Color.brandColorPrimaryTeal,
-                    action: {
-                        // add your logic on here
-                    }
-                )
+                VStack(spacing: 30){
+                    AppHeadline(
+                        title: "Ambil foto untuk mengetahui kosakata baru!" ,
+                        subtitle : "Foto benda di sekitarmu untuk temukan kosakata baru, dan lihat bagaimana cara menggunakannya dalam kalimat!",
+                        titleStyle: .appTitle,
+                        subtitleStyle: .appHeadline,
+                        aligment: .leading,
+                        spacing: 12,
+                        isFullWidth: true
+                    )
+                    
+                    
+                    AppButton(
+                        textButton: "Mulai",
+                        textColor: .white,
+                        backgroundColor: Color.brandColorPrimaryTeal,
+                        action: {
+                           navigateToDemo = true
+                        }
+                    )
+                }
+                .padding(AppPadding.areaPadding)
+                
             }
-            .padding(AppPadding.areaPadding)
-            
+            .navigationDestination(isPresented: $navigateToDemo){
+                DemoView()
+            }
         }
+   
       
     }
 }
@@ -48,4 +58,5 @@ struct OnboardingView: View{
 
 #Preview {
     OnboardingView()
+     
 }

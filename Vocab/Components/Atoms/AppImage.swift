@@ -14,8 +14,7 @@ struct AppImage: View {
     
     var body: some View {
         ZStack {
-          
-            
+        
             if isSystemIcon {
                 Image(systemName: image)
                     .resizable()

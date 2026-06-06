@@ -13,6 +13,7 @@ struct VocabApp: App {
         WindowGroup {
             ContentView()
                 .background(Color(UIColor.systemGroupedBackground))
+    
                 
         }
     }
