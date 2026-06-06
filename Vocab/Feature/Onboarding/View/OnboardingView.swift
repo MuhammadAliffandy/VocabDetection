@@ -15,7 +15,7 @@ struct OnboardingView: View{
         
             
             AppHeadline(
-                title: "Ambil foto untuk mengetahui kosakata baru!" ,
+                title: "Ambil foto untuk mengetahui kosakata baru! " ,
                 subtitle : "Foto benda di sekitarmu untuk temukan kosakata baru, dan lihat bagaimana cara menggunakannya dalam kalimat!",
                 titleStyle: .appTitle,
                 subtitleStyle: .appHeadline,
