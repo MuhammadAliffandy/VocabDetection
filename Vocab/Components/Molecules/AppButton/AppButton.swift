@@ -10,6 +10,7 @@ import SwiftUI
 struct AppButton: View {
     
     var textButton: String = "Text Default"
+    var textColor: Color = .black
     var backgroundColor: Color = .blue
     var action: () -> Void = {}
     
@@ -19,7 +20,10 @@ struct AppButton: View {
             action: action
         ){
             AppText(
-                text: textButton
+                text: textButton,
+                fontStyle: .appHeadlinev2,
+                textColor: textColor,
+                
             )
               
         }

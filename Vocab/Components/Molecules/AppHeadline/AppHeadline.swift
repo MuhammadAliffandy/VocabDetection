@@ -34,13 +34,16 @@ struct AppHeadline: View {
                 textColor: subtitleColor
             )
         }
+        .padding(0)
     }
 }
 
 #Preview{
-    AppHeadline(
-        title: "Hay" ,
-        subtitle : "ini adalah subtitile",
-        aligment: .leading
-    )
+    VStack(alignment: .leading){
+        AppHeadline(
+            title: "Hay" ,
+            subtitle : "ini adalah subtitile",
+            aligment: .leading
+        )
+    }
 }

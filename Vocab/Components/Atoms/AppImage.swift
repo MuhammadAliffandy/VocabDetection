@@ -7,19 +7,27 @@
 
 import SwiftUI
 
-struct AppImage: View{
+struct AppImage: View {
     var image: String
     
-    var body: some View{
+    var isSystemIcon: Bool = false
+    
+    var body: some View {
         ZStack {
             Color.white
-            Image(systemName: image)
-                .resizable()
-                .scaledToFit()
-                .foregroundColor(.black)
-
-                  
+            
+            if isSystemIcon {
+                Image(systemName: image)
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundColor(.black)
+            } else {
+                Image(image)
+                    .resizable()
+                    .scaledToFit()
             }
-            .aspectRatio(1.0, contentMode: .fit)
+            
+        }
+        .aspectRatio(1.0, contentMode: .fit)
     }
 }
