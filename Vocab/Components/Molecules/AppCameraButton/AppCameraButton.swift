@@ -18,6 +18,10 @@ struct AppCameraButton: View {
             Image(systemName: AppIcon.CameraApertureIcon)
                 .font(.system(size: AppIconSize.Large))
                 .foregroundColor(Color.brandColorPrimaryTeal)
+                .background(Color.white)
+                .clipShape(RoundedRectangle(cornerRadius: .infinity))
+              
+                
         }
     }
 }
@@ -27,6 +31,6 @@ struct AppCameraButton: View {
     
     AppCameraButton(action : {})
     
-    AppCameraButton(action : {})
-        .appTooltip("Tekan Icon\nuntuk membuka\nkamera", isVisible: true)
+//    AppCameraButton(action : {})
+//        .appTooltip("Tekan Icon\nuntuk membuka\nkamera", isVisible: true)
 }

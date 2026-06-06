@@ -12,3 +12,7 @@ enum AppPadding {
     static let shapePadding: CGFloat = 12
     static let areaPadding: CGFloat = 20
 }
+
+enum AppSpacing{
+    static let regular: CGFloat = 12
+}

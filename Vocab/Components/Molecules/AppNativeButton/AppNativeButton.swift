@@ -68,14 +68,14 @@ struct AppGlassButton: View {
         VStack(spacing: 40) {
             
 
-            AppGlassButton(
-                icon: "chevron.left",
-                action: { print("Back tapped") }
-            )
             
             AppGlassButton(
                 text: "Selesai",
                 action: { print("Done tapped") }
+            )
+            AppGlassButton(
+                icon: "chevron.left",
+                action: { print("Back tapped") }
             )
             
             AppGlassButton(

@@ -24,7 +24,9 @@ enum AppIcon {
     static let SpeakerWave3Icon: String = "speaker.wave.3.fill"
     static let XmarkCircleFillIcon: String = "xmark.circle.fill"
     static let TextAlignLeftIcon: String = "text.alignleft"
-    static let CircleFillIcon: String = "circle.fill" 
+    static let CircleFillIcon: String = "circle.fill"
+    static let XmarkIcon: String = "xmark"
+    static let ChevronLeftIcon: String = "chevron.left"
 }
 
 enum AppIconSize{

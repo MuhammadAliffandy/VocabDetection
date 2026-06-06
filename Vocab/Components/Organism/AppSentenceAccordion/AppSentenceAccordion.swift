@@ -8,10 +8,20 @@
 import SwiftUI
 
 struct AppSentenceAccordion: View {
+    
+    var rawSentence: String = "rock is very hard"
+    var vocabDictionary: [String: String] = [
+        "rock": "Batu",
+        "hard": "Keras"
+    ]
+    var selectedType: AppSentenceType = .command
+    
     var body: some View {
         AppAccordion(
             header: {
-                AppAccordionHeader()
+                AppAccordionHeader(
+                    selectedType: selectedType
+                )
             },
             footer: {
                 
@@ -31,7 +41,11 @@ struct AppSentenceAccordion: View {
                         .horizontal,36
                     )
                     
-                    AppSentenceGroup()
+                    AppSentenceGroup(
+                        rawSentence: rawSentence,
+                        vocabDictionary: vocabDictionary
+
+                    )
                 }
             }
         )

@@ -8,6 +8,13 @@
 import SwiftUI
 
 struct AppSentenceGroup: View {
+
+    var rawSentence: String = "rock is very hard"
+    var vocabDictionary: [String: String] = [
+        "rock": "Batu",
+        "hard": "Keras"
+    ]
+    
     var body: some View {
         VStack(alignment: .leading ) {
             HStack(
@@ -21,11 +28,8 @@ struct AppSentenceGroup: View {
                 .foregroundStyle(.white)
                 
                 AppSentenceContent(
-                    rawSentence: "rock is very hard",
-                    vocabDictionary: [
-                        "rock": "Batu",
-                        "hard": "Keras"
-                    ],
+                    rawSentence: rawSentence,
+                    vocabDictionary: vocabDictionary ,
                     textStyle: .appHeadline
                     
                 )
@@ -70,5 +74,7 @@ struct AppSentenceGroup: View {
 }
 
 #Preview {
-    AppSentenceGroup()
+    AppSentenceGroup(
+        
+    )
 }

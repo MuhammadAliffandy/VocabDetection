@@ -14,7 +14,7 @@ struct AppImage: View {
     
     var body: some View {
         ZStack {
-            Color.white
+          
             
             if isSystemIcon {
                 Image(systemName: image)

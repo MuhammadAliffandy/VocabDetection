@@ -25,8 +25,8 @@ struct OnboardingView: View{
                     subtitleStyle: .appHeadline,
                     aligment: .leading,
                     spacing: 12,
+                    isFullWidth: true
                 )
-    
                 
                 
                 AppButton(

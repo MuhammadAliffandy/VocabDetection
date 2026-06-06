@@ -20,11 +20,14 @@ struct AppVocabText: View {
             titleStyle: .appTitle,
             titleColor: .white,
             subtitleColor: Color.white.opacity(0.7),
-            aligment: .center
+            aligment: .center,
+            isFullWidth: false
         )
+       
         .padding(AppPadding.buttonPadding)
         .background(Color.brandColorPrimaryTeal)
         .clipShape(RoundedRectangle(cornerRadius: AppRadius.vocabShapeRadius))
+        
     }
 }
 

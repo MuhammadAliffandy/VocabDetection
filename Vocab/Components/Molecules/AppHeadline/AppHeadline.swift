@@ -18,6 +18,8 @@ struct AppHeadline: View {
     var aligment: HorizontalAlignment = .leading
     var spacing: CGFloat = 10
     
+    var isFullWidth: Bool = true
+    
     var body: some View {
         VStack(
             alignment: aligment,
@@ -35,6 +37,10 @@ struct AppHeadline: View {
             )
         }
         .padding(0)
+        .frame(
+            maxWidth: isFullWidth ? .infinity : nil,
+            alignment: .leading
+        )
     }
 }
 

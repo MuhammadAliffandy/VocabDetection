@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AppAccordionHeader: View {
         
-    @State private var selectedType: AppSentenceType? = .exclamation
+    var selectedType: AppSentenceType? = .exclamation
     
     var body: some View {
         HStack(alignment: .center){
@@ -34,5 +34,17 @@ struct AppAccordionHeader: View {
 }
 
 #Preview {
-    AppAccordionHeader()
+    AppAccordionHeader(
+        selectedType: .statement
+    )
+    AppAccordionHeader(
+        selectedType: .question
+    )
+    AppAccordionHeader(
+        selectedType: .command
+    )
+    AppAccordionHeader(
+        selectedType: .exclamation
+    )
+    
 }

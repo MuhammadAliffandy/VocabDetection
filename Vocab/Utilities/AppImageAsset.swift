@@ -8,4 +8,5 @@
 enum AppImageAsset {
     static let onboardingImage:String = "img_onboarding"
     static let demoImage: String = "img_demo"
+    static let dummyImage: String = "img_dummy"
 }
