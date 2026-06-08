@@ -1,0 +1,87 @@
+//
+//  AppToolbar.swift
+//  Vocab
+//
+//  Created by Muhammad Aliffandy on 08/06/26.
+//
+
+import SwiftUI
+
+struct AppToolbar: View {
+    
+    @State private var isMagnifyClicked :Bool = false
+    
+    var onMagnifyingTap: (Bool) -> Void;
+    var onEllipsisTap: () -> Void;
+    var onDateTap: () -> Void;
+    var onNewestTap: () -> Void;
+    
+    var body: some View {
+        HStack(spacing: 16){
+            AppWrapButton(
+                action: {
+                    isMagnifyClicked.toggle()
+                    onMagnifyingTap(isMagnifyClicked)
+                }
+            ){
+                Image(systemName: isMagnifyClicked ? AppIcon.XmarkIcon :  AppIcon.MagnifyingGlassIcon )
+                    .font(.system(size: AppIconSize.Regular))
+                    .foregroundColor(Color.black)
+                    .bold()
+            }
+            
+            
+            if !isMagnifyClicked {
+              
+                
+                AppWrapDropdown(
+                    parent:{
+                        AppWrapButton(
+                            action: onEllipsisTap
+                        ){
+                            Image(systemName: AppIcon.EllipsisIcon)
+                                .font(.system(size: AppIconSize.Regular))
+                                .foregroundColor(Color.black)
+                                .bold()
+                        }
+                    },
+                    child: {
+                        AppWrapButton(
+                            action: onNewestTap
+                        ){
+                            Label("Terbaru", systemImage: AppIcon.DocBadgeClockIcon)
+                        }
+                        
+                        AppWrapButton(
+                            action: onDateTap
+                        ){
+                            Label("Tanggal", systemImage: AppIcon.CalendarIcon)
+                        }
+                        
+                        
+                       
+                    }
+                )
+                
+                
+                
+            }
+        }
+        .padding(AppPadding.areaPadding)
+        .background(.white)
+        .clipShape(RoundedRectangle(cornerRadius: .infinity))
+    }
+}
+
+#Preview {
+    AppToolbar(
+        onMagnifyingTap: {
+            isClicked in
+            print(isClicked
+            )
+        } ,
+        onEllipsisTap: {},
+        onDateTap: {},
+        onNewestTap: {},
+    )
+}
