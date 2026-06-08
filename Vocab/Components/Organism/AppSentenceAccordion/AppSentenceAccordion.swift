@@ -18,9 +18,11 @@ struct AppSentenceAccordion: View {
     
     var body: some View {
         AppAccordion(
-            header: {
+            header: { isExpanded, hasBeenOpened in
                 AppAccordionHeader(
-                    selectedType: selectedType
+                    selectedType: selectedType,
+                    isExpanded: isExpanded,
+                    hasBeenOpened: hasBeenOpened
                 )
             },
             footer: {

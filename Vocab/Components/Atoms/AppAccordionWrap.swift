@@ -1,12 +1,15 @@
 
+// adsfalsdfj
+
 import SwiftUI
 
 struct AppAccordion<Header: View, Footer: View>: View {
     
 //    var opened : (Bool) -> Void = ()
     @State private var isExpanded: Bool = false
+    @State private var hasBeenOpened: Bool = false  // ditambah
     
-    @ViewBuilder let header: Header
+    @ViewBuilder let header: (Bool, Bool) -> Header
     @ViewBuilder let footer: Footer
     
     var body: some View {
@@ -16,10 +19,12 @@ struct AppAccordion<Header: View, Footer: View>: View {
 
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                     isExpanded.toggle()
+                    if isExpanded {
+                        hasBeenOpened = true
+                    }
                 }
             }) {
-                header
-        
+                header(isExpanded, hasBeenOpened)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .contentShape(Rectangle())
             }

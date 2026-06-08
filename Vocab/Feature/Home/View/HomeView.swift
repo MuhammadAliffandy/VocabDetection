@@ -125,7 +125,8 @@ struct HomeView:View {
                                 title: "Chair",
                                 subtitle: "Kursi",
                                 onTapGesture: {
-                                    print("test")
+                                    navigateToResultLoading = true
+//                                    print("appvocabCard")
                                 }
                             )
                              AppVocabCard(
@@ -150,6 +151,7 @@ struct HomeView:View {
                         
                     }
                 }
+                .scrollIndicators(.hidden)
                 .padding(AppPadding.areaPadding)
                 .background(Color(UIColor.systemGroupedBackground))
                 
