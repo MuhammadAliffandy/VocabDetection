@@ -10,6 +10,8 @@ import SwiftUI
 
 struct HomeView:View {
     
+    @State private var previewPeriod = "Tanggal"
+    @State private var isNewest: Bool = true
     @State private var isMagnifying: Bool = false
     @State private var showDropdown: Bool = false
     @State private var navigateToResultLoading = false
@@ -28,10 +30,9 @@ struct HomeView:View {
             ZStack{
                 ScrollView{
                     
-                    VStack(spacing: 15 ){
-                        
-                        
+                    VStack(spacing: 16 ){
                         HStack(
+                            alignment: .top, 
                             spacing: 16){
                             
                             if !isMagnifying {
@@ -53,7 +54,13 @@ struct HomeView:View {
                                     isMagnifying = isClicked
                                 }, onEllipsisTap: {
                                     showDropdown.toggle()
-                                }
+                                },
+                                onDateTap: {
+                                    isNewest = false
+                                },
+                                onNewestTap: {
+                                    isNewest = true
+                                },
                             )
                                 
                             
@@ -80,14 +87,35 @@ struct HomeView:View {
                             
                         }
 
-                        AppHeadline(
-                            title: "Terbaru" ,
-                            subtitle : "Foto terbaru yang anda tambahkan",
-                            titleStyle: .appHeadlinev2,
-                            subtitleStyle: .appHeadline,
-                            aligment: .leading,
-                            spacing:AppSpacing.textSpacing,
-                        )
+                        if isNewest {
+                            AppHeadline(
+                                title: "Terbaru" ,
+                                subtitle : "Foto terbaru yang anda tambahkan",
+                                titleStyle: .appHeadlinev2,
+                                subtitleStyle: .appHeadline,
+                                aligment: .leading,
+                                spacing:AppSpacing.textSpacing,
+                            )
+                        }
+                        else{
+                            HStack(spacing: 16){
+                                
+                                AppText(
+                                    text: "8 Juni",
+                                    fontStyle: .appHeadlinev2
+                                    
+                                )
+                                
+                                Spacer()
+                                
+                                AppOptionPicker(selectedPeriod: $previewPeriod
+                                ,options:  ["Tanggal", "Bulan", "Tahun"]
+                                )
+                                
+                            }
+                        }
+                        
+                       
                         
                         
                         LazyVGrid(columns: gridColumns, spacing: 16) {

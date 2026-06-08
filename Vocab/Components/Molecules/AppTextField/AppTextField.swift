@@ -12,15 +12,22 @@ struct AppTextField: View {
     @Binding var text: String
     
     var body: some View{
-        TextField(
-            "Masukkan Vocabulary . . .", text: $text,
-        )
-        .font(.appHeadline)
-        .padding(AppPadding.shapePadding * 1.5)
-        .foregroundStyle(Color.black)
+        HStack{
+            
+            Image(systemName: AppIcon.MagnifyingGlassIcon)
+                .foregroundStyle(.black)
+                .padding(.leading,AppPadding.shapePadding * 1.5 )
+            
+            TextField(
+                "Masukkan Vocabulary . . .", text: $text,
+            )
+            .font(.appHeadline)
+            .padding(.vertical,AppPadding.shapePadding * 1.5)
+            .padding(.trailing,AppPadding.shapePadding * 1.5 )
+            .foregroundStyle(Color.black)
+        }
         .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: .infinity))
-
     }
 }
 

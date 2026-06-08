@@ -13,6 +13,7 @@ struct AppGlassButton: View {
     var icon: String? = nil
     var text: String? = nil
     var action: () -> Void
+    var isGlass: Bool = true
     
     var body: some View {
         Button(action: action) {
@@ -32,15 +33,10 @@ struct AppGlassButton: View {
                 
             }
             .foregroundColor(.primary)
-            
             .padding(.horizontal, text == nil ? 0 : 20)
-            
             .frame(width: text == nil ? 44 : nil, height: 44)
-            
             .background(.regularMaterial)
-            
             .clipShape(Capsule())
-            
             .overlay(
                 Capsule()
                     .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
@@ -59,12 +55,7 @@ struct AppGlassButton: View {
         Color.teal
             .ignoresSafeArea()
         
-        VStack {
-            Image(systemName: "apple.pencil.and.scribble")
-                .font(.system(size: 250))
-                .foregroundColor(.white.opacity(0.3))
-        }
-   
+      
         VStack(spacing: 40) {
             
 
