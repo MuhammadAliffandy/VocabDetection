@@ -8,21 +8,26 @@
 import SwiftUI
 
 struct AppVocabSpeech: View {
+    
+    var action: () -> Void
+    
     var body: some View {
-        ZStack(alignment: .bottom){
-            AppVocabText(
-                vocabText: "Chair" ,
-                meaningText: "/ˈtʃɛɹ/ : Kursi",
-            )
-            AppIconSpeech(action: {
-                
-            })
-            .offset(y: 20)
+        AppWrapButton(action: action ){
+            ZStack(alignment: .bottom){
+                AppVocabText(
+                    vocabText: "Chair" ,
+                    meaningText: "/ˈtʃɛɹ/ : Kursi",
+                )
+                AppIconSpeech()
+                .offset(y: 20)
+            }
         }
     }
 }
 
 
 #Preview {
-    AppVocabSpeech()
+    AppVocabSpeech(
+        action: {}
+    )
 }

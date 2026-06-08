@@ -22,11 +22,10 @@ struct ResultView: View {
                             .frame(maxWidth: .infinity)
                             .frame(height: 400)
                             
-                            AppVocabSpeech()
-                                .onTapGesture {
-                                    print("test")
-                                }
-                                .offset(y: 170)
+                            AppVocabSpeech(action: {
+                                print("test")
+                            })
+                            .offset(y: 170)
                         }
                         
                         VStack(spacing: AppSpacing.regular) {
