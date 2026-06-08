@@ -29,7 +29,7 @@ struct OnboardingView: View{
                         titleStyle: .appTitle,
                         subtitleStyle: .appHeadline,
                         aligment: .leading,
-                        spacing: 12,
+                        spacing: AppSpacing.regular,
                         isFullWidth: true
                     )
                     

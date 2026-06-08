@@ -11,13 +11,14 @@ struct AppVocabCard: View {
     
     var image: String
     var title: String
+    var subtitle: String
     var onTapGesture: () -> Void = {}
     
     
     var body: some View{
         VStack(
-            alignment: .center,
-            spacing: 10
+            alignment: .leading,
+            spacing: 8
         ){
             ZStack {
                 Color.white
@@ -26,7 +27,7 @@ struct AppVocabCard: View {
                     .resizable()
                     .scaledToFit()
                     .foregroundColor(.black)
-                    .clipShape(.rect(cornerRadius: 16))
+                    .clipShape(.rect(cornerRadius: AppRadius.vocabShapeRadius))
 
                       
                 }
@@ -35,13 +36,22 @@ struct AppVocabCard: View {
                     onTapGesture()
                 }
             
-            AppText(
-                text: title,
-                fontStyle: .appHeadline,
-                textColor: Color.textColorPrimarySemiBlack
+            AppHeadline(
+                title: title,
+                subtitle: subtitle,
+                titleStyle: .appHeadlinev2,
+                subtitleStyle: .appSubheadline,
+                subtitleColor: .textColorSecondaryBlackGrey,
+                spacing: AppSpacing.textSpacing
             )
+            .padding(.leading ,11)
+            .padding(.bottom, 8)
             
         }
+        .padding(4)
+        .background(.white)
+        .clipShape(RoundedRectangle(cornerRadius: AppRadius.shapeRadius))
+        
     }
 }
 
@@ -57,23 +67,13 @@ struct AppVocabCard: View {
             
             AppVocabCard(
                 image: AppImageAsset.dummyImage,
-                title: "Orang",
+                title: "Chair",
+                subtitle: "Kursi",
                 onTapGesture: {
                     print("test")
                 }
             )
-            AppVocabCard(
-                image: AppImageAsset.dummyImage,
-                title: "Orang",
-            )
-            AppVocabCard(
-                image: AppImageAsset.dummyImage,
-                title: "Orang",
-            )
-            AppVocabCard(
-                image: AppImageAsset.dummyImage,
-                title: "Orang",
-            )
+            
             
         }
         .padding(16)

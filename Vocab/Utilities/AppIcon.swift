@@ -27,6 +27,10 @@ enum AppIcon {
     static let CircleFillIcon: String = "circle.fill"
     static let XmarkIcon: String = "xmark"
     static let ChevronLeftIcon: String = "chevron.left"
+    static let MagnifyingGlassIcon: String = "magnifyingglass"
+    static let EllipsisIcon: String = "ellipsis"
+    static let BookPagesIcon: String = "book.pages.fill"
+    static let ClockBadgeCheckmarkIcon: String = "clock.badge.checkmark.fill"
 }
 
 enum AppIconSize{

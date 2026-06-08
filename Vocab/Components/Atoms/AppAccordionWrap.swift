@@ -2,6 +2,8 @@
 import SwiftUI
 
 struct AppAccordion<Header: View, Footer: View>: View {
+    
+//    var opened : (Bool) -> Void = ()
     @State private var isExpanded: Bool = false
     
     @ViewBuilder let header: Header

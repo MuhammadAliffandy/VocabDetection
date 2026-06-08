@@ -15,8 +15,20 @@ struct ResultLoadingView: View {
         VStack {
             Spacer()
             
-            ProgressView()
-                .controlSize(.large)
+            ZStack{
+                AppImage(
+                    image: AppImageAsset.dummyImage,
+                    contentMode: .fill,
+                )
+                .blur(radius: 6)
+                
+                
+                
+                ProgressView()
+                    .controlSize(.large)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .ignoresSafeArea(.all)
             
             Spacer()
             
@@ -29,13 +41,15 @@ struct ResultLoadingView: View {
                 isFullWidth: true
             )
             .padding(.bottom, 80)
+            .padding(.top,AppPadding.areaPadding)
+            .padding(.horizontal ,AppPadding.areaPadding)
         }
-        .padding(AppPadding.areaPadding)
+       
         .navigationBarBackButtonHidden(true)
         .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
-                navigateToResult = true
-            }
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
+//                navigateToResult = true
+//            }
         }
         .navigationDestination(isPresented: $navigateToResult) {
             ResultView()

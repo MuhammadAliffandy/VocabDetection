@@ -9,8 +9,9 @@ import SwiftUI
 
 struct AppImage: View {
     var image: String
-    
     var isSystemIcon: Bool = false
+    var aspectRatio: CGFloat = 1.0
+    var contentMode:ContentMode = .fit
     
     var body: some View {
         ZStack {
@@ -28,5 +29,6 @@ struct AppImage: View {
             
         }
         .aspectRatio(1.0, contentMode: .fit)
+        
     }
 }

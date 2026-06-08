@@ -16,7 +16,7 @@ struct AppHeadline: View {
     var titleColor: Color = Color.textColorPrimarySemiBlack
     var subtitleColor: Color = Color.textColorSecondaryBlackGrey
     var aligment: HorizontalAlignment = .leading
-    var spacing: CGFloat = 10
+    var spacing: CGFloat = AppSpacing.regular
     
     var isFullWidth: Bool = true
     

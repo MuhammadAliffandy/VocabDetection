@@ -17,11 +17,12 @@ struct AppVocabText: View {
         AppHeadline(
             title: vocabText ,
             subtitle : meaningText,
-            titleStyle: .appTitle,
+            titleStyle: .appLargeTitle,
             titleColor: .white,
             subtitleColor: Color.white.opacity(0.7),
             aligment: .center,
-            isFullWidth: false
+            spacing: 0,
+            isFullWidth: false,
         )
        
         .padding(AppPadding.buttonPadding)

@@ -15,4 +15,5 @@ enum AppPadding {
 
 enum AppSpacing{
     static let regular: CGFloat = 12
+    static let textSpacing: CGFloat = 4
 }

@@ -9,6 +9,9 @@ import SwiftUI
 
 
 struct HomeView:View {
+    
+    @State private var isMagnifying: Bool = false
+    @State private var showDropdown: Bool = false
     @State private var navigateToResultLoading = false
     @State private var typping: String = ""
     @State private var isShowingCamera = false
@@ -26,14 +29,64 @@ struct HomeView:View {
                 ScrollView{
                     
                     VStack(spacing: 15 ){
-                        AppTextField(text: $typping)
+                        
+                        
+                        HStack(
+                            spacing: 16){
+                            
+                            if !isMagnifying {
+                                AppHeadline(
+                                    title: "Kosakata Kamu" ,
+                                    subtitle : "Jumlah kosakata yang sudah kamu ketahui",
+                                    titleStyle: .appHeadlinev2,
+                                    subtitleStyle: .appHeadline,
+                                    aligment: .leading,
+                                    spacing:AppSpacing.textSpacing,
+                                )
+                            }else{
+                                AppTextField(text: $typping)
+                            }
+                            
+                            AppToolbar(
+                                onMagnifyingTap: {
+                                    isClicked in
+                                    isMagnifying = isClicked
+                                }, onEllipsisTap: {
+                                    showDropdown.toggle()
+                                }
+                            )
+                                
+                            
+                                
+                        }
+                        
+                        if !isMagnifying {
+                            
+                            HStack(spacing: 16){
+                                AppVocabDashboardCard(
+                                    icon:AppIcon.BookPagesIcon,
+                                    title: "Total",
+                                    subtitle: "Kosakata",
+                                    count: "0"
+                                )
+                                
+                                AppVocabDashboardCard(
+                                    icon:AppIcon.ClockBadgeCheckmarkIcon,
+                                    title: "Kosakata",
+                                    subtitle: "Hari ini",
+                                    count: "0"
+                                )
+                            }
+                            
+                        }
+
                         AppHeadline(
                             title: "Terbaru" ,
                             subtitle : "Foto terbaru yang anda tambahkan",
                             titleStyle: .appHeadlinev2,
                             subtitleStyle: .appHeadline,
                             aligment: .leading,
-                            spacing: 10,
+                            spacing:AppSpacing.textSpacing,
                         )
                         
                         
@@ -41,35 +94,27 @@ struct HomeView:View {
                             
                             AppVocabCard(
                                 image: AppImageAsset.dummyImage,
-                                title: "Orang",
+                                title: "Chair",
+                                subtitle: "Kursi",
                                 onTapGesture: {
-                                    navigateToResultLoading = true
+                                    print("test")
                                 }
                             )
-                            
-                            
-                            AppVocabCard(
+                             AppVocabCard(
                                 image: AppImageAsset.dummyImage,
-                                title: "Rumah"
+                                title: "Chair",
+                                subtitle: "Kursi",
+                                onTapGesture: {
+                                    print("test")
+                                }
                             )
-                            
-                            AppVocabCard(
+                             AppVocabCard(
                                 image: AppImageAsset.dummyImage,
-                                title: "Mobil"
-                            )
-                            
-                            AppVocabCard(
-                                image: AppImageAsset.dummyImage,
-                                title: "Pohon"
-                            )
-                            AppVocabCard(
-                                image: AppImageAsset.dummyImage,
-                                title: "Pohon"
-                            )
-                            
-                            AppVocabCard(
-                                image: AppImageAsset.dummyImage,
-                                title: "Pohon"
+                                title: "Chair",
+                                subtitle: "Kursi",
+                                onTapGesture: {
+                                    print("test")
+                                }
                             )
                             
                         }
