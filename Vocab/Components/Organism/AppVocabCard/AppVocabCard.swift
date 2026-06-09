@@ -46,8 +46,17 @@ struct AppVocabCard: View {
                                     startPoint: .top,
                                     endPoint: .bottom
                                 )
+                                
                         )
                         .frame(height: 60)
+                        .clipShape(
+                            .rect(
+                                topLeadingRadius: 0,
+                                bottomLeadingRadius: AppRadius.vocabShapeRadius,
+                                bottomTrailingRadius: AppRadius.vocabShapeRadius,
+                                topTrailingRadius: 0
+                            )
+                        )
                     }
                 )
             
