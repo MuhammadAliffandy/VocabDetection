@@ -153,7 +153,7 @@ struct HomeView: View {
                 
             }
             .fullScreenCover(isPresented: $isShowingCamera) {
-                AppCameraPicker(selectedImage: $capturedImage)
+                CameraView()
                     .ignoresSafeArea()
             }
             .navigationBarBackButtonHidden(true)
