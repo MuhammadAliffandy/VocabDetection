@@ -27,6 +27,7 @@ struct DemoView: View {
                         subtitle: "coba lakukan demo untuk melihat bagaimana aplikasi ini membantumu belajar kosakata baru dari benda sekitarmu!",
                         titleStyle: .appTitle,
                         subtitleStyle: .appHeadline,
+                        titleColor: .primary,
                         aligment: .leading,
                         spacing: AppSpacing.regular,
                         isFullWidth: true

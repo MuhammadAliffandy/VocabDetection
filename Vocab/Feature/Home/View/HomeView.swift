@@ -41,6 +41,7 @@ struct HomeView:View {
                                     subtitle : "Jumlah kosakata yang sudah kamu ketahui",
                                     titleStyle: .appHeadlinev2,
                                     subtitleStyle: .appHeadline,
+                                    titleColor: .primary,
                                     aligment: .leading,
                                     spacing:AppSpacing.textSpacing,
                                 )
@@ -94,6 +95,7 @@ struct HomeView:View {
                                 subtitle : "Foto terbaru yang anda tambahkan",
                                 titleStyle: .appHeadlinev2,
                                 subtitleStyle: .appHeadline,
+                                titleColor: .primary,
                                 aligment: .leading,
                                 spacing:AppSpacing.textSpacing,
                             )

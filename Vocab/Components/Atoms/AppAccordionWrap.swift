@@ -1,13 +1,12 @@
 
-// adsfalsdfj
+//
 
 import SwiftUI
 
 struct AppAccordion<Header: View, Footer: View>: View {
     
-//    var opened : (Bool) -> Void = ()
     @State private var isExpanded: Bool = false
-    @State private var hasBeenOpened: Bool = false  // ditambah
+    @State private var hasBeenOpened: Bool = false
     
     @ViewBuilder let header: (Bool, Bool) -> Header
     @ViewBuilder let footer: Footer

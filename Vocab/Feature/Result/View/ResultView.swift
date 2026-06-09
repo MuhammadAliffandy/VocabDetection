@@ -37,6 +37,7 @@ struct ResultView: View {
                                 subtitle: "Memindai kata dari gambar yang sudah kamu ambil",
                                 titleStyle: .appHeadlinev2,
                                 subtitleStyle: .appSubheadline,
+                                titleColor: .primary,
                                 aligment: .leading,
                                 isFullWidth: true
                             )
