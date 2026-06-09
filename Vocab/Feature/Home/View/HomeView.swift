@@ -96,57 +96,74 @@ struct HomeView:View {
                                 aligment: .leading,
                                 spacing:AppSpacing.textSpacing,
                             )
-                        }
-                        else{
-                            HStack(spacing: 16){
+                            
+                            LazyVGrid(columns: gridColumns, spacing: 16) {
                                 
-                                AppText(
-                                    text: "8 Juni",
-                                    fontStyle: .appHeadlinev2
-                                    
+                                AppVocabCard(
+                                    image: AppImageAsset.dummyImage,
+                                    title: "Chair",
+                                    subtitle: "Kursi",
+                                    onTapGesture: {
+                                        print("test")
+                                    }
                                 )
-                                
-                                Spacer()
-                                
-                                AppOptionPicker(selectedPeriod: $previewPeriod
-                                ,options:  ["Tanggal", "Bulan", "Tahun"]
+                                 AppVocabCard(
+                                    image: AppImageAsset.dummyImage,
+                                    title: "Chair",
+                                    subtitle: "Kursi",
+                                    onTapGesture: {
+                                        print("test")
+                                    }
+                                )
+                                 AppVocabCard(
+                                    image: AppImageAsset.dummyImage,
+                                    title: "Chair",
+                                    subtitle: "Kursi",
+                                    onTapGesture: {
+                                        print("test")
+                                    }
                                 )
                                 
                             }
                         }
-                        
-                       
-                        
-                        
-                        LazyVGrid(columns: gridColumns, spacing: 16) {
+                        else{
                             
-                            AppVocabCard(
-                                image: AppImageAsset.dummyImage,
-                                title: "Chair",
-                                subtitle: "Kursi",
-                                onTapGesture: {
-                                    print("test")
-                                }
-                            )
-                             AppVocabCard(
-                                image: AppImageAsset.dummyImage,
-                                title: "Chair",
-                                subtitle: "Kursi",
-                                onTapGesture: {
-                                    print("test")
-                                }
-                            )
-                             AppVocabCard(
-                                image: AppImageAsset.dummyImage,
-                                title: "Chair",
-                                subtitle: "Kursi",
-                                onTapGesture: {
-                                    print("test")
-                                }
-                            )
+                            ForEach(1..<4 , id: \.self){
+                                index in
+                                AppVocabCardDateGroup(
+                                    title: "8 Juni",
+                                    trailingComponent: {
+                                        if index == 1{
+                                            AppOptionPicker(
+                                                selectedPeriod: $previewPeriod,
+                                                options:
+                                                    [
+                                                        "Tanggal",
+                                                        "Bulan",
+                                                        "Tahun"
+                                                    ]
+                                            )
+                                        }
+                                    },
+                                    component: {
+                                        ForEach(1..<4 , id: \.self){
+                                            index in
+                                            AppVocabCard(
+                                                image: AppImageAsset.dummyImage,
+                                                title: "Chair",
+                                                subtitle: "Kursi",
+                                                onTapGesture: {
+                                                    print("test")
+                                                }
+                                            )
+                                        }
+                                        
+                                    }
+                                )
+                            }
                             
+                           
                         }
-                        
                         
                     }
                 }

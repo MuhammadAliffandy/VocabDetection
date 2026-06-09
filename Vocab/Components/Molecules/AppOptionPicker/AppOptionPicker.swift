@@ -58,7 +58,7 @@ struct AppOptionPicker: View {
                         .foregroundColor(.secondary)
                 }
                 .padding()
-                .onChange(of: previewPeriod) { newValue in
+                .onChange(of: previewPeriod) { _, newValue in
                     print("The user changed the period to: \(newValue)")
                 }
             }

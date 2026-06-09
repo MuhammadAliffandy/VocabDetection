@@ -35,6 +35,21 @@ struct AppVocabCard: View {
                 .onTapGesture {
                     onTapGesture()
                 }
+                .overlay(
+                    VStack{
+                        Spacer()
+                        
+                        Rectangle()
+                            .fill(
+                                LinearGradient(
+                                    colors: [.clear, Color.brandColorPrimaryTeal.opacity(0.5)],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                        )
+                        .frame(height: 60)
+                    }
+                )
             
             AppHeadline(
                 title: title,
