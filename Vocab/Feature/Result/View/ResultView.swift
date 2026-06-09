@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ResultView: View {
     
+    var isFromHome : Bool? = false
     let rawSentence: String = "rock is very hard"
     let vocabDictionary: [String: String] = [
         "rock": "Batu",
@@ -51,11 +52,14 @@ struct ResultView: View {
                 
                 HStack {
                  
-                    AppGlassButton(
-                        icon: AppIcon.ChevronLeftIcon,
-                        text: "Retake",
-                        action: { print("Save tapped") }
-                    )
+                    if isFromHome == false  {
+                        AppGlassButton(
+                            icon: AppIcon.ChevronLeftIcon,
+                            text: "Retake",
+                            action: { print("Save tapped") }
+                        )
+                    }
+                
                     Spacer()
                     
                     AppGlassButton(

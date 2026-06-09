@@ -14,7 +14,7 @@ struct HomeView:View {
     @State private var isNewest: Bool = true
     @State private var isMagnifying: Bool = false
     @State private var showDropdown: Bool = false
-    @State private var navigateToResultLoading = false
+    @State private var navigateToResult = false
     @State private var typping: String = ""
     @State private var isShowingCamera = false
     @State private var capturedImage: UIImage?
@@ -107,7 +107,7 @@ struct HomeView:View {
                                         title: "Chair",
                                         subtitle: "Kursi",
                                         onTapGesture: {
-                                            print("test")
+                                            navigateToResult = true
                                         }
                                     )
                                 }
@@ -117,7 +117,6 @@ struct HomeView:View {
                         }
                         else{
                             
-<<<<<<< HEAD
                             ForEach(1..<4 , id: \.self){
                                 index in
                                 AppVocabCardDateGroup(
@@ -143,7 +142,7 @@ struct HomeView:View {
                                                 title: "Chair",
                                                 subtitle: "Kursi",
                                                 onTapGesture: {
-                                                    print("test")
+                                                    navigateToResult = true
                                                 }
                                             )
                                         }
@@ -151,34 +150,7 @@ struct HomeView:View {
                                     }
                                 )
                             }
-=======
-                            AppVocabCard(
-                                image: AppImageAsset.dummyImage,
-                                title: "Chair",
-                                subtitle: "Kursi",
-                                onTapGesture: {
-                                    navigateToResultLoading = true
-//                                    print("appvocabCard")
-                                }
-                            )
-                             AppVocabCard(
-                                image: AppImageAsset.dummyImage,
-                                title: "Chair",
-                                subtitle: "Kursi",
-                                onTapGesture: {
-                                    print("test")
-                                }
-                            )
-                             AppVocabCard(
-                                image: AppImageAsset.dummyImage,
-                                title: "Chair",
-                                subtitle: "Kursi",
-                                onTapGesture: {
-                                    print("test")
-                                }
-                            )
->>>>>>> 50f20a3c5e85b4e4d81e7d5ee2c2553c86af9869
-                            
+
                            
                         }
                         
@@ -205,8 +177,8 @@ struct HomeView:View {
                     .ignoresSafeArea()
             }
             .navigationBarBackButtonHidden(true)
-            .navigationDestination(isPresented: $navigateToResultLoading ){
-                ResultLoadingView()
+            .navigationDestination(isPresented: $navigateToResult ){
+                ResultView(isFromHome: true)
             }
         }
 
