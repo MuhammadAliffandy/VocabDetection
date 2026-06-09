@@ -253,7 +253,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4Z34RN4542;
+				DEVELOPMENT_TEAM = ZB4G54X6W4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Agar anda dapat mengambil foto data mendeteksi kosakata pada benda yang anda foto, aplikasi kami memerlukan akses ke kamera anda";
@@ -287,7 +287,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4Z34RN4542;
+				DEVELOPMENT_TEAM = ZB4G54X6W4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Agar anda dapat mengambil foto data mendeteksi kosakata pada benda yang anda foto, aplikasi kami memerlukan akses ke kamera anda";
