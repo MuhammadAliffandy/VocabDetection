@@ -9,7 +9,8 @@ import SwiftUI
 struct DemoView: View {
     
     @State private var navigateToHome = false
-    
+    @State private var isDemo = false
+
     var body: some View {
         NavigationStack{
             ZStack(alignment: .top) {
@@ -41,6 +42,7 @@ struct DemoView: View {
                         backgroundColor: Color.teal,
                         action: {
                             navigateToHome = true
+                            isDemo = true
                         }
                     )
                 }
@@ -62,7 +64,7 @@ struct DemoView: View {
             }
             .navigationBarBackButtonHidden(true)
             .navigationDestination(isPresented: $navigateToHome){
-                HomeView()
+                isDemo ? HomeView(isDemo: true) : HomeView()
             }
         }
     }

@@ -7,8 +7,9 @@
 
 import SwiftUI
 
-
-struct HomeView:View {
+struct HomeView: View {
+    
+    var isDemo: Bool = false
     
     @State private var previewPeriod = "Tanggal"
     @State private var isNewest: Bool = true
@@ -20,38 +21,32 @@ struct HomeView:View {
     @State private var capturedImage: UIImage?
 
     let gridColumns = [
-        GridItem(.flexible(), spacing:AppSpacing.medium),
+        GridItem(.flexible(), spacing: AppSpacing.medium),
         GridItem(.flexible(), spacing: AppSpacing.medium)
     ]
     
     var body: some View {
-        
-        NavigationStack{
-            ZStack{
-                ScrollView{
-                    
-                    VStack(spacing: AppSpacing.medium ){
-                        HStack(
-                            alignment: .top, 
-                            spacing: AppSpacing.medium){
-                            
+        NavigationStack {
+            ZStack {
+                ScrollView {
+                    VStack(spacing: AppSpacing.medium) {
+                        HStack(alignment: .top, spacing: AppSpacing.medium) {
                             if !isMagnifying {
                                 AppHeadline(
-                                    title: "Kosakata Kamu" ,
-                                    subtitle : "Jumlah kosakata yang sudah kamu ketahui",
+                                    title: "Kosakata Kamu",
+                                    subtitle: "Jumlah kosakata yang sudah kamu ketahui",
                                     titleStyle: .appHeadlinev2,
                                     subtitleStyle: .appHeadline,
                                     titleColor: .primary,
                                     aligment: .leading,
-                                    spacing:AppSpacing.textSpacing,
+                                    spacing: AppSpacing.textSpacing
                                 )
-                            }else{
+                            } else {
                                 AppTextField(text: $typping)
                             }
                             
                             AppToolbar(
-                                onMagnifyingTap: {
-                                    isClicked in
+                                onMagnifyingTap: { isClicked in
                                     isMagnifying = isClicked
                                     isNewest = true
                                 }, onEllipsisTap: {
@@ -62,48 +57,41 @@ struct HomeView:View {
                                 },
                                 onNewestTap: {
                                     isNewest = true
-                                },
+                                }
                             )
-                                
-                            
-                                
                         }
                         
                         if !isMagnifying {
-                            
-                            HStack(spacing: AppSpacing.medium){
+                            HStack(spacing: AppSpacing.medium) {
                                 AppVocabDashboardCard(
-                                    icon:AppIcon.BookPagesIcon,
+                                    icon: AppIcon.BookPagesIcon,
                                     title: "Total",
                                     subtitle: "Kosakata",
                                     count: "0"
                                 )
                                 
                                 AppVocabDashboardCard(
-                                    icon:AppIcon.ClockBadgeCheckmarkIcon,
+                                    icon: AppIcon.ClockBadgeCheckmarkIcon,
                                     title: "Kosakata",
                                     subtitle: "Hari ini",
                                     count: "0"
                                 )
                             }
-                            
                         }
 
                         if isNewest {
                             AppHeadline(
-                                title: "Terbaru" ,
-                                subtitle : "Foto terbaru yang anda tambahkan",
+                                title: "Terbaru",
+                                subtitle: "Foto terbaru yang anda tambahkan",
                                 titleStyle: .appHeadlinev2,
                                 subtitleStyle: .appHeadline,
                                 titleColor: .primary,
                                 aligment: .leading,
-                                spacing:AppSpacing.textSpacing,
+                                spacing: AppSpacing.textSpacing
                             )
                             
                             LazyVGrid(columns: gridColumns, spacing: AppSpacing.medium) {
-                                
-                                ForEach(1..<10 , id: \.self ){
-                                    index in
+                                ForEach(1..<10, id: \.self) { index in
                                     AppVocabCard(
                                         image: AppImageAsset.dummyImage,
                                         title: "Chair",
@@ -113,32 +101,21 @@ struct HomeView:View {
                                         }
                                     )
                                 }
-                               
-                                
                             }
-                        }
-                        else{
-                            
-                            ForEach(1..<4 , id: \.self){
-                                index in
+                        } else {
+                            ForEach(1..<4, id: \.self) { index in
                                 AppVocabCardDateGroup(
                                     title: "8 Juni",
                                     trailingComponent: {
-                                        if index == 1{
+                                        if index == 1 {
                                             AppOptionPicker(
                                                 selectedPeriod: $previewPeriod,
-                                                options:
-                                                    [
-                                                        "Tanggal",
-                                                        "Bulan",
-                                                        "Tahun"
-                                                    ]
+                                                options: ["Tanggal", "Bulan", "Tahun"]
                                             )
                                         }
                                     },
                                     component: {
-                                        ForEach(1..<4 , id: \.self){
-                                            index in
+                                        ForEach(1..<4, id: \.self) { index in
                                             AppVocabCard(
                                                 image: AppImageAsset.dummyImage,
                                                 title: "Chair",
@@ -148,29 +125,30 @@ struct HomeView:View {
                                                 }
                                             )
                                         }
-                                        
                                     }
                                 )
                             }
-
-                           
                         }
-                        
                     }
                 }
                 .scrollIndicators(.hidden)
                 .padding(AppPadding.areaPadding)
                 .background(Color(UIColor.systemGroupedBackground))
+                .disabled(isDemo)
                 
+                if isDemo {
+                    Color.black.opacity(0.7)
+                        .ignoresSafeArea()
+                        .allowsHitTesting(true)
+                }
                 
-                VStack{
+                VStack {
                     Spacer()
                     
-                    AppCameraButton(action : {
+                    AppCameraButton(action: {
                         isShowingCamera = true
                     })
-                    .appTooltip(
-                        "Tekan Icon\nuntuk membuka\nkamera", isVisible: false)
+                    .appTooltip("Tekan Icon\nuntuk membuka\nkamera", isVisible: isDemo ? true : false)
                 }
                 
             }
@@ -179,17 +157,13 @@ struct HomeView:View {
                     .ignoresSafeArea()
             }
             .navigationBarBackButtonHidden(true)
-            .navigationDestination(isPresented: $navigateToResult ){
+            .navigationDestination(isPresented: $navigateToResult) {
                 ResultView(isFromHome: true)
             }
         }
-
     }
-
 }
-
 
 #Preview {
     HomeView()
-      
 }
