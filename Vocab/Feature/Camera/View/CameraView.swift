@@ -5,6 +5,7 @@ struct CameraView: View {
     @StateObject private var cameraManager = CameraManager()
     @Environment(\.dismiss) var dismiss
     @State private var navigateToLoading = false
+    @State private var navigateToHome = false
     
     var body: some View {
         NavigationStack {
@@ -19,7 +20,7 @@ struct CameraView: View {
                         Spacer()
                         
                         Button(action: {
-                            dismiss()
+                            navigateToHome = true
                         }) {
                             Image(systemName: "xmark")
                                 .font(.system(size: 16, weight: .bold))
@@ -95,10 +96,12 @@ struct CameraView: View {
             .navigationDestination(isPresented: $navigateToLoading) {
                 ResultLoadingView()
             }
+            .navigationDestination(isPresented: $navigateToHome) {
+                HomeView()
+            }
         }
     }
 }
-
 
 #Preview {
     CameraView()
