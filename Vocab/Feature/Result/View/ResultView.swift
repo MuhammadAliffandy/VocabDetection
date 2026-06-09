@@ -22,8 +22,10 @@ struct ResultView: View {
                             AppImage(
                                 image: AppImageAsset.dummyImage
                             )
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 400)
+                            .scaledToFill()
+                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 400)
+                            .ignoresSafeArea()
+
                             
                             AppVocabSpeech(action: {
                                 print("test")
