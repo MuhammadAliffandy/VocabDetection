@@ -117,6 +117,7 @@ struct HomeView:View {
                         }
                         else{
                             
+<<<<<<< HEAD
                             ForEach(1..<4 , id: \.self){
                                 index in
                                 AppVocabCardDateGroup(
@@ -150,12 +151,40 @@ struct HomeView:View {
                                     }
                                 )
                             }
+=======
+                            AppVocabCard(
+                                image: AppImageAsset.dummyImage,
+                                title: "Chair",
+                                subtitle: "Kursi",
+                                onTapGesture: {
+                                    navigateToResultLoading = true
+//                                    print("appvocabCard")
+                                }
+                            )
+                             AppVocabCard(
+                                image: AppImageAsset.dummyImage,
+                                title: "Chair",
+                                subtitle: "Kursi",
+                                onTapGesture: {
+                                    print("test")
+                                }
+                            )
+                             AppVocabCard(
+                                image: AppImageAsset.dummyImage,
+                                title: "Chair",
+                                subtitle: "Kursi",
+                                onTapGesture: {
+                                    print("test")
+                                }
+                            )
+>>>>>>> 50f20a3c5e85b4e4d81e7d5ee2c2553c86af9869
                             
                            
                         }
                         
                     }
                 }
+                .scrollIndicators(.hidden)
                 .padding(AppPadding.areaPadding)
                 .background(Color(UIColor.systemGroupedBackground))
                 
