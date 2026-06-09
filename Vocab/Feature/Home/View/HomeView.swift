@@ -52,6 +52,7 @@ struct HomeView:View {
                                 onMagnifyingTap: {
                                     isClicked in
                                     isMagnifying = isClicked
+                                    isNewest = true
                                 }, onEllipsisTap: {
                                     showDropdown.toggle()
                                 },
@@ -99,30 +100,18 @@ struct HomeView:View {
                             
                             LazyVGrid(columns: gridColumns, spacing: 16) {
                                 
-                                AppVocabCard(
-                                    image: AppImageAsset.dummyImage,
-                                    title: "Chair",
-                                    subtitle: "Kursi",
-                                    onTapGesture: {
-                                        print("test")
-                                    }
-                                )
-                                 AppVocabCard(
-                                    image: AppImageAsset.dummyImage,
-                                    title: "Chair",
-                                    subtitle: "Kursi",
-                                    onTapGesture: {
-                                        print("test")
-                                    }
-                                )
-                                 AppVocabCard(
-                                    image: AppImageAsset.dummyImage,
-                                    title: "Chair",
-                                    subtitle: "Kursi",
-                                    onTapGesture: {
-                                        print("test")
-                                    }
-                                )
+                                ForEach(1..<10 , id: \.self ){
+                                    index in
+                                    AppVocabCard(
+                                        image: AppImageAsset.dummyImage,
+                                        title: "Chair",
+                                        subtitle: "Kursi",
+                                        onTapGesture: {
+                                            print("test")
+                                        }
+                                    )
+                                }
+                               
                                 
                             }
                         }
