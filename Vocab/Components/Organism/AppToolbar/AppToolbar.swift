@@ -49,17 +49,21 @@ struct AppToolbar: View {
                         AppWrapButton(
                             action: onNewestTap
                         ){
-                            Label("Terbaru", systemImage: AppIcon.DocBadgeClockIcon)
+                            Label("Terbaru", systemImage: AppIcon.DocBadgeClockIcon )
+                                
                         }
                         
                         AppWrapButton(
                             action: onDateTap
                         ){
                             Label("Tanggal", systemImage: AppIcon.CalendarIcon)
+                    
+                            
                         }
+                    
+               
                         
                         
-                       
                     }
                 )
                 

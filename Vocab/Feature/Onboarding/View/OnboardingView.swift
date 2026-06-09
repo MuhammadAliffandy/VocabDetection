@@ -28,6 +28,7 @@ struct OnboardingView: View{
                         subtitle : "Foto benda di sekitarmu untuk temukan kosakata baru, dan lihat bagaimana cara menggunakannya dalam kalimat!",
                         titleStyle: .appTitle,
                         subtitleStyle: .appHeadline,
+                        titleColor: .primary,
                         aligment: .leading,
                         spacing: AppSpacing.regular,
                         isFullWidth: true

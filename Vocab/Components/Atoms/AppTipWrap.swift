@@ -70,7 +70,6 @@ struct TooltipModifier: ViewModifier {
 
 
 extension View {
-    /// Wraps any View with a custom speech bubble tooltip.
     func appTooltip(_ text: String, isVisible: Bool = true , y:CGFloat = -95) -> some View {
         self.modifier(TooltipModifier(text: text, isVisible: isVisible , y: y))
     }

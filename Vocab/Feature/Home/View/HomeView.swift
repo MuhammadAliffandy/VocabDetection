@@ -20,8 +20,8 @@ struct HomeView:View {
     @State private var capturedImage: UIImage?
 
     let gridColumns = [
-        GridItem(.flexible(), spacing: 16),
-        GridItem(.flexible(), spacing: 16)
+        GridItem(.flexible(), spacing:AppSpacing.medium),
+        GridItem(.flexible(), spacing: AppSpacing.medium)
     ]
     
     var body: some View {
@@ -30,10 +30,10 @@ struct HomeView:View {
             ZStack{
                 ScrollView{
                     
-                    VStack(spacing: 16 ){
+                    VStack(spacing: AppSpacing.medium ){
                         HStack(
                             alignment: .top, 
-                            spacing: 16){
+                            spacing: AppSpacing.medium){
                             
                             if !isMagnifying {
                                 AppHeadline(
@@ -41,6 +41,7 @@ struct HomeView:View {
                                     subtitle : "Jumlah kosakata yang sudah kamu ketahui",
                                     titleStyle: .appHeadlinev2,
                                     subtitleStyle: .appHeadline,
+                                    titleColor: .primary,
                                     aligment: .leading,
                                     spacing:AppSpacing.textSpacing,
                                 )
@@ -70,7 +71,7 @@ struct HomeView:View {
                         
                         if !isMagnifying {
                             
-                            HStack(spacing: 16){
+                            HStack(spacing: AppSpacing.medium){
                                 AppVocabDashboardCard(
                                     icon:AppIcon.BookPagesIcon,
                                     title: "Total",
@@ -94,11 +95,12 @@ struct HomeView:View {
                                 subtitle : "Foto terbaru yang anda tambahkan",
                                 titleStyle: .appHeadlinev2,
                                 subtitleStyle: .appHeadline,
+                                titleColor: .primary,
                                 aligment: .leading,
                                 spacing:AppSpacing.textSpacing,
                             )
                             
-                            LazyVGrid(columns: gridColumns, spacing: 16) {
+                            LazyVGrid(columns: gridColumns, spacing: AppSpacing.medium) {
                                 
                                 ForEach(1..<10 , id: \.self ){
                                     index in

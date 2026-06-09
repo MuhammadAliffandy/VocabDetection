@@ -12,16 +12,20 @@ struct ResultView: View {
     @State private var navigateBackToHome = false
     
     var body: some View {
-        NavigationStack{
-            ZStack(alignment: .top) {
+        NavigationStack {
+            ZStack(alignment: .bottom) {
+                
+            
                 ScrollView {
                     VStack(spacing: 0) {
                         ZStack {
                             AppImage(
                                 image: AppImageAsset.dummyImage
                             )
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 400)
+                            .scaledToFill()
+                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 400)
+                            .ignoresSafeArea()
+
                             
                             AppVocabSpeech(action: {
                                 print("test")
@@ -35,6 +39,7 @@ struct ResultView: View {
                                 subtitle: "Memindai kata dari gambar yang sudah kamu ambil",
                                 titleStyle: .appHeadlinev2,
                                 subtitleStyle: .appSubheadline,
+                                titleColor: .primary,
                                 aligment: .leading,
                                 isFullWidth: true
                             )
@@ -43,6 +48,10 @@ struct ResultView: View {
                             AppSentenceAccordion(rawSentence: rawSentence, vocabDictionary: vocabDictionary, selectedType: .exclamation)
                             AppSentenceAccordion(rawSentence: rawSentence, vocabDictionary: vocabDictionary, selectedType: .command)
                             AppSentenceAccordion(rawSentence: rawSentence, vocabDictionary: vocabDictionary, selectedType: .statement)
+                            
+
+                            Spacer()
+                                .frame(height: 100)
                         }
                         .padding(.top, 30)
                         .padding(AppPadding.areaPadding)
@@ -50,28 +59,47 @@ struct ResultView: View {
                 }
                 .ignoresSafeArea(edges: .top)
                 
-                HStack {
-                 
-                    if isFromHome == false  {
-                        AppGlassButton(
-                            icon: AppIcon.ChevronLeftIcon,
-                            text: "Retake",
-                            action: { print("Save tapped") }
-                        )
-                    }
-                
-                    Spacer()
-                    
-                    AppGlassButton(
-                        icon: AppIcon.XmarkIcon,
+                VStack {
+                    AppButton(
+                        textButton: "Simpan",
+                        textColor: Color.white,
+                        backgroundColor: Color.brandColorPrimaryTeal,
                         action: {
                             navigateBackToHome = true
                         }
                     )
-                   
+                    .padding(AppPadding.areaPadding)
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 10)
+                .frame(maxWidth: .infinity)
+           
+                
+         
+                ZStack(alignment: .top) {
+                    HStack {
+                        if isFromHome == false {
+                            AppGlassButton(
+                                icon: AppIcon.ChevronLeftIcon,
+                                text: "Retake",
+                                action: { print("Save tapped") }
+                            )
+                        }
+                    
+                        Spacer()
+                        
+                        AppGlassButton(
+                            icon: AppIcon.XmarkIcon,
+                            action: {
+                                navigateBackToHome = true
+                            }
+                        )
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 10)
+                    
+                    Spacer()
+                }
+                .frame(maxHeight: .infinity, alignment: .top)
+                
             }
             .background(Color(UIColor.systemGroupedBackground))
             .toolbar(.hidden, for: .navigationBar)

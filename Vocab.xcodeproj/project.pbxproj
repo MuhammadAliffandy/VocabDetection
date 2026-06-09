@@ -256,7 +256,7 @@
 				DEVELOPMENT_TEAM = 4Z34RN4542;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSCameraUsageDescription = "\"Aplikasi membutuhkan akses kamera untuk memindai dan mengenali kosakata dari benda di sekitarmu.\"";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Agar anda dapat mengambil foto data mendeteksi kosakata pada benda yang anda foto, aplikasi kami memerlukan akses ke kamera anda";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Aplikasi membutuhkan akses galeri untuk mengambil gambar yang ingin kamu pindai menjadi kosakata.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -290,7 +290,7 @@
 				DEVELOPMENT_TEAM = 4Z34RN4542;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSCameraUsageDescription = "\"Aplikasi membutuhkan akses kamera untuk memindai dan mengenali kosakata dari benda di sekitarmu.\"";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Agar anda dapat mengambil foto data mendeteksi kosakata pada benda yang anda foto, aplikasi kami memerlukan akses ke kamera anda";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Aplikasi membutuhkan akses galeri untuk mengambil gambar yang ingin kamu pindai menjadi kosakata.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

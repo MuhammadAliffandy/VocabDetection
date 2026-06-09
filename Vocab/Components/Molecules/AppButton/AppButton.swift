@@ -44,6 +44,7 @@ struct AppButton: View {
     
     AppButton(
         textButton: "Text example",
+        textColor: Color.white,
         backgroundColor: Color.blue,
         action: {
             // add your logic on here
