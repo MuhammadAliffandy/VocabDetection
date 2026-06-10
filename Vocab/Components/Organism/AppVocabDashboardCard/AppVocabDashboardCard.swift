@@ -28,7 +28,7 @@ struct AppVocabDashboardCard: View {
                     title: title,
                     subtitle: subtitle,
                     titleStyle: .appHeadlinev2,
-                    subtitleStyle: .appHeadline,
+                    subtitleStyle: .appHeadlinev2,
                     subtitleColor: Color.textColorPrimarySemiBlack,
                     spacing: AppSpacing.textSpacing
                 )
@@ -36,7 +36,7 @@ struct AppVocabDashboardCard: View {
         
                 AppText(
                     text: count,
-                    fontStyle: .appHeadlinev2,
+                    fontStyle: .appLargeTitle,
                     textColor: .black
                    
                 )

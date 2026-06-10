@@ -80,8 +80,11 @@ struct ResultView: View {
                             AppGlassButton(
                                 icon: AppIcon.ChevronLeftIcon,
                                 text: "Retake",
-                                action: { print("Save tapped") }
+                                action: { print("Save tapped") },
+                                horizontalPadding: AppPadding.areaPadding ,
+                                verticalPadding: AppPadding.areaPadding / 1.5
                             )
+                    
                         }
                     
                         Spacer()
@@ -90,7 +93,11 @@ struct ResultView: View {
                             icon: AppIcon.XmarkIcon,
                             action: {
                                 navigateBackToHome = true
-                            }
+                            },
+                            horizontalPadding: AppPadding.areaPadding / 1.5,
+                            verticalPadding: AppPadding.areaPadding / 1.5
+                            
+                            
                         )
                     }
                     .padding(.horizontal, 20)

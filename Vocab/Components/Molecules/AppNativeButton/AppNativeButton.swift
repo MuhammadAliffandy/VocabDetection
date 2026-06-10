@@ -14,6 +14,8 @@ struct AppGlassButton: View {
     var text: String? = nil
     var action: () -> Void
     var isGlass: Bool = true
+    var horizontalPadding: CGFloat = AppPadding.areaPadding 
+    var verticalPadding: CGFloat = AppPadding.areaPadding
     
     var body: some View {
         Button(action: action) {
@@ -32,9 +34,9 @@ struct AppGlassButton: View {
                 }
                 
             }
+            .padding(.vertical , verticalPadding)
+            .padding(.horizontal, horizontalPadding)
             .foregroundColor(.primary)
-            .padding(.horizontal, text == nil ? 0 : 20)
-            .frame(width: text == nil ? 44 : nil, height: 44)
             .background(.regularMaterial)
             .clipShape(Capsule())
             .overlay(

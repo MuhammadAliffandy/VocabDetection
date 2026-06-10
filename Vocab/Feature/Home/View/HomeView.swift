@@ -12,7 +12,6 @@ struct HomeView: View {
     var isDemo: Bool = false
     
     @State private var previewPeriod = "Tanggal"
-    @State private var isNewest: Bool = true
     @State private var isMagnifying: Bool = false
     @State private var showDropdown: Bool = false
     @State private var navigateToResult = false
@@ -48,16 +47,9 @@ struct HomeView: View {
                             AppToolbar(
                                 onMagnifyingTap: { isClicked in
                                     isMagnifying = isClicked
-                                    isNewest = true
-                                }, onEllipsisTap: {
-                                    showDropdown.toggle()
+                           
                                 },
-                                onDateTap: {
-                                    isNewest = false
-                                },
-                                onNewestTap: {
-                                    isNewest = true
-                                }
+                                horizontalPadding: AppPadding.areaPadding
                             )
                         }
                         
@@ -79,52 +71,24 @@ struct HomeView: View {
                             }
                         }
 
-                        if isNewest {
-                            AppHeadline(
-                                title: "Terbaru",
-                                subtitle: "Foto terbaru yang anda tambahkan",
-                                titleStyle: .appHeadlinev2,
-                                subtitleStyle: .appHeadline,
-                                titleColor: .primary,
-                                aligment: .leading,
-                                spacing: AppSpacing.textSpacing
-                            )
-                            
-                            LazyVGrid(columns: gridColumns, spacing: AppSpacing.medium) {
-                                ForEach(1..<10, id: \.self) { index in
-                                    AppVocabCard(
-                                        image: AppImageAsset.dummyImage,
-                                        title: "Chair",
-                                        subtitle: "Kursi",
-                                        onTapGesture: {
-                                            navigateToResult = true
-                                        }
-                                    )
-                                }
-                            }
-                        } else {
-                            ForEach(1..<4, id: \.self) { index in
-                                AppVocabCardDateGroup(
-                                    title: "8 Juni",
-                                    trailingComponent: {
-                                        if index == 1 {
-                                            AppOptionPicker(
-                                                selectedPeriod: $previewPeriod,
-                                                options: ["Tanggal", "Bulan", "Tahun"]
-                                            )
-                                        }
-                                    },
-                                    component: {
-                                        ForEach(1..<4, id: \.self) { index in
-                                            AppVocabCard(
-                                                image: AppImageAsset.dummyImage,
-                                                title: "Chair",
-                                                subtitle: "Kursi",
-                                                onTapGesture: {
-                                                    navigateToResult = true
-                                                }
-                                            )
-                                        }
+                        AppHeadline(
+                            title: "Terbaru",
+                            subtitle: "Foto terbaru yang anda tambahkan",
+                            titleStyle: .appHeadlinev2,
+                            subtitleStyle: .appHeadline,
+                            titleColor: .primary,
+                            aligment: .leading,
+                            spacing: AppSpacing.textSpacing
+                        )
+                        
+                        LazyVGrid(columns: gridColumns, spacing: AppSpacing.medium) {
+                            ForEach(1..<10, id: \.self) { index in
+                                AppVocabCard(
+                                    image: AppImageAsset.dummyImage,
+                                    title: "Chair",
+                                    subtitle: "Kursi",
+                                    onTapGesture: {
+                                        navigateToResult = true
                                     }
                                 )
                             }

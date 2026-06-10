@@ -48,7 +48,7 @@ struct OnboardingView: View{
                 
             }
             .navigationDestination(isPresented: $navigateToDemo){
-                DemoView()
+                HomeView()
             }
         }
    

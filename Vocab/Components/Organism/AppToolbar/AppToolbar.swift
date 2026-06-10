@@ -12,68 +12,23 @@ struct AppToolbar: View {
     @State private var isMagnifyClicked :Bool = false
     
     var onMagnifyingTap: (Bool) -> Void;
-    var onEllipsisTap: () -> Void;
-    var onDateTap: () -> Void;
-    var onNewestTap: () -> Void;
+    var horizontalPadding: CGFloat = AppPadding.areaPadding * 1.2
+    var verticalPadding: CGFloat = AppPadding.areaPadding
     
     var body: some View {
-        HStack(spacing: 16){
-            AppWrapButton(
-                action: {
-                    isMagnifyClicked.toggle()
-                    onMagnifyingTap(isMagnifyClicked)
-                }
-            ){
-                Image(systemName: isMagnifyClicked ? AppIcon.XmarkIcon :  AppIcon.MagnifyingGlassIcon )
-                    .font(.system(size: AppIconSize.Regular))
-                    .foregroundColor(Color.black)
-                    .bold()
-            }
+        AppGlassButton(
+            icon: isMagnifyClicked ? AppIcon.XmarkIcon :  AppIcon.MagnifyingGlassIcon ,
+            action: {
+                isMagnifyClicked.toggle()
+                onMagnifyingTap(isMagnifyClicked)
+            },
+            horizontalPadding: horizontalPadding,
+            verticalPadding: verticalPadding,
             
             
-            if !isMagnifyClicked {
-              
-                
-                AppWrapDropdown(
-                    parent:{
-                        AppWrapButton(
-                            action: onEllipsisTap
-                        ){
-                            Image(systemName: AppIcon.EllipsisIcon)
-                                .font(.system(size: AppIconSize.Regular))
-                                .foregroundColor(Color.black)
-                                .bold()
-                        }
-                    },
-                    child: {
-                        AppWrapButton(
-                            action: onNewestTap
-                        ){
-                            Label("Terbaru", systemImage: AppIcon.DocBadgeClockIcon )
-                                
-                        }
-                        
-                        AppWrapButton(
-                            action: onDateTap
-                        ){
-                            Label("Tanggal", systemImage: AppIcon.CalendarIcon)
-                    
-                            
-                        }
-                    
-               
-                        
-                        
-                    }
-                )
-                
-                
-                
-            }
-        }
-        .padding(AppPadding.areaPadding)
-        .background(.white)
-        .clipShape(RoundedRectangle(cornerRadius: .infinity))
+        )
+
+
     }
 }
 
@@ -84,8 +39,6 @@ struct AppToolbar: View {
             print(isClicked
             )
         } ,
-        onEllipsisTap: {},
-        onDateTap: {},
-        onNewestTap: {},
+
     )
 }
