@@ -10,9 +10,23 @@
 		D09764152FD3AD8C00E6207A /* Vocab.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Vocab.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		D030141D2FD96FAF0040BD7E /* Exceptions for "Vocab" folder in "Vocab" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Shared/Models/VocabItem.swift,
+				Shared/Models/VocabSentence.swift,
+			);
+			target = D09764142FD3AD8C00E6207A /* Vocab */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D09764172FD3AD8C00E6207A /* Vocab */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				D030141D2FD96FAF0040BD7E /* Exceptions for "Vocab" folder in "Vocab" target */,
+			);
 			path = Vocab;
 			sourceTree = "<group>";
 		};

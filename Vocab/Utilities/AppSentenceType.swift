@@ -18,19 +18,19 @@ enum AppSentenceType: CaseIterable, Identifiable {
     
     var title: String {
         switch self {
-        case .statement: return "Pernyataan"
-        case .question: return "Pertanyaan"
-        case .command: return "Perintah"
-        case .exclamation: return "Seruan"
+            case .statement: return "Pernyataan"
+            case .question: return "Pertanyaan"
+            case .command: return "Perintah"
+            case .exclamation: return "Seruan"
         }
     }
 
     var iconName: String {
         switch self {
-        case .statement: return "info.bubble.fill"
-        case .question: return "questionmark.bubble.fill"
-        case .command: return "speaker.wave.2.bubble.fill"
-        case .exclamation: return "exclamationmark.bubble.fill"
+            case .statement: return "info.bubble.fill"
+            case .question: return "questionmark.bubble.fill"
+            case .command: return "speaker.wave.2.bubble.fill"
+            case .exclamation: return "exclamationmark.bubble.fill"
         }
     }
 }
