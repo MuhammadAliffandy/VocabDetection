@@ -11,6 +11,7 @@ struct AppButton: View {
     
     var textButton: String = "Text Default"
     var textColor: Color = .black
+    var fontStyle: Font = .appHeadlinev2
     var backgroundColor: Color = .blue
     var action: () -> Void = {}
     
@@ -21,10 +22,10 @@ struct AppButton: View {
         ){
             AppText(
                 text: textButton,
-                fontStyle: .appHeadlinev2,
+                fontStyle: fontStyle,
                 textColor: textColor,
-                
             )
+            .multilineTextAlignment(.center)
               
         }
         .buttonStyle(.appPrimary(color: backgroundColor))
@@ -43,7 +44,7 @@ struct AppButton: View {
     )
     
     AppButton(
-        textButton: "Text example",
+        textButton: "Keep Apple Intelligence Service off",
         textColor: Color.white,
         backgroundColor: Color.blue,
         action: {
@@ -53,6 +54,7 @@ struct AppButton: View {
     
     AppButton(
         textButton: "Text example",
+        textColor: .white,
         backgroundColor: Color.gray,
         action: {
             // add your logic on here

@@ -8,7 +8,7 @@
 import SwiftUI
 
 
-enum AppSentenceType: CaseIterable, Identifiable {
+enum AppSentenceType: String, Codable, CaseIterable, Identifiable {
     case statement
     case question
     case command

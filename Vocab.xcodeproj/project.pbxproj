@@ -10,23 +10,9 @@
 		D09764152FD3AD8C00E6207A /* Vocab.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Vocab.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		D030141D2FD96FAF0040BD7E /* Exceptions for "Vocab" folder in "Vocab" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Shared/Models/VocabItem.swift,
-				Shared/Models/VocabSentence.swift,
-			);
-			target = D09764142FD3AD8C00E6207A /* Vocab */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D09764172FD3AD8C00E6207A /* Vocab */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				D030141D2FD96FAF0040BD7E /* Exceptions for "Vocab" folder in "Vocab" target */,
-			);
 			path = Vocab;
 			sourceTree = "<group>";
 		};
@@ -108,6 +94,8 @@
 			);
 			mainGroup = D097640C2FD3AD8C00E6207A;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D09764162FD3AD8C00E6207A /* Products */;
 			projectDirPath = "";
@@ -265,6 +253,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Vocab/Vocab.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = ZB4G54X6W4;
@@ -299,6 +288,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Vocab/Vocab.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = ZB4G54X6W4;

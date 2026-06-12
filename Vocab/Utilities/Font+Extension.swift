@@ -13,5 +13,6 @@ extension Font{
     static let appHeadline = Font.body.weight(.regular)
     static let appHeadlinev2 = Font.headline.weight(.bold)
     static let appSubheadline = Font.subheadline.weight(.regular)
+    static let appSubheadlineV2 = Font.subheadline.weight(.bold)
 }
 

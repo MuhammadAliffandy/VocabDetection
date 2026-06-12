@@ -9,7 +9,8 @@ import SwiftUI
 
 struct AppSentenceGroup: View {
 
-    var rawSentence: String = "rock is very hard"
+    var rawSentence: String = "rock is very hard even you handled must be broken in the world"
+    var meaningSentence: String = "batunya sangat keras"
     var vocabDictionary: [String: String] = [
         "rock": "Batu",
         "hard": "Keras"
@@ -42,10 +43,10 @@ struct AppSentenceGroup: View {
             
             Divider()
                 .frame(height: 1)
-                .background(.white)
+                .background(.secondary)
                 .padding(.horizontal, 15)
                 .padding(.vertical, 0)
-                .foregroundStyle(.white)
+                
             
             HStack(
                 alignment: .center,
@@ -58,17 +59,17 @@ struct AppSentenceGroup: View {
                 .foregroundStyle(.white)
                 
                 AppText(
-                    text: "batunya sangat besar",
-                    textColor: Color.white,
+                    text: meaningSentence,
+                    textColor: Color.secondary,
                 )
             }
             .padding(0)
             
         }
-        .padding(AppPadding.shapePadding)
-        .background(
+        .padding()
+        .overlay(
             RoundedRectangle(cornerRadius: AppRadius.shapeRadius)
-                .fill(Color.brandColorPrimaryTeal)
+                .stroke(Color.textColorSecondaryBlackGrey, style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [6, 6]))
         )
     }
 }

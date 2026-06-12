@@ -10,11 +10,13 @@ import SwiftUI
 struct AppSentenceAccordion: View {
     
     var rawSentence: String = "rock is very hard"
+    var meaningSentence: String = "batunya sangat keras"
     var vocabDictionary: [String: String] = [
         "rock": "Batu",
         "hard": "Keras"
     ]
     var selectedType: AppSentenceType = .command
+    var isAppleIntelligence: Bool = true
     
     var body: some View {
         AppAccordion(
@@ -42,12 +44,23 @@ struct AppSentenceAccordion: View {
                     .padding(
                         .horizontal,36
                     )
-                    
-                    AppSentenceGroup(
-                        rawSentence: rawSentence,
-                        vocabDictionary: vocabDictionary
-
-                    )
+                   
+                    if isAppleIntelligence {
+                        AppSentenceGroup(
+                            rawSentence: rawSentence,
+                            meaningSentence: meaningSentence,
+                            vocabDictionary: vocabDictionary
+                        )
+                    } else{
+                        AppWarningShape()
+                            .padding(
+                                .vertical, 10
+                            )
+                            .padding(
+                                .horizontal,36
+                            )
+                    }
+                   
                 }
             }
         )
@@ -62,6 +75,8 @@ struct AppSentenceAccordion: View {
 #Preview {
     VStack{
         AppSentenceAccordion()
+        
+        AppSentenceAccordion(isAppleIntelligence: false)
     }
     .frame(width: .infinity, height: .infinity)
     .ignoresSafeArea()

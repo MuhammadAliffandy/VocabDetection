@@ -27,6 +27,7 @@ extension Color{
     static let surfaceOnboardingColorPrimaryCream = Color(hex: "#FFF0E4")
     static let surfacePrimaryLightgrey = Color(hex: "#FAFAFA")
     static let textColorPrimarySemiBlack = Color(hex: "#000000")
-    static let textColorSecondaryBlackGrey = Color(hex: "7B7B7B")
+    static let textColorSecondaryBlackGrey = Color(hex: "#7B7B7B")
+    static let colorRedWarning = Color(hex: "#FF3B30")
     
 }

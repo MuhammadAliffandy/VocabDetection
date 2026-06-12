@@ -10,9 +10,13 @@ import SwiftUI
 struct AppVocabCard: View {
     
     var image: String
+    var imageData: Data? = nil
     var title: String
     var subtitle: String
+    var isEditingMode: Bool = false
+    var isSelected: Bool = false
     var onTapGesture: () -> Void = {}
+    var onLongPressGesture: (() -> Void)? = nil
     
     
     var body: some View{
@@ -23,17 +27,33 @@ struct AppVocabCard: View {
             ZStack {
                 Color.white
                     .clipShape(.rect(cornerRadius: 16))
-                Image(image)
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundColor(.black)
-                    .clipShape(.rect(cornerRadius: AppRadius.vocabShapeRadius))
+                if let data = imageData, let uiImage = UIImage(data: data) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                        .foregroundColor(.black)
+                        .clipped()
+                } else {
+                    Image(image)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                        .foregroundColor(.black)
+                        .clipped()
+                }
 
                       
-                }
-                .aspectRatio(1.0, contentMode: .fit)
+            }
+            .clipShape(.rect(cornerRadius: AppRadius.vocabShapeRadius))
+            .aspectRatio(1.0, contentMode: .fit)
                 .onTapGesture {
                     onTapGesture()
+                }
+                .onLongPressGesture {
+                    if let longPress = onLongPressGesture {
+                        longPress()
+                    }
                 }
                 .overlay(
                     VStack{
@@ -59,6 +79,19 @@ struct AppVocabCard: View {
                         )
                     }
                 )
+                .overlay(alignment: .topTrailing) {
+                    if isEditingMode {
+                        Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                            .font(.system(size: 24))
+                            .foregroundColor(isSelected ? .brandColorPrimaryTeal : .white)
+                            .background {
+                                Circle().fill(Color.white).opacity(isSelected ? 1.0 : 0.0)
+                            }
+                            .shadow(color: .black.opacity(0.3), radius: 2)
+                            .padding(8)
+                            .transition(.scale.combined(with: .opacity))
+                    }
+                }
             
             AppHeadline(
                 title: title,
@@ -75,6 +108,7 @@ struct AppVocabCard: View {
         .padding(4)
         .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: AppRadius.shapeRadius))
+        .AppShadowVocabCard()
         
     }
 }
@@ -97,6 +131,7 @@ struct AppVocabCard: View {
                     print("test")
                 }
             )
+ 
             
             
         }

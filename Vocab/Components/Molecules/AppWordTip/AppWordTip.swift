@@ -30,7 +30,7 @@ struct AppWordTip: View {
         AppText(
             text: text,
             fontStyle: textStyle ,
-            textColor: Color.white
+            textColor: Color.brandColorPrimaryTeal
         )
         .appTooltip(tooltipText, isVisible: isPressed , y: -55)
         .overlay(
@@ -44,7 +44,7 @@ struct AppWordTip: View {
                                 dash: [5, 6]
                             )
                         )
-                        .foregroundColor(.white)
+                        .foregroundColor(Color.brandColorPrimaryTeal)
                         .frame(height: 1)
                 }
             }
@@ -75,7 +75,7 @@ struct AppWordTip: View {
         )
     }
     .padding(100)
-    .background(Color.brandColorPrimaryTeal)
+    .background(Color.red)
 
     
 }

@@ -33,18 +33,20 @@ struct AppSentenceContent: View {
     }
     
     var body: some View {
-        HStack(spacing: 6) {
+        
+        // Replace HStack with our new custom FlowLayout
+        AppFlowLayout(spacing: 6) {
             
             ForEach(splittedWords) { item in
-                if let meaning = vocabDictionary[item.text] {
-                    
+                let cleanWord = item.text.trimmingCharacters(in: .punctuationCharacters).lowercased()
+                
+                if let meaning = vocabDictionary[cleanWord] {
                     AppWordTip(
                         text: item.text,
                         tooltipText: meaning,
                         textStyle: textStyle,
                         isPressed: activeWordID == item.id,
-                        isVocab: true,
-              
+                        isVocab: true
                     )
                     .zIndex(activeWordID == item.id ? 1 : 0)
                     .contentShape(Rectangle())
@@ -59,14 +61,12 @@ struct AppSentenceContent: View {
                     }
                     
                 } else {
-                    
                     AppWordTip(
                         text: item.text,
                         tooltipText: "",
                         textStyle: textStyle,
                         isPressed: false,
-                        isVocab: false,
-                  
+                        isVocab: false
                     )
                     .contentShape(Rectangle())
                     .onTapGesture {
@@ -74,11 +74,9 @@ struct AppSentenceContent: View {
                             activeWordID = nil
                         }
                     }
-                    
                 }
             }
         }
-
     }
 }
 
@@ -86,7 +84,7 @@ struct AppSentenceContent: View {
     VStack {
      
         AppSentenceContent(
-            rawSentence: "rock is very hard",
+            rawSentence: "rock is very hard even you needed ",
             vocabDictionary: [
                 "rock": "Batu",
                 "hard": "Keras"
@@ -96,5 +94,5 @@ struct AppSentenceContent: View {
         )
     }
     .padding(100)
-    .background(Color.teal)
+    .background(Color.red)
 }

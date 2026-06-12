@@ -20,8 +20,7 @@ struct AppCameraButton: View {
                 .foregroundColor(Color.brandColorPrimaryTeal)
                 .background(Color.white)
                 .clipShape(RoundedRectangle(cornerRadius: .infinity))
-              
-                
+                .AppShadowCamera()
         }
     }
 }

@@ -1,15 +1,26 @@
 import SwiftUI
+import SwiftData
+import Translation
 
+@MainActor
 struct ResultView: View {
     
-    var isFromHome : Bool? = false
-    let rawSentence: String = "rock is very hard"
-    let vocabDictionary: [String: String] = [
-        "rock": "Batu",
-        "hard": "Keras"
-    ]
+    var isFromHome: Bool? = false
+    var detectedObjects: [String] = ["rock", "hard"]
+    var capturedImageData: Data?
+    var injectedSentences: [GeneratedSentence]?
+    var injectedVocab: [String: String]?
+    var injectedPronunciation: String?
+
+
+    
+    @Environment(\.modelContext) private var modelContext
+    
+    @StateObject private var viewModel = ResultViewModel()
     
     @State private var navigateBackToHome = false
+    @State var isRetake: Bool = false
+    @State private var showAppleIntelligenceAlert: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -19,17 +30,34 @@ struct ResultView: View {
                 ScrollView {
                     VStack(spacing: 0) {
                         ZStack {
-                            AppImage(
-                                image: AppImageAsset.dummyImage
-                            )
-                            .scaledToFill()
-                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 400)
-                            .ignoresSafeArea()
+                            if let data = capturedImageData, let uiImage = UIImage(data: data) {
+                                Image(uiImage: uiImage)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 400)
+                                    .clipped()
+                                    .ignoresSafeArea()
+                            } else {
+                                AppImage(
+                                    image: AppImageAsset.dummyImage
+                                )
+                                .scaledToFill()
+                                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 400)
+                                .ignoresSafeArea()
+                            }
 
                             
-                            AppVocabSpeech(action: {
-                                print("test")
-                            })
+                            let firstWord = detectedObjects.first ?? "Unknown"
+                            let meaning = viewModel.vocabDictionary[firstWord.lowercased()] ?? firstWord
+                            let ipa = viewModel.getIPA(for: firstWord)
+                            
+                            AppVocabSpeech(
+                                vocabText: firstWord.capitalized,
+                                meaningText: "\(ipa) : \(meaning.capitalized)",
+                                action: {
+                                    viewModel.speakSentence(text: firstWord)
+                                }
+                            )
                             .offset(y: 170)
                         }
                         
@@ -44,10 +72,20 @@ struct ResultView: View {
                                 isFullWidth: true
                             )
                             
-                            AppSentenceAccordion(rawSentence: rawSentence, vocabDictionary: vocabDictionary, selectedType: .question)
-                            AppSentenceAccordion(rawSentence: rawSentence, vocabDictionary: vocabDictionary, selectedType: .exclamation)
-                            AppSentenceAccordion(rawSentence: rawSentence, vocabDictionary: vocabDictionary, selectedType: .command)
-                            AppSentenceAccordion(rawSentence: rawSentence, vocabDictionary: vocabDictionary, selectedType: .statement)
+                            if viewModel.isLoading {
+                                ProgressView("Sedang memproses kalimat...")
+                                    .padding(.top, 20)
+                            } else {
+                                ForEach(viewModel.generatedSentences) { sentence in
+                                    AppSentenceAccordion(
+                                        rawSentence: sentence.text,
+                                        meaningSentence: sentence.meaning,
+                                        vocabDictionary: viewModel.vocabDictionary,
+                                        selectedType: sentence.type,
+                                        isAppleIntelligence: viewModel.isAppleIntelligenceAvailable
+                                    )
+                                }
+                            }
                             
 
                             Spacer()
@@ -59,18 +97,59 @@ struct ResultView: View {
                 }
                 .ignoresSafeArea(edges: .top)
                 
-                VStack {
-                    AppButton(
-                        textButton: "Simpan",
-                        textColor: Color.white,
-                        backgroundColor: Color.brandColorPrimaryTeal,
-                        action: {
-                            navigateBackToHome = true
-                        }
-                    )
-                    .padding(AppPadding.areaPadding)
+                if isFromHome != nil && isFromHome == false {
+                    VStack {
+                        AppButton(
+                            textButton: "Simpan",
+                            textColor: Color.white,
+                            backgroundColor: Color.brandColorPrimaryTeal,
+                            action: {
+                                let firstWord = detectedObjects.first ?? "Unknown"
+                                let firstWordLower = firstWord.lowercased()
+                                
+                                // Gunakan injectedVocab jika tersedia (data real dari LoadingView),
+                                // fallback ke viewModel.vocabDictionary
+                                let sourceDict = injectedVocab ?? viewModel.vocabDictionary
+                                let rawMeaning = sourceDict[firstWordLower] ?? ""
+                                let meaning = rawMeaning.isEmpty || rawMeaning.lowercased() == firstWordLower
+                                    ? firstWord
+                                    : rawMeaning
+                                
+                                // IPA: dari injectedPronunciation jika ada, fallback PhoneticService
+                                let ipa: String
+                                if let injected = injectedPronunciation, !injected.isEmpty, injected.lowercased() != firstWordLower {
+                                    ipa = "/\(injected.lowercased())/"
+                                } else {
+                                    ipa = "/\(PhoneticService.phonetic(for: firstWordLower))/"
+                                }
+                                
+                                let sentences = viewModel.generatedSentences.map {
+                                    VocabSentence(text: $0.text, meaning: $0.meaning, type: $0.type)
+                                }
+                                
+                                let newItem = VocabItem(
+                                    textVocab: firstWord.capitalized,
+                                    textMeaning: meaning,
+                                    textIPA: ipa,
+                                    imageData: capturedImageData,
+                                    sentences: sentences
+                                )
+                                
+                                modelContext.insert(newItem)
+                                do {
+                                    try modelContext.save()
+                                    print("✅ VocabItem berhasil disimpan: \(newItem.textVocab) - \(newItem.textMeaning)")
+                                } catch {
+                                    print("❌ Gagal save SwiftData: \(error)")
+                                }
+                                navigateBackToHome = true
+                            }
+                        )
+                        .padding(AppPadding.areaPadding)
+                        .AppShadowVocabCard()
+                    }
+                    .frame(maxWidth: .infinity)
                 }
-                .frame(maxWidth: .infinity)
            
                 
          
@@ -80,7 +159,9 @@ struct ResultView: View {
                             AppGlassButton(
                                 icon: AppIcon.ChevronLeftIcon,
                                 text: "Retake",
-                                action: { print("Save tapped") },
+                                action: { 
+                                   isRetake = true
+                                },
                                 horizontalPadding: AppPadding.areaPadding ,
                                 verticalPadding: AppPadding.areaPadding / 1.5
                             )
@@ -107,6 +188,9 @@ struct ResultView: View {
                 }
                 .frame(maxHeight: .infinity, alignment: .top)
                 
+                if showAppleIntelligenceAlert {
+                    AppleIntelligenceAlert(isShowing: $showAppleIntelligenceAlert)
+                }
             }
             .background(Color(UIColor.systemGroupedBackground))
             .toolbar(.hidden, for: .navigationBar)
@@ -114,6 +198,47 @@ struct ResultView: View {
             .navigationDestination(isPresented: $navigateBackToHome) {
                 HomeView()
             }
+            .navigationDestination(isPresented: $isRetake) {
+                CameraView()
+            }
+            .onAppear {
+                if let injectedSentences = injectedSentences, let injectedVocab = injectedVocab {
+                    viewModel.generatedSentences = injectedSentences
+                    viewModel.vocabDictionary = injectedVocab
+                } else if viewModel.generatedSentences.isEmpty && !viewModel.isLoading {
+                    if #unavailable(iOS 17.4) {
+                        Task { await viewModel.processDetectedObjects(detectedObjects) }
+                    }
+                }
+                
+                if !viewModel.isAppleIntelligenceAvailable {
+                    showAppleIntelligenceAlert = true
+                }
+            }
+            .modifier(TranslationTaskModifier(
+                viewModel: viewModel,
+                detectedObjects: detectedObjects,
+                shouldProcess: injectedSentences == nil && viewModel.generatedSentences.isEmpty
+            ))
+        }
+    }
+}
+
+struct TranslationTaskModifier: ViewModifier {
+    var viewModel: ResultViewModel
+    var detectedObjects: [String]
+    var shouldProcess: Bool
+    
+    func body(content: Content) -> some View {
+        if #available(iOS 17.4, *) {
+            content.translationTask(source: Locale.Language(identifier: "en-US"), target: Locale.Language(identifier: "id-ID")) { session in
+                if shouldProcess {
+                    viewModel.setTranslationSession(session)
+                    await viewModel.processDetectedObjects(detectedObjects)
+                }
+            }
+        } else {
+            content
         }
     }
 }

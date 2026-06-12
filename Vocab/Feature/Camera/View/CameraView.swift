@@ -1,4 +1,5 @@
 import SwiftUI
+import PhotosUI
 
 struct CameraView: View {
 
@@ -7,6 +8,7 @@ struct CameraView: View {
     
     @State private var navigateToLoading = false
     @State private var navigateToHome = false
+    @State private var selectedPhotoItem: PhotosPickerItem?
     
     let gridColumns = [
         GridItem(.flexible(), spacing: AppSpacing.medium),
@@ -41,7 +43,7 @@ struct CameraView: View {
                     Spacer()
                 
 
-                    ViewfinderBrackets()
+                    ViewfinderBrackets(isObjectReady: cameraManager.isObjectReady)
                         .frame(maxHeight: 500)
                         .padding(AppPadding.areaPadding)
                         .scaleEffect(cameraManager.bracketScale)
@@ -57,18 +59,28 @@ struct CameraView: View {
                        
                         LazyVGrid(columns: gridColumns, spacing: AppSpacing.medium) {
                             
-                            AppWrapButton(action: {
-                                
-                            }) {
-                                Image(systemName: AppIcon.PhotoOnRectangleIcon)
-                                    .font(.system(size: 24))
-                                    .foregroundColor(.white)
+                            PhotosPicker(selection: $selectedPhotoItem, matching: .images, photoLibrary: .shared()) {
+                                ZStack {
+                                    Circle()
+                                        .fill(Color.black.opacity(0.4))
+                                        .frame(width: 50, height: 50)
+                                    Image(systemName: AppIcon.PhotoOnRectangleIcon)
+                                        .font(.system(size: 24))
+                                        .foregroundColor(.white)
+                                }
+                            }
+                            .onChange(of: selectedPhotoItem) { _, newItem in
+                                Task {
+                                    if let data = try? await newItem?.loadTransferable(type: Data.self),
+                                       let image = UIImage(data: data) {
+                                        cameraManager.processGalleryImage(image)
+                                    }
+                                }
                             }
                             
                             
                             Button(action: {
                                 cameraManager.capturePhoto()
-                                navigateToLoading = true
                             }) {
                                 ZStack {
                                     Circle()
@@ -90,9 +102,14 @@ struct CameraView: View {
             .onDisappear {
                 cameraManager.stopSession()
             }
+            .onChange(of: cameraManager.isProcessingComplete) { _, isComplete in
+                if isComplete {
+                    navigateToLoading = true
+                }
+            }
             .navigationBarHidden(true)
             .navigationDestination(isPresented: $navigateToLoading) {
-                ResultLoadingView()
+                ResultLoadingView(imageData: cameraManager.capturedImageData, labels: cameraManager.detectedLabels)
             }
             .navigationDestination(isPresented: $navigateToHome) {
                 HomeView()

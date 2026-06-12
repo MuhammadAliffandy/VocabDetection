@@ -8,8 +8,16 @@
 import SwiftUI
 
 struct ContentView: View {
+    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding: Bool = false
+    
     var body: some View {
-        OnboardingView()
+        if hasSeenOnboarding {
+            HomeView()
+            
+        } else {
+            OnboardingView()
+
+        }
     }
 }
 

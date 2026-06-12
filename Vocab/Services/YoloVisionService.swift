@@ -1,7 +1,7 @@
 import Vision
 import CoreML
 
-class YOLOVisionService {
+class YoloVisionService {
     private var visionModel: VNCoreMLModel?
     
     init() {
@@ -11,7 +11,7 @@ class YOLOVisionService {
     private func setupModel() {
         do {
             let config = MLModelConfiguration()
-            let coreMLModel = try YoloWorld8L(configuration: config)
+            let coreMLModel = try yolov8x_oiv7_CoreML(configuration: config)
             self.visionModel = try VNCoreMLModel(for: coreMLModel.model)
         } catch {
             print(error)

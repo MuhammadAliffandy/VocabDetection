@@ -9,16 +9,22 @@ class CameraManager: NSObject, ObservableObject {
     private var photoOutput = AVCapturePhotoOutput()
     private var videoOutput = AVCaptureVideoDataOutput()
     
-    private let yoloService = YOLOVisionService()
+    private let yoloService = YoloVisionService()
     
     private let targetLabel = "person"
-    private let confidenceThreshold: Float = 0.70
+    private let confidenceThreshold: Float = 0.45
     
     @Published var detectedObjects: [VNRecognizedObjectObservation] = []
+    @Published var detectedLabels: [String] = []
+    @Published var capturedImageData: Data?
+    
     @Published var isProcessingComplete: Bool = false
     
-    @Published var guidanceMessage: String = "Mencari objek..."
+    @Published var guidanceMessage: String = "arahkan kamera ke satu benda yang ingin anda foto"
     @Published var bracketScale: CGFloat = 1.0
+    @Published var isObjectReady: Bool = false
+    
+    private var lastDetectionTime = Date()
     
     func checkPermissionsAndStart() {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
@@ -77,10 +83,48 @@ class CameraManager: NSObject, ObservableObject {
         DispatchQueue.main.async {
             self.isProcessingComplete = false
             self.detectedObjects = []
+            self.detectedLabels = []
+            self.capturedImageData = nil
         }
         
         let settings = AVCapturePhotoSettings()
         photoOutput.capturePhoto(with: settings, delegate: self)
+    }
+    
+    func processGalleryImage(_ image: UIImage) {
+        guard let cgImage = image.cgImage else { return }
+        
+        DispatchQueue.main.async {
+            self.isProcessingComplete = false
+            self.detectedObjects = []
+            self.detectedLabels = []
+            // Menggunakan JPEG data agar tidak terlalu besar
+            self.capturedImageData = image.jpegData(compressionQuality: 0.8)
+        }
+        
+        yoloService.detectObjects(in: cgImage) { [weak self] observations in
+            guard let self = self else { return }
+            
+            let validObservations = observations.filter { ($0.labels.first?.confidence ?? 0.0) >= self.confidenceThreshold }
+            let largestObject = validObservations.max(by: { a, b in
+                let areaA = a.boundingBox.width * a.boundingBox.height
+                let areaB = b.boundingBox.width * b.boundingBox.height
+                return areaA < areaB
+            })
+            
+            DispatchQueue.main.async {
+                if let target = largestObject {
+                    self.detectedObjects = [target]
+                    let label = target.labels.first?.identifier ?? "Unknown"
+                    self.detectedLabels = [label]
+                    print("Gallery Object: \(label)")
+                } else {
+                    self.detectedObjects = []
+                    self.detectedLabels = []
+                }
+                self.isProcessingComplete = true
+            }
+        }
     }
 }
 
@@ -100,21 +144,24 @@ extension CameraManager: AVCapturePhotoCaptureDelegate {
         yoloService.detectObjects(in: cgImage) { [weak self] observations in
             guard let self = self else { return }
             
-            // Find the single largest object based on bounding box area
-            let largestObject = observations.max(by: { a, b in
+            let validObservations = observations.filter { ($0.labels.first?.confidence ?? 0.0) >= self.confidenceThreshold }
+            let largestObject = validObservations.max(by: { a, b in
                 let areaA = a.boundingBox.width * a.boundingBox.height
                 let areaB = b.boundingBox.width * b.boundingBox.height
                 return areaA < areaB
             })
             
             DispatchQueue.main.async {
+                self.capturedImageData = data
                 if let target = largestObject {
                     self.detectedObjects = [target]
                     
                     let label = target.labels.first?.identifier ?? "Unknown"
+                    self.detectedLabels = [label]
                     print("Captured Prominent Object: \(label)")
                 } else {
                     self.detectedObjects = []
+                    self.detectedLabels = []
                 }
                 self.isProcessingComplete = true
             }
@@ -125,13 +172,17 @@ extension CameraManager: AVCapturePhotoCaptureDelegate {
 // MARK: - Video Data Output Delegate (Real-Time - Focus on Largest Object)
 extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        let now = Date()
+        if now.timeIntervalSince(lastDetectionTime) < 0.2 { return }
+        lastDetectionTime = now
+        
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         
         yoloService.detectObjects(in: pixelBuffer) { [weak self] observations in
             guard let self = self else { return }
             
-            // Find the single largest object based on bounding box area
-            let largestObject = observations.max(by: { a, b in
+            let validObservations = observations.filter { ($0.labels.first?.confidence ?? 0.0) >= self.confidenceThreshold }
+            let largestObject = validObservations.max(by: { a, b in
                 let areaA = a.boundingBox.width * a.boundingBox.height
                 let areaB = b.boundingBox.width * b.boundingBox.height
                 return areaA < areaB
@@ -146,19 +197,26 @@ extension CameraManager: AVCaptureVideoDataOutputSampleBufferDelegate {
                     let objectLabel = target.labels.first?.identifier ?? "Object"
                     
                     if objectWidth < 0.38 {
-                        self.guidanceMessage = "Dekatkan Kamera ke \(objectLabel)"
+                        self.guidanceMessage = "Benda terlalu jauh, mendekat ke benda"
                         self.bracketScale = 0.8
+                        self.isObjectReady = false
                     } else if objectWidth > 0.68 {
-                        self.guidanceMessage = "Jauhkan Kamera dari \(objectLabel)"
+                        self.guidanceMessage = "Camera terlalu dekat, sedikit menjauh"
                         self.bracketScale = 1.2
+                        self.isObjectReady = false
                     } else {
-                        self.guidanceMessage = "\(objectLabel) Terdeteksi! Silakan Ambil Foto"
+                        self.guidanceMessage = "Objek Terdeteksi! Silakan Ambil Foto"
                         self.bracketScale = 1.0
+                        if !self.isObjectReady {
+                            UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+                        }
+                        self.isObjectReady = true
                     }
                 } else {
                     self.detectedObjects = []
-                    self.guidanceMessage = "Posisikan objek di dalam kotak"
+                    self.guidanceMessage = "Posisikan benda di dalam kotak kamera"
                     self.bracketScale = 1.0
+                    self.isObjectReady = false
                 }
             }
         }

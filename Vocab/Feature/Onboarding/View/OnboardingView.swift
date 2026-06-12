@@ -8,7 +8,8 @@ import SwiftUI
 
 struct OnboardingView: View{
     
-    @State private var navigateToDemo = false
+    @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding: Bool = false
+    @AppStorage("showDemo") private var showDemo: Bool = false
     
     var body: some View{
         NavigationStack{
@@ -40,15 +41,13 @@ struct OnboardingView: View{
                         textColor: .white,
                         backgroundColor: Color.brandColorPrimaryTeal,
                         action: {
-                           navigateToDemo = true
+                           hasSeenOnboarding = true
+                           showDemo = true
                         }
                     )
                 }
                 .padding(AppPadding.areaPadding)
                 
-            }
-            .navigationDestination(isPresented: $navigateToDemo){
-                HomeView()
             }
         }
    

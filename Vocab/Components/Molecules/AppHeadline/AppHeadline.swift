@@ -17,6 +17,7 @@ struct AppHeadline: View {
     var subtitleColor: Color = Color.textColorSecondaryBlackGrey
     var aligment: HorizontalAlignment = .leading
     var spacing: CGFloat = AppSpacing.regular
+    var textAlign: TextAlignment = .leading
     
     var isFullWidth: Bool = true
     
@@ -35,6 +36,7 @@ struct AppHeadline: View {
                 fontStyle: subtitleStyle,
                 textColor: subtitleColor
             )
+            .multilineTextAlignment(textAlign)
         }
         .padding(0)
         .frame(

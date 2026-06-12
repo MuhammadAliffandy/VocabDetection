@@ -1,40 +1,37 @@
 import SwiftUI
 
 struct ViewfinderBrackets: View {
-    // Kamu bisa menyesuaikan ukuran width dan height ini nanti
-    // sesuai dengan proporsi aset gambar aslinya
+
+    var isObjectReady: Bool = false
     let iconSize: CGFloat = 50
     
     var body: some View {
         VStack {
-            // Sisi Atas (Kiri & Kanan)
             HStack {
-                Image("left-top")
+                Image(isObjectReady ? AppImageAsset.roundGreenLeftTop : AppImageAsset.roundLeftTop)
                     .resizable()
                     .scaledToFit()
                     .frame(width: iconSize, height: iconSize)
                 
                 Spacer()
                 
-                Image("right-top")
+                Image(isObjectReady ? AppImageAsset.roundGreenRightTop : AppImageAsset.roundRightTop)
                     .resizable()
                     .scaledToFit()
                     .frame(width: iconSize, height: iconSize)
             }
-            
-            // Mendorong HStack atas dan bawah agar berjauhan
+
             Spacer()
-            
-            // Sisi Bawah (Kiri & Kanan)
+
             HStack {
-                Image("left-bottom")
+                Image(isObjectReady ? AppImageAsset.roundGreenLeftBottom : AppImageAsset.roundLeftBottom)
                     .resizable()
                     .scaledToFit()
                     .frame(width: iconSize, height: iconSize)
                 
                 Spacer()
                 
-                Image("right-bottom")
+                Image(isObjectReady ? AppImageAsset.roundGreenRightBottom : AppImageAsset.roundRightBottom)
                     .resizable()
                     .scaledToFit()
                     .frame(width: iconSize, height: iconSize)
