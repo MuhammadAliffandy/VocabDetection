@@ -31,7 +31,7 @@ struct CameraView: View {
                         AppGlassButton(
                             icon: AppIcon.XmarkIcon,
                             action: {
-                                print("Back tapped")
+                                navigateToHome = true
                             },
                             horizontalPadding: AppPadding.areaPadding / 1.7,
                             verticalPadding: AppPadding.areaPadding / 1.7,
