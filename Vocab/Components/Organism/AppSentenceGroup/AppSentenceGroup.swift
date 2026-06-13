@@ -12,7 +12,7 @@ struct AppSentenceGroup: View {
     var rawSentence: String = "rock is very hard even you handled must be broken in the world"
     var meaningSentence: String = "batunya sangat keras"
     var vocabDictionary: [String: String] = [
-        "rock": "Batu",
+        "rock": "Batujhfjfkshj",
         "hard": "Keras"
     ]
     
@@ -62,12 +62,13 @@ struct AppSentenceGroup: View {
                     text: meaningSentence,
                     textColor: Color.secondary,
                 )
+            
             }
             .padding(0)
             
         }
         .padding()
-        .overlay(
+        .background(
             RoundedRectangle(cornerRadius: AppRadius.shapeRadius)
                 .stroke(Color.textColorSecondaryBlackGrey, style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [6, 6]))
         )

@@ -18,7 +18,7 @@ struct AppCameraButton: View {
             Image(systemName: AppIcon.CameraApertureIcon)
                 .font(.system(size: AppIconSize.Large))
                 .foregroundColor(Color.brandColorPrimaryTeal)
-                .background(Color.white)
+                .adaptiveBackground()
                 .clipShape(RoundedRectangle(cornerRadius: .infinity))
                 .AppShadowCamera()
         }

@@ -15,18 +15,23 @@ struct AppTextField: View {
         HStack{
             
             Image(systemName: AppIcon.MagnifyingGlassIcon)
-                .foregroundStyle(.black)
+                .foregroundStyle(.primary)
                 .padding(.leading,AppPadding.shapePadding * 1.5 )
             
             TextField(
-                "Masukkan Vocabulary . . .", text: $text,
+                "",
+                text: $text,
+                prompt: Text("Masukkan Vocabulary . . .")
+                        .foregroundStyle(.gray)
+                
             )
-            .font(.appHeadline)
             .padding(.vertical,AppPadding.shapePadding * 1.5)
             .padding(.trailing,AppPadding.shapePadding * 1.5 )
+            .font(.appHeadline)
             .foregroundStyle(Color.black)
+        
         }
-        .background(Color.white)
+        .adaptiveBackground()
         .clipShape(RoundedRectangle(cornerRadius: .infinity))
     }
 }

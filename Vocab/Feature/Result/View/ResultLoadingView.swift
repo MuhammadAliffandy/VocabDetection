@@ -62,13 +62,14 @@ struct ResultLoadingView: View {
                     subtitle: translationSubtitle,
                     titleStyle: .appTitle,
                     subtitleStyle: .appHeadline,
+                    titleColor: .primary,
                     aligment: .leading,
                     isFullWidth: true
                 )
                 .padding(.bottom, 40)
                 .padding(.top, AppPadding.areaPadding)
                 .padding(.horizontal, AppPadding.areaPadding)
-                .background(.white)
+                .adaptiveBackground()
             }
         }
         .navigationBarBackButtonHidden(true)

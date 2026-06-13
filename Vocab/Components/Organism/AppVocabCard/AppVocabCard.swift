@@ -98,6 +98,7 @@ struct AppVocabCard: View {
                 subtitle: subtitle,
                 titleStyle: .appHeadlinev2,
                 subtitleStyle: .appSubheadline,
+                titleColor: .primary,
                 subtitleColor: .textColorSecondaryBlackGrey,
                 spacing: AppSpacing.textSpacing
             )
@@ -106,7 +107,7 @@ struct AppVocabCard: View {
             
         }
         .padding(4)
-        .background(.white)
+        .adaptiveBackground()
         .clipShape(RoundedRectangle(cornerRadius: AppRadius.shapeRadius))
         .AppShadowVocabCard()
         

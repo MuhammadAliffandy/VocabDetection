@@ -11,13 +11,18 @@ struct AppVocabSpeech: View {
     
     var vocabText: String = "Chair"
     var meaningText: String = "/ˈtʃɛɹ/ : Kursi"
-    var action: () -> Void 
+    var action: () -> Void
+    
+    var formattedVocabText: String {
+        let words = vocabText.split(separator: " ")
+        return words.joined(separator: "\n")
+    }
     
     var body: some View {
         AppWrapButton(action: action ){
             ZStack(alignment: .bottom){
                 AppVocabText(
-                    vocabText: vocabText ,
+                    vocabText: formattedVocabText ,
                     meaningText: meaningText,
                 )
                 AppIconSpeech()
@@ -30,7 +35,7 @@ struct AppVocabSpeech: View {
 
 #Preview {
     AppVocabSpeech(
-        vocabText: "Chair",
+        vocabText: "headman Chair",
         meaningText: "/ˈtʃɛɹ/ : Kursi",
         action: {}
     )

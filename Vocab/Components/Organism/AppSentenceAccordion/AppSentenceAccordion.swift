@@ -12,7 +12,7 @@ struct AppSentenceAccordion: View {
     var rawSentence: String = "rock is very hard"
     var meaningSentence: String = "batunya sangat keras"
     var vocabDictionary: [String: String] = [
-        "rock": "Batu",
+        "rock": "Batudsjhajghf",
         "hard": "Keras"
     ]
     var selectedType: AppSentenceType = .command
@@ -65,8 +65,11 @@ struct AppSentenceAccordion: View {
             }
         )
         .padding(AppPadding.shapePadding)
-        .background(Color.white)
-        .clipShape(RoundedRectangle(cornerRadius: AppRadius.shapeRadius))
+        .background(
+            RoundedRectangle(cornerRadius: AppRadius.shapeRadius)
+                .fill(Color(UIColor.secondarySystemGroupedBackground))
+        )
+        .contentShape(RoundedRectangle(cornerRadius: AppRadius.shapeRadius))
         
     }
 }

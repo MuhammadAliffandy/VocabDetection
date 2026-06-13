@@ -31,6 +31,7 @@ struct AppAccordionHeader: View {
                 AppText(
                     text: selectedType?.title ?? "",
                     fontStyle: .appHeadlinev2,
+                    textColor: .primary,
                 )
             }
             

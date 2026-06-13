@@ -238,7 +238,7 @@ struct HomeView: View {
                     detectedObjects: [vocab.textVocab],
                     capturedImageData: vocab.imageData,
                     injectedSentences: sentences,
-                    injectedVocab: [vocab.textVocab.lowercased(): vocab.textMeaning]
+                    injectedVocab: vocab.vocabDictionary
                 )
             }
         }

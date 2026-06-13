@@ -13,9 +13,9 @@ struct AppAccordion<Header: View, Footer: View>: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-        
+            
             Button(action: {
-
+                
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                     isExpanded.toggle()
                     if isExpanded {
@@ -39,6 +39,5 @@ struct AppAccordion<Header: View, Footer: View>: View {
                     )
             }
         }
-        .clipped()
     }
 }

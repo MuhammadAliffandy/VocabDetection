@@ -29,7 +29,8 @@ struct AppVocabDashboardCard: View {
                     subtitle: subtitle,
                     titleStyle: .appHeadlinev2,
                     subtitleStyle: .appHeadlinev2,
-                    subtitleColor: Color.textColorPrimarySemiBlack,
+                    titleColor: .primary,
+                    subtitleColor: .primary,
                     spacing: AppSpacing.textSpacing
                 )
                 
@@ -37,13 +38,13 @@ struct AppVocabDashboardCard: View {
                 AppText(
                     text: count,
                     fontStyle: .appLargeTitle,
-                    textColor: .black
+                    textColor: .primary
                    
                 )
             }
         }
         .padding(20)
-        .background(.white)
+        .adaptiveBackground()
         .clipShape(RoundedRectangle(cornerRadius: AppRadius.shapeRadius))
     }
 }

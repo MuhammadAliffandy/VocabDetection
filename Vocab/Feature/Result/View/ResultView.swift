@@ -63,8 +63,8 @@ struct ResultView: View {
                         
                         VStack(spacing: AppSpacing.regular) {
                             AppHeadline(
-                                title: "Memindai kosa kata...",
-                                subtitle: "Memindai kata dari gambar yang sudah kamu ambil",
+                                title: "Kalimat",
+                                subtitle: "Penggunaan kosakata dalam kalimat",
                                 titleStyle: .appHeadlinev2,
                                 subtitleStyle: .appSubheadline,
                                 titleColor: .primary,
@@ -132,7 +132,8 @@ struct ResultView: View {
                                     textMeaning: meaning,
                                     textIPA: ipa,
                                     imageData: capturedImageData,
-                                    sentences: sentences
+                                    sentences: sentences,
+                                    vocabDictionary: sourceDict
                                 )
                                 
                                 modelContext.insert(newItem)
