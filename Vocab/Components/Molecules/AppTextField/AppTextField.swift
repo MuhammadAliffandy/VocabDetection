@@ -28,7 +28,7 @@ struct AppTextField: View {
             .padding(.vertical,AppPadding.shapePadding * 1.5)
             .padding(.trailing,AppPadding.shapePadding * 1.5 )
             .font(.appHeadline)
-            .foregroundStyle(Color.black)
+            .foregroundStyle(.primary)
         
         }
         .adaptiveBackground()

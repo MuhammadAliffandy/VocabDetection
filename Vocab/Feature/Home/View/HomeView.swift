@@ -181,17 +181,14 @@ struct HomeView: View {
                                 textColor: .textColorSecondaryBlackGrey
                             )
                             .padding(.horizontal, 20)
+                            .multilineTextAlignment(.center)
                             
                         } else {
-                            AppHeadline(
-                                title: isMagnifying && !typping.isEmpty ? "Hasil Pencarian" 
-                                       : (dashboardFilter == .today ? "Hari Ini" : "Terbaru"),
-                                subtitle: "Foto terbaru yang anda tambahkan",
-                                titleStyle: .appHeadlinev2,
-                                subtitleStyle: .appHeadline,
-                                titleColor: .primary,
-                                aligment: .leading,
-                                spacing: AppSpacing.textSpacing
+                            AppText(
+                                text: isMagnifying && !typping.isEmpty ? "Hasil Pencarian"
+                                : (dashboardFilter == .today ? "Hari Ini" : "Terbaru"),
+                                fontStyle: .appHeadlinev2,
+                                textColor: .primary
                             )
                             
                             LazyVGrid(columns: gridColumns, spacing: AppSpacing.medium) {
