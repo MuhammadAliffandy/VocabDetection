@@ -24,15 +24,35 @@ struct HomeView: View {
     @State private var isEditing: Bool = false
     @State private var selectedItems: Set<VocabItem.ID> = []
 
+    enum DashboardFilterType {
+        case total
+        case today
+    }
+    
+    @State private var dashboardFilter: DashboardFilterType = .total
+
     var filteredVocabs: [VocabItem] {
-        if typping.isEmpty {
-            return savedVocabs
+        let baseList: [VocabItem]
+        if dashboardFilter == .today {
+            let calendar = Calendar.current
+            baseList = savedVocabs.filter { calendar.isDateInToday($0.createDate) }
         } else {
-            return savedVocabs.filter { item in
+            baseList = savedVocabs
+        }
+        
+        if typping.isEmpty {
+            return baseList
+        } else {
+            return baseList.filter { item in
                 item.textVocab.lowercased().contains(typping.lowercased()) ||
                 item.textMeaning.lowercased().contains(typping.lowercased())
             }
         }
+    }
+
+    var todayVocabCount: Int {
+        let calendar = Calendar.current
+        return savedVocabs.filter { calendar.isDateInToday($0.createDate) }.count
     }
 
     let gridColumns = [
@@ -115,13 +135,23 @@ struct HomeView: View {
                                     subtitle: "Kosakata",
                                     count: "\(savedVocabs.count)"
                                 )
+                                .onTapGesture {
+                                    withAnimation {
+                                        dashboardFilter = .total
+                                    }
+                                }
                                 
                                 AppVocabDashboardCard(
                                     icon: AppIcon.ClockBadgeCheckmarkIcon,
                                     title: "Kosakata",
                                     subtitle: "Hari ini",
-                                    count: "0"
+                                    count: "\(todayVocabCount)"
                                 )
+                                .onTapGesture {
+                                    withAnimation {
+                                        dashboardFilter = .today
+                                    }
+                                }
                             }
                         }
 
@@ -154,7 +184,8 @@ struct HomeView: View {
                             
                         } else {
                             AppHeadline(
-                                title: isMagnifying && !typping.isEmpty ? "Hasil Pencarian" : "Terbaru",
+                                title: isMagnifying && !typping.isEmpty ? "Hasil Pencarian" 
+                                       : (dashboardFilter == .today ? "Hari Ini" : "Terbaru"),
                                 subtitle: "Foto terbaru yang anda tambahkan",
                                 titleStyle: .appHeadlinev2,
                                 subtitleStyle: .appHeadline,
@@ -187,6 +218,7 @@ struct HomeView: View {
                                         },
                                         onLongPressGesture: {
                                             if !isEditing {
+                                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                                                 withAnimation {
                                                     isEditing = true
                                                     selectedItems.insert(item.id)
@@ -235,12 +267,16 @@ struct HomeView: View {
                 let sentences = vocab.sentences.map {
                     GeneratedSentence(type: $0.type, text: $0.text, meaning: $0.meaning)
                 }
+                let dictToInject = vocab.vocabDictionary.isEmpty 
+                    ? [vocab.textVocab.lowercased(): vocab.textMeaning] 
+                    : vocab.vocabDictionary
+                    
                 ResultView(
                     isFromHome: true,
                     detectedObjects: [vocab.textVocab],
                     capturedImageData: vocab.imageData,
                     injectedSentences: sentences,
-                    injectedVocab: vocab.vocabDictionary
+                    injectedVocab: dictToInject
                 )
             }
         }

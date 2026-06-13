@@ -92,7 +92,7 @@ struct ResultView: View {
                             Spacer()
                                 .frame(height: 100)
                         }
-                        .padding(.top, 30)
+                        .padding(.top, 57)
                         .padding(AppPadding.areaPadding)
                     }
                 }

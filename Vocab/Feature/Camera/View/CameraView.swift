@@ -54,6 +54,7 @@ struct CameraView: View {
                     AppToast(
                         textToast: cameraManager.guidanceMessage
                     )
+                    .padding(.bottom,20)
                     
                     HStack(){
                        
