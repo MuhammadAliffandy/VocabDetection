@@ -181,6 +181,7 @@ struct HomeView: View {
                                 textColor: .textColorSecondaryBlackGrey
                             )
                             .padding(.horizontal, 20)
+                            .multilineTextAlignment(.center)
                             
                         } else {
                             AppHeadline(

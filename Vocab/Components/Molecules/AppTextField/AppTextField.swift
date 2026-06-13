@@ -31,7 +31,7 @@ struct AppTextField: View {
             .foregroundStyle(.primary)
         
         }
-        .adaptiveBackground()
+        .background(.regularMaterial)
         .clipShape(RoundedRectangle(cornerRadius: .infinity))
     }
 }
@@ -48,5 +48,16 @@ struct CreateTextField: View{
 
 
 #Preview {
-    CreateTextField()
+    VStack{
+        
+        Spacer()
+        
+        CreateTextField()
+        
+        Spacer()
+        
+    }
+    .background(Color.red)
+    
+    
 }
