@@ -184,12 +184,14 @@ struct HomeView: View {
                             .multilineTextAlignment(.center)
                             
                         } else {
-                            AppText(
-                                text: isMagnifying && !typping.isEmpty ? "Hasil Pencarian"
-                                : (dashboardFilter == .today ? "Hari Ini" : "Terbaru"),
-                                fontStyle: .appHeadlinev2,
-                                textColor: .primary
-                            )
+                            VStack(alignment: .leading){
+                                AppText(
+                                    text: isMagnifying && !typping.isEmpty ? "Hasil Pencarian"
+                                    : (dashboardFilter == .today ? "Hari Ini" : "Terbaru"),
+                                    fontStyle: .appHeadlinev2,
+                                    textColor: .primary
+                                )
+                            }
                             
                             LazyVGrid(columns: gridColumns, spacing: AppSpacing.medium) {
                                 ForEach(filteredVocabs) { item in
