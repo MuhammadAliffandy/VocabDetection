@@ -214,7 +214,9 @@ struct HomeView: View {
                                                     }
                                                 }
                                             } else {
-                                                selectedVocab = item
+                                                withAnimation(.easeInOut) {
+                                                    selectedVocab = item
+                                                }
                                             }
                                         },
                                         onLongPressGesture: {
@@ -238,6 +240,8 @@ struct HomeView: View {
                 .background(Color(UIColor.systemGroupedBackground))
                 .disabled(isDemo)
                 
+
+                
                 if isDemo {
                     Color.black.opacity(0.7)
                         .ignoresSafeArea()
@@ -256,9 +260,11 @@ struct HomeView: View {
                     .appTooltip("Ketuk di sini untuk\nmembuka kamera dan\nmulai memfoto benda\ndisekitarmu",
                         isVisible: isDemo ? true : false)
                 }
-                .padding(AppPadding.areaPadding)
+                .padding(AppPadding.areaPadding * 2)
+
                 
             }
+            .ignoresSafeArea(.container, edges: .bottom)
             .fullScreenCover(isPresented: $isShowingCamera) {
                 CameraView()
                     .ignoresSafeArea()

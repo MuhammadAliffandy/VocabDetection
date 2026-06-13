@@ -29,10 +29,18 @@ struct AppTextField: View {
             .padding(.trailing,AppPadding.shapePadding * 1.5 )
             .font(.appHeadline)
             .foregroundStyle(.primary)
+       
         
         }
         .background(.regularMaterial)
         .clipShape(RoundedRectangle(cornerRadius: .infinity))
+        .overlay(
+            Capsule()
+                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+        )
+        .glassEffect()
+      
+        
     }
 }
 
@@ -57,7 +65,7 @@ struct CreateTextField: View{
         Spacer()
         
     }
-    .background(Color.red)
+    .background(.red)
     
     
 }

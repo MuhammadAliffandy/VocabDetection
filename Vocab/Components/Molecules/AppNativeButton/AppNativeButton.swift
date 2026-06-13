@@ -43,6 +43,7 @@ struct AppGlassButton: View {
                 Capsule()
                     .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
             )
+            .glassEffect()
         }
         .buttonStyle(.plain)
     }
