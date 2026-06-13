@@ -77,7 +77,7 @@ struct TooltipModifier: ViewModifier {
 
 
 extension View {
-    func appTooltip(_ text: String, isVisible: Bool = true , y:CGFloat = -95) -> some View {
+    func appTooltip(_ text: String, isVisible: Bool = true , y:CGFloat = -105) -> some View {
         self.modifier(TooltipModifier(text: text, isVisible: isVisible , y: y))
     }
 }

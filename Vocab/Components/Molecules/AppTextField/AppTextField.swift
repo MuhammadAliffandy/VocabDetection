@@ -21,7 +21,7 @@ struct AppTextField: View {
             TextField(
                 "",
                 text: $text,
-                prompt: Text("Masukkan Vocabulary . . .")
+                prompt: Text("Kursi, Kacamata...")
                         .foregroundStyle(.gray)
                 
             )

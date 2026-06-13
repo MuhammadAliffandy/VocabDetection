@@ -39,13 +39,14 @@ struct AppWordTip: View {
                     Line()
                         .stroke(
                             style: StrokeStyle(
-                                lineWidth: 3,
+                                lineWidth: 1,
                                 lineCap: .round,
-                                dash: [5, 6]
+                                dash: [5, 4]
                             )
                         )
                         .foregroundColor(Color.brandColorPrimaryTeal)
                         .frame(height: 1)
+                        
                 }
             }
 
@@ -75,7 +76,7 @@ struct AppWordTip: View {
         )
     }
     .padding(100)
-    .background(Color.red)
+    .background(Color.white)
 
     
 }

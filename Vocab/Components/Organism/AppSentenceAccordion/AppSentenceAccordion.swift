@@ -51,6 +51,9 @@ struct AppSentenceAccordion: View {
                             meaningSentence: meaningSentence,
                             vocabDictionary: vocabDictionary
                         )
+                        .padding(
+                            .horizontal,22
+                        )
                     } else{
                         AppWarningShape()
                             .padding(

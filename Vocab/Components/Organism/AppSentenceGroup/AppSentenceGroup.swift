@@ -23,10 +23,10 @@ struct AppSentenceGroup: View {
                 spacing: 10
             ){
            
-                Image(systemName: AppIcon.CircleFillIcon )
-                    .font(.system(size: 6)
-                )
-                .foregroundStyle(.white)
+//                Image(systemName: AppIcon.CircleFillIcon )
+//                    .font(.system(size: 6)
+//                )
+//                .foregroundStyle(.white)
                 
                 AppSentenceContent(
                     rawSentence: rawSentence,
@@ -43,8 +43,8 @@ struct AppSentenceGroup: View {
             
             Divider()
                 .frame(height: 1)
-                .background(.secondary)
-                .padding(.horizontal, 15)
+                .background( Color.textColorSecondaryBlackGrey.opacity(0.30))
+                .padding(.horizontal, 1)
                 .padding(.vertical, 0)
                 
             
@@ -53,10 +53,10 @@ struct AppSentenceGroup: View {
                 spacing: 10
             ){
            
-                Image(systemName: AppIcon.CircleFillIcon )
-                    .font(.system(size: 6)
-                )
-                .foregroundStyle(.white)
+//                Image(systemName: AppIcon.CircleFillIcon )
+//                    .font(.system(size: 6)
+//                )
+//                .foregroundStyle(.white)
                 
                 AppText(
                     text: meaningSentence,
@@ -70,7 +70,12 @@ struct AppSentenceGroup: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: AppRadius.shapeRadius)
-                .stroke(Color.textColorSecondaryBlackGrey, style: StrokeStyle(lineWidth: 2, lineCap: .round, dash: [6, 6]))
+                .stroke(
+                    Color.textColorSecondaryBlackGrey.opacity(0.30),
+                        style: StrokeStyle(lineWidth: 2,
+                        lineCap: .round,
+                        dash: [6, 6])
+                )
         )
     }
 }

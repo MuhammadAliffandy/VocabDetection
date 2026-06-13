@@ -65,7 +65,7 @@ struct ResultView: View {
                             AppHeadline(
                                 title: "Kalimat",
                                 subtitle: "Penggunaan kosakata dalam kalimat",
-                                titleStyle: .appHeadlinev2,
+                                titleStyle: .appTitle,
                                 subtitleStyle: .appSubheadline,
                                 titleColor: .primary,
                                 aligment: .leading,
@@ -108,8 +108,6 @@ struct ResultView: View {
                                 let firstWord = detectedObjects.first ?? "Unknown"
                                 let firstWordLower = firstWord.lowercased()
                                 
-                                // Gunakan injectedVocab jika tersedia (data real dari LoadingView),
-                                // fallback ke viewModel.vocabDictionary
                                 let sourceDict = injectedVocab ?? viewModel.vocabDictionary
                                 let rawMeaning = sourceDict[firstWordLower] ?? ""
                                 let meaning = rawMeaning.isEmpty || rawMeaning.lowercased() == firstWordLower

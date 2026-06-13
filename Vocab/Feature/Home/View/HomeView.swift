@@ -83,7 +83,7 @@ struct HomeView: View {
                                 if !isMagnifying {
                                     AppHeadline(
                                         title: "Kosakata Kamu",
-                                        subtitle: "Jumlah kosakata yang sudah kamu ketahui",
+                                        subtitle: "Jumlah kosakata yang sudah kamu simpan",
                                         titleStyle: .appHeadlinev2,
                                         subtitleStyle: .appHeadline,
                                         titleColor: .primary,
@@ -146,7 +146,7 @@ struct HomeView: View {
                                 .frame(height: 100)
                                 
                             AppText(
-                                text: "Belum ada kosakata tersimpan dengan nama ini",
+                                text: "Belum ada kosakata tersimpan\ndengan nama ini",
                                 fontStyle: .appSubheadline,
                                 textColor: .textColorSecondaryBlackGrey
                             )
@@ -220,8 +220,10 @@ struct HomeView: View {
                         }
                         isShowingCamera = true
                     })
-                    .appTooltip("Tekan Icon\nuntuk membuka\nkamera", isVisible: isDemo ? true : false)
+                    .appTooltip("Ketuk di sini untuk\nmembuka kamera dan\nmulai memfoto benda\ndisekitarmu",
+                        isVisible: isDemo ? true : false)
                 }
+                .padding(AppPadding.areaPadding)
                 
             }
             .fullScreenCover(isPresented: $isShowingCamera) {
