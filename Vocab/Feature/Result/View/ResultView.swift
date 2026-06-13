@@ -69,6 +69,7 @@ struct ResultView: View {
                                 subtitleStyle: .appSubheadline,
                                 titleColor: .primary,
                                 aligment: .leading,
+                                spacing: AppSpacing.textSpacing,
                                 isFullWidth: true
                             )
                             
