@@ -6,10 +6,16 @@ struct ResultLoadingView: View {
     var labels: [String] = []
     
     @StateObject private var viewModel = ResultViewModel()
+    @State private var fastVLMService = FastVLMService()
+    
     @State private var navigateToResult = false
-    @State private var translationStatus: String = "Memindai kosa kata..."
-    @State private var translationSubtitle: String = "Memindai kata dari gambar yang sudah kamu ambil"
+    @State private var translationStatus: String = "Memuat model FastVLM..."
+    @State private var translationSubtitle: String = "Sedang menginisialisasi model deteksi objek..."
     @State private var isDownloadingLanguage: Bool = false
+    
+    @State private var vlmLabels: [String] = []
+    @State private var isVLMDone: Bool = false
+    
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
@@ -74,18 +80,18 @@ struct ResultLoadingView: View {
         }
         .navigationBarBackButtonHidden(true)
         .onAppear {
-            checkTranslationAvailability()
-            if #unavailable(iOS 17.4) {
-                Task {
-                    await viewModel.processDetectedObjects(labels)
-                }
+            Task {
+                await runFastVLM()
             }
         }
-        .modifier(TranslationTaskModifier(
-            viewModel: viewModel,
-            detectedObjects: labels,
-            shouldProcess: true
-        ))
+        .background {
+            if #available(iOS 17.4, *) {
+                Color.clear
+                    .translationTask(source: Locale.Language(identifier: "en-US"), target: Locale.Language(identifier: "id-ID")) { session in
+                        viewModel.setTranslationSession(session)
+                    }
+            }
+        }
         .onChange(of: viewModel.isLoading) { _, loading in
             if !loading && !viewModel.generatedSentences.isEmpty {
                 // Reset status setelah selesai
@@ -96,7 +102,7 @@ struct ResultLoadingView: View {
         .navigationDestination(isPresented: $navigateToResult) {
             ResultView(
                 isFromHome: false,
-                detectedObjects: labels,
+                detectedObjects: vlmLabels,
                 capturedImageData: imageData,
                 injectedSentences: viewModel.generatedSentences,
                 injectedVocab: viewModel.vocabDictionary,
@@ -116,13 +122,11 @@ struct ResultLoadingView: View {
             await MainActor.run {
                 switch status {
                 case .installed:
-                    // Sudah tersedia, proses normal
                     isDownloadingLanguage = false
                     translationStatus = "Memindai kosa kata..."
                     translationSubtitle = "Memindai kata dari gambar yang sudah kamu ambil"
                     
                 case .supported:
-                    // Didukung tapi belum diunduh — .translationTask akan otomatis trigger download sheet
                     isDownloadingLanguage = true
                     translationStatus = "Mengunduh paket terjemahan"
                     translationSubtitle = "Paket bahasa Indonesia sedang diunduh. Harap tunggu sebentar..."
@@ -135,6 +139,46 @@ struct ResultLoadingView: View {
                 @unknown default:
                     break
                 }
+            }
+        }
+    }
+    
+    private func runFastVLM() async {
+        guard let data = imageData, let uiImage = UIImage(data: data) else {
+            await MainActor.run {
+                self.vlmLabels = self.labels.isEmpty ? ["Unknown"] : self.labels
+                self.isVLMDone = true
+                self.checkTranslationAvailability()
+                Task { await self.viewModel.processDetectedObjects(self.vlmLabels) }
+            }
+            return
+        }
+        
+        await fastVLMService.ensureLoaded()
+        
+        await MainActor.run {
+            translationStatus = "Mendeteksi objek..."
+            translationSubtitle = "Menganalisis gambar menggunakan model VLM"
+        }
+        
+        do {
+            let result = try await fastVLMService.detectScene(in: uiImage)
+            await MainActor.run {
+                self.vlmLabels = [result.object]
+                self.isVLMDone = true
+                // Now check translation status to update text
+                self.checkTranslationAvailability()
+                
+                Task { await self.viewModel.processDetectedObjects(self.vlmLabels) }
+            }
+        } catch {
+            print("FastVLM Error: \(error)")
+            await MainActor.run {
+                self.vlmLabels = self.labels.isEmpty ? ["Unknown"] : self.labels
+                self.isVLMDone = true
+                self.checkTranslationAvailability()
+                
+                Task { await self.viewModel.processDetectedObjects(self.vlmLabels) }
             }
         }
     }

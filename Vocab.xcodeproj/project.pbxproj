@@ -6,11 +6,28 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		2FF9EAD72FE03312000F1FA8 /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 2FF9EAD62FE03312000F1FA8 /* MLXLMCommon */; };
+		2FF9EAD92FE03312000F1FA8 /* MLXVLM in Frameworks */ = {isa = PBXBuildFile; productRef = 2FF9EAD82FE03312000F1FA8 /* MLXVLM */; };
+		2FF9EADC2FE03417000F1FA8 /* BenchmarkHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = 2FF9EADB2FE03417000F1FA8 /* BenchmarkHelpers */; };
+		2FF9EADE2FE03417000F1FA8 /* IntegrationTestHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = 2FF9EADD2FE03417000F1FA8 /* IntegrationTestHelpers */; };
+		2FF9EAE02FE03417000F1FA8 /* MLXEmbedders in Frameworks */ = {isa = PBXBuildFile; productRef = 2FF9EADF2FE03417000F1FA8 /* MLXEmbedders */; };
+		2FF9EAE22FE03417000F1FA8 /* MLXHuggingFace in Frameworks */ = {isa = PBXBuildFile; productRef = 2FF9EAE12FE03417000F1FA8 /* MLXHuggingFace */; };
+		2FF9EAE42FE03417000F1FA8 /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = 2FF9EAE32FE03417000F1FA8 /* MLXLLM */; };
+		2FF9EAE92FE03419000F1FA8 /* HuggingFace in Frameworks */ = {isa = PBXBuildFile; productRef = 2FF9EAE72FE03419000F1FA8 /* HuggingFace */; };
+		2FF9EAEA2FE03419000F1FA8 /* Tokenizers in Frameworks */ = {isa = PBXBuildFile; productRef = 2FF9EAE82FE03419000F1FA8 /* Tokenizers */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		D09764152FD3AD8C00E6207A /* Vocab.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Vocab.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		2FC22EB52FDFF33000FB1398 /* FastVLMModel */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = FastVLMModel;
+			sourceTree = "<group>";
+		};
 		D09764172FD3AD8C00E6207A /* Vocab */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Vocab;
@@ -23,17 +40,35 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2FF9EAE42FE03417000F1FA8 /* MLXLLM in Frameworks */,
+				2FF9EAD92FE03312000F1FA8 /* MLXVLM in Frameworks */,
+				2FF9EADE2FE03417000F1FA8 /* IntegrationTestHelpers in Frameworks */,
+				2FF9EAD72FE03312000F1FA8 /* MLXLMCommon in Frameworks */,
+				2FF9EADC2FE03417000F1FA8 /* BenchmarkHelpers in Frameworks */,
+				2FF9EAE02FE03417000F1FA8 /* MLXEmbedders in Frameworks */,
+				2FF9EAE22FE03417000F1FA8 /* MLXHuggingFace in Frameworks */,
+				2FF9EAE92FE03419000F1FA8 /* HuggingFace in Frameworks */,
+				2FF9EAEA2FE03419000F1FA8 /* Tokenizers in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2FF9EADA2FE03417000F1FA8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		D097640C2FD3AD8C00E6207A = {
 			isa = PBXGroup;
 			children = (
 				D09764172FD3AD8C00E6207A /* Vocab */,
 				D09764162FD3AD8C00E6207A /* Products */,
+				2FC22EB52FDFF33000FB1398 /* FastVLMModel */,
+				2FF9EADA2FE03417000F1FA8 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -61,10 +96,20 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				2FC22EB52FDFF33000FB1398 /* FastVLMModel */,
 				D09764172FD3AD8C00E6207A /* Vocab */,
 			);
 			name = Vocab;
 			packageProductDependencies = (
+				2FF9EAD62FE03312000F1FA8 /* MLXLMCommon */,
+				2FF9EAD82FE03312000F1FA8 /* MLXVLM */,
+				2FF9EADB2FE03417000F1FA8 /* BenchmarkHelpers */,
+				2FF9EADD2FE03417000F1FA8 /* IntegrationTestHelpers */,
+				2FF9EADF2FE03417000F1FA8 /* MLXEmbedders */,
+				2FF9EAE12FE03417000F1FA8 /* MLXHuggingFace */,
+				2FF9EAE32FE03417000F1FA8 /* MLXLLM */,
+				2FF9EAE72FE03419000F1FA8 /* HuggingFace */,
+				2FF9EAE82FE03419000F1FA8 /* Tokenizers */,
 			);
 			productName = Vocab;
 			productReference = D09764152FD3AD8C00E6207A /* Vocab.app */;
@@ -95,6 +140,9 @@
 			mainGroup = D097640C2FD3AD8C00E6207A;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				2FF9EAD52FE03312000F1FA8 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */,
+				2FF9EAE52FE03419000F1FA8 /* XCRemoteSwiftPackageReference "swift-huggingface" */,
+				2FF9EAE62FE03419000F1FA8 /* XCRemoteSwiftPackageReference "swift-transformers" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D09764162FD3AD8C00E6207A /* Products */;
@@ -256,7 +304,7 @@
 				CODE_SIGN_ENTITLEMENTS = Vocab/Vocab.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = ZB4G54X6W4;
+				DEVELOPMENT_TEAM = 4Z34RN4542;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Agar anda dapat mengambil foto data mendeteksi kosakata pada benda yang anda foto, aplikasi kami memerlukan akses ke kamera anda";
@@ -271,11 +319,11 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.fandy.training.Vocab;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dev.training.Vocab;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
@@ -291,7 +339,7 @@
 				CODE_SIGN_ENTITLEMENTS = Vocab/Vocab.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = ZB4G54X6W4;
+				DEVELOPMENT_TEAM = 4Z34RN4542;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Agar anda dapat mengambil foto data mendeteksi kosakata pada benda yang anda foto, aplikasi kami memerlukan akses ke kamera anda";
@@ -306,11 +354,11 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.fandy.training.Vocab;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dev.training.Vocab;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
@@ -340,6 +388,81 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2FF9EAD52FE03312000F1FA8 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ml-explore/mlx-swift-lm";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.31.3;
+			};
+		};
+		2FF9EAE52FE03419000F1FA8 /* XCRemoteSwiftPackageReference "swift-huggingface" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/huggingface/swift-huggingface";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.0;
+			};
+		};
+		2FF9EAE62FE03419000F1FA8 /* XCRemoteSwiftPackageReference "swift-transformers" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/huggingface/swift-transformers";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2FF9EAD62FE03312000F1FA8 /* MLXLMCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2FF9EAD52FE03312000F1FA8 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */;
+			productName = MLXLMCommon;
+		};
+		2FF9EAD82FE03312000F1FA8 /* MLXVLM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2FF9EAD52FE03312000F1FA8 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */;
+			productName = MLXVLM;
+		};
+		2FF9EADB2FE03417000F1FA8 /* BenchmarkHelpers */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2FF9EAD52FE03312000F1FA8 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */;
+			productName = BenchmarkHelpers;
+		};
+		2FF9EADD2FE03417000F1FA8 /* IntegrationTestHelpers */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2FF9EAD52FE03312000F1FA8 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */;
+			productName = IntegrationTestHelpers;
+		};
+		2FF9EADF2FE03417000F1FA8 /* MLXEmbedders */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2FF9EAD52FE03312000F1FA8 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */;
+			productName = MLXEmbedders;
+		};
+		2FF9EAE12FE03417000F1FA8 /* MLXHuggingFace */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2FF9EAD52FE03312000F1FA8 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */;
+			productName = MLXHuggingFace;
+		};
+		2FF9EAE32FE03417000F1FA8 /* MLXLLM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2FF9EAD52FE03312000F1FA8 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */;
+			productName = MLXLLM;
+		};
+		2FF9EAE72FE03419000F1FA8 /* HuggingFace */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2FF9EAE52FE03419000F1FA8 /* XCRemoteSwiftPackageReference "swift-huggingface" */;
+			productName = HuggingFace;
+		};
+		2FF9EAE82FE03419000F1FA8 /* Tokenizers */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2FF9EAE62FE03419000F1FA8 /* XCRemoteSwiftPackageReference "swift-transformers" */;
+			productName = Tokenizers;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D097640D2FD3AD8C00E6207A /* Project object */;
 }
