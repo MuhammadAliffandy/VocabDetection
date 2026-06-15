@@ -24,6 +24,9 @@ class CameraManager: NSObject, ObservableObject {
     @Published var bracketScale: CGFloat = 1.0
     @Published var isObjectReady: Bool = false
     
+    @Published var isFlashOn: Bool = false
+    @Published var zoomFactor: CGFloat = 1.0
+    
     private var lastDetectionTime = Date()
     
     func checkPermissionsAndStart() {
@@ -79,6 +82,25 @@ class CameraManager: NSObject, ObservableObject {
         }
     }
     
+    func toggleFlash() {
+        isFlashOn.toggle()
+    }
+    
+    func setZoom(factor: CGFloat) {
+        guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else { return }
+        do {
+            try device.lockForConfiguration()
+            let maxZoom = min(device.activeFormat.videoMaxZoomFactor, 5.0)
+            device.videoZoomFactor = max(1.0, min(factor, maxZoom))
+            device.unlockForConfiguration()
+            DispatchQueue.main.async {
+                self.zoomFactor = device.videoZoomFactor
+            }
+        } catch {
+            print("Failed to lock device for zoom configuration: \(error)")
+        }
+    }
+    
     func capturePhoto() {
         DispatchQueue.main.async {
             self.isProcessingComplete = false
@@ -88,6 +110,9 @@ class CameraManager: NSObject, ObservableObject {
         }
         
         let settings = AVCapturePhotoSettings()
+        if photoOutput.supportedFlashModes.contains(isFlashOn ? .on : .off) {
+            settings.flashMode = isFlashOn ? .on : .off
+        }
         photoOutput.capturePhoto(with: settings, delegate: self)
     }
     

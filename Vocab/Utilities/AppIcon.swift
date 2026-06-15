@@ -36,6 +36,8 @@ enum AppIcon {
     static let ChevronRightIcon: String = "chevron.right"
     static let PhotoOnRectangleIcon: String = "photo.on.rectangle"
     static let ExclamationmarkTriangleIcon:String = "exclamationmark.triangle.fill"
+    static let BoltIcon: String = "bolt.fill"
+    static let BoltSlashIcon: String = "bolt.slash.fill"
 }
 
 enum AppIconSize{

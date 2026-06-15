@@ -9,6 +9,7 @@ struct CameraView: View {
     @State private var navigateToLoading = false
     @State private var navigateToHome = false
     @State private var selectedPhotoItem: PhotosPickerItem?
+    @State private var currentZoom: CGFloat = 1.0
     
     let gridColumns = [
         GridItem(.flexible(), spacing: AppSpacing.medium),
@@ -23,6 +24,15 @@ struct CameraView: View {
                 
                 CameraPreview(session: cameraManager.session)
                     .ignoresSafeArea()
+                    .gesture(
+                        MagnificationGesture()
+                            .onChanged { value in
+                                cameraManager.setZoom(factor: currentZoom * value)
+                            }
+                            .onEnded { value in
+                                currentZoom = cameraManager.zoomFactor
+                            }
+                    )
                 
                 VStack(spacing: 10) {
                     HStack {
@@ -90,6 +100,19 @@ struct CameraView: View {
                                     Circle()
                                         .fill(Color.white)
                                         .frame(width: 56, height: 56)
+                                }
+                            }
+                            
+                            Button(action: {
+                                cameraManager.toggleFlash()
+                            }) {
+                                ZStack {
+                                    Circle()
+                                        .fill(Color.black.opacity(0.4))
+                                        .frame(width: 50, height: 50)
+                                    Image(systemName: cameraManager.isFlashOn ? AppIcon.BoltIcon : AppIcon.BoltSlashIcon)
+                                        .font(.system(size: 24))
+                                        .foregroundColor(cameraManager.isFlashOn ? .yellow : .white)
                                 }
                             }
                         }
