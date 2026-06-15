@@ -84,6 +84,16 @@ class CameraManager: NSObject, ObservableObject {
     
     func toggleFlash() {
         isFlashOn.toggle()
+        guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else { return }
+        if device.hasTorch {
+            do {
+                try device.lockForConfiguration()
+                device.torchMode = isFlashOn ? .on : .off
+                device.unlockForConfiguration()
+            } catch {
+                print("Failed to lock device for torch configuration: \(error)")
+            }
+        }
     }
     
     func setZoom(factor: CGFloat) {
