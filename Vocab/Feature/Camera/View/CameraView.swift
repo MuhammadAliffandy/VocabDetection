@@ -24,6 +24,8 @@ struct CameraView: View {
                 
                 CameraPreview(session: cameraManager.session)
                     .ignoresSafeArea()
+                    .accessibilityLabel("Pratinjau Kamera")
+                    .accessibilityHint("Gunakan dua jari untuk memperbesar atau memperkecil")
                     .gesture(
                         MagnificationGesture()
                             .onChanged { value in
@@ -44,9 +46,10 @@ struct CameraView: View {
                                 navigateToHome = true
                             },
                             horizontalPadding: AppPadding.areaPadding / 1.7,
-                            verticalPadding: AppPadding.areaPadding / 1.7,
-                            
+                            verticalPadding: AppPadding.areaPadding / 1.7
                         )
+                        .accessibilityLabel("Kembali ke Beranda")
+                        .accessibilityHint("Tutup kamera dan kembali ke halaman utama")
                     }
                   
                     
@@ -80,6 +83,8 @@ struct CameraView: View {
                                         .foregroundColor(.white)
                                 }
                             }
+                            .accessibilityLabel("Galeri Foto")
+                            .accessibilityHint("Pilih foto dari galeri untuk dideteksi kosakatanya")
                             .onChange(of: selectedPhotoItem) { _, newItem in
                                 Task {
                                     if let data = try? await newItem?.loadTransferable(type: Data.self),
@@ -102,6 +107,8 @@ struct CameraView: View {
                                         .frame(width: 56, height: 56)
                                 }
                             }
+                            .accessibilityLabel("Ambil Foto")
+                            .accessibilityHint("Ambil foto objek yang ada di pratinjau kamera")
                             
                             Button(action: {
                                 cameraManager.toggleFlash()
@@ -115,6 +122,9 @@ struct CameraView: View {
                                         .foregroundColor(cameraManager.isFlashOn ? .yellow : .white)
                                 }
                             }
+                            .accessibilityLabel("Lampu Kilat")
+                            .accessibilityValue(cameraManager.isFlashOn ? "Menyala" : "Mati")
+                            .accessibilityHint("Tekan untuk menyalakan atau mematikan lampu kilat")
                         }
                     }
                 }

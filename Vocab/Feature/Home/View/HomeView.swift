@@ -77,6 +77,8 @@ struct HomeView: View {
                                         .font(.system(size: 17, weight: .regular))
                                         .foregroundColor(.brandColorPrimaryTeal)
                                 }
+                                .accessibilityLabel("Batal edit")
+                                .accessibilityHint("Batalkan mode hapus kosakata")
                                 
                                 Spacer()
                                 
@@ -94,6 +96,8 @@ struct HomeView: View {
                                         .foregroundColor(selectedItems.isEmpty ? .gray : .red)
                                 }
                                 .disabled(selectedItems.isEmpty)
+                                .accessibilityLabel("Hapus kosakata terpilih")
+                                .accessibilityHint("Hapus kosakata yang sudah dipilih")
                             }
                             .padding(.top, 8)
                             .padding(.bottom, 16)
@@ -135,6 +139,9 @@ struct HomeView: View {
                                     subtitle: "Kosakata",
                                     count: "\(savedVocabs.count)"
                                 )
+                                .accessibilityElement(children: .combine)
+                                .accessibilityLabel("Total \(savedVocabs.count) Kosakata")
+                                .accessibilityHint("Tampilkan semua kosakata")
                                 .onTapGesture {
                                     withAnimation {
                                         dashboardFilter = .total
@@ -147,6 +154,9 @@ struct HomeView: View {
                                     subtitle: "Hari ini",
                                     count: "\(todayVocabCount)"
                                 )
+                                .accessibilityElement(children: .combine)
+                                .accessibilityLabel("\(todayVocabCount) Kosakata Hari ini")
+                                .accessibilityHint("Tampilkan kosakata yang ditambahkan hari ini")
                                 .onTapGesture {
                                     withAnimation {
                                         dashboardFilter = .today
@@ -257,6 +267,8 @@ struct HomeView: View {
                         }
                         isShowingCamera = true
                     })
+                    .accessibilityLabel("Buka Kamera")
+                    .accessibilityHint("Buka kamera untuk memfoto dan mendeteksi kosakata baru")
                     .appTooltip("Ketuk di sini untuk\nmembuka kamera dan\nmulai memfoto benda\ndisekitarmu",
                         isVisible: isDemo ? true : false)
                 }

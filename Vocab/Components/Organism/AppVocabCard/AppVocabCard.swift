@@ -110,6 +110,11 @@ struct AppVocabCard: View {
         .adaptiveBackground()
         .clipShape(RoundedRectangle(cornerRadius: AppRadius.shapeRadius))
         .AppShadowVocabCard()
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(title), \(subtitle)")
+        .accessibilityHint(isEditingMode ? (isSelected ? "Ketuk untuk membatalkan pilihan" : "Ketuk untuk memilih") : "Ketuk untuk melihat detail kosakata")
+        .accessibilityAddTraits(.isButton)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
         
     }
 }

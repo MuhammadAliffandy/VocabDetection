@@ -147,6 +147,8 @@ struct ResultView: View {
                         )
                         .padding(AppPadding.areaPadding)
                         .AppShadowVocabCard()
+                        .accessibilityLabel("Simpan Kosakata")
+                        .accessibilityHint("Menyimpan kosakata ini beserta kalimatnya ke beranda")
                     }
                     .frame(maxWidth: .infinity)
                 }
@@ -165,6 +167,8 @@ struct ResultView: View {
                                 horizontalPadding: AppPadding.areaPadding ,
                                 verticalPadding: AppPadding.areaPadding / 1.5
                             )
+                            .accessibilityLabel("Ulangi Foto")
+                            .accessibilityHint("Kembali ke kamera untuk mengambil foto ulang")
                     
                         }
                     
@@ -180,6 +184,8 @@ struct ResultView: View {
                             
                             
                         )
+                        .accessibilityLabel("Tutup")
+                        .accessibilityHint("Tutup halaman ini dan kembali")
                     }
                     .padding(.horizontal, 20)
                     .padding(.top, 10)
