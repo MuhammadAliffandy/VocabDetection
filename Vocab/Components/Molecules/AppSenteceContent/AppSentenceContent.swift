@@ -28,7 +28,6 @@ struct AppSentenceContent: View {
     ) {
         self.rawSentence = rawSentence
         self.vocabDictionary = vocabDictionary
-    
         self.splittedWords = rawSentence.split(separator: " ").map { WordItem(text: String($0)) }
     }
     
@@ -44,7 +43,7 @@ struct AppSentenceContent: View {
                     AppWordTip(
                         text: item.text,
                         tooltipText: meaning,
-                        textStyle: textStyle,
+                        textStyle: .appHeadlinev2,
                         isPressed: activeWordID == item.id,
                         isVocab: true
                     )
@@ -64,7 +63,7 @@ struct AppSentenceContent: View {
                     AppWordTip(
                         text: item.text,
                         tooltipText: "",
-                        textStyle: textStyle,
+                        textStyle: .appHeadline,
                         isPressed: false,
                         isVocab: false
                     )

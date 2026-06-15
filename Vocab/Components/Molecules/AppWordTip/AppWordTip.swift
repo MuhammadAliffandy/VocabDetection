@@ -49,7 +49,6 @@ struct AppWordTip: View {
                         
                 }
             }
-
             , alignment: .bottom
         )
         
