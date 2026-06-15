@@ -239,7 +239,7 @@ struct HomeView: View {
                                             }
                                         }
                                     )
-                                    .frame(maxHeight: .infinity)
+                                
                                 }
                             }
                             .animation(.default, value: filteredVocabs)

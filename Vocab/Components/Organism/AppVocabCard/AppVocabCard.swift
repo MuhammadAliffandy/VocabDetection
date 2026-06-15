@@ -106,6 +106,7 @@ struct AppVocabCard: View {
             .padding(.bottom, 8)
             
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .padding(4)
         .adaptiveBackground()
         .clipShape(RoundedRectangle(cornerRadius: AppRadius.shapeRadius))
@@ -123,25 +124,37 @@ struct AppVocabCard: View {
 
     let gridColumns = [
         GridItem(.flexible(), spacing: 16),
-        GridItem(.flexible(), spacing: 16)
+        GridItem(.flexible(), spacing: 16),
+
+
     ]
     
     ScrollView {
-        LazyVGrid(columns: gridColumns, spacing: 16) {
-            
-            AppVocabCard(
-                image: AppImageAsset.dummyImage,
-                title: "Chair",
-                subtitle: "Kursi",
-                onTapGesture: {
-                    print("test")
-                }
-            )
- 
-            
-            
+        VStack{
+            LazyVGrid(columns: gridColumns, spacing: 16) {
+                
+                AppVocabCard(
+                    image: AppImageAsset.dummyImage,
+                    title: "Chair ADKDASDJASAHJAKDJKDHJKSDJADHA",
+                    subtitle: "Kursi",
+                    onTapGesture: {
+                        print("test")
+                    }
+                )
+     
+                AppVocabCard(
+                    image: AppImageAsset.dummyImage,
+                    title: "Chair",
+                    subtitle: "Kursi",
+                    onTapGesture: {
+                        print("test")
+                    }
+                )
+         
+                
+            }
+            .padding(16)
         }
-        .padding(16)
     }
     .background(Color(UIColor.systemGroupedBackground))
 }
