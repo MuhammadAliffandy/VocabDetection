@@ -19,6 +19,7 @@ struct HomeView: View {
     @State private var showDropdown: Bool = false
     @State private var selectedVocab: VocabItem?
     @State private var typping: String = ""
+    @State private var debouncedTypping: String = ""
     @State private var isShowingCamera = false
     @State private var capturedImage: UIImage?
     @State private var isEditing: Bool = false
@@ -40,12 +41,12 @@ struct HomeView: View {
             baseList = savedVocabs
         }
         
-        if typping.isEmpty {
+        if debouncedTypping.isEmpty {
             return baseList
         } else {
             return baseList.filter { item in
-                item.textVocab.lowercased().contains(typping.lowercased()) ||
-                item.textMeaning.lowercased().contains(typping.lowercased())
+                item.textVocab.lowercased().contains(debouncedTypping.lowercased()) ||
+                item.textMeaning.lowercased().contains(debouncedTypping.lowercased())
             }
         }
     }
@@ -248,6 +249,16 @@ struct HomeView: View {
                 }
                 .scrollIndicators(.hidden)
                 .padding(AppPadding.areaPadding)
+                .onChange(of: typping) { _, newValue in
+                    Task {
+                        try? await Task.sleep(nanoseconds: 300_000_000) // 300ms debounce
+                        if typping == newValue {
+                            await MainActor.run {
+                                debouncedTypping = newValue
+                            }
+                        }
+                    }
+                }
                 .background(Color(UIColor.systemGroupedBackground))
                 .disabled(isDemo)
                 
@@ -274,7 +285,7 @@ struct HomeView: View {
                         isVisible: isDemo ? true : false)
                 }
                 .padding(AppPadding.areaPadding * 2)
-
+                .ignoresSafeArea(.keyboard)
                 
             }
             .ignoresSafeArea(.container, edges: .bottom)
