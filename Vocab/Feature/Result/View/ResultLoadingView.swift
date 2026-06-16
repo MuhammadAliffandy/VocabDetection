@@ -163,6 +163,8 @@ struct ResultLoadingView: View {
         
         do {
             let result = try await fastVLMService.detectScene(in: uiImage)
+            fastVLMService.unload() // 🚀 Bebaskan memori GPU agar tidak crash!
+            
             await MainActor.run {
                 self.vlmLabels = [result.object]
                 self.isVLMDone = true
@@ -173,6 +175,8 @@ struct ResultLoadingView: View {
             }
         } catch {
             print("FastVLM Error: \(error)")
+            fastVLMService.unload() // 🚀 Bebaskan memori GPU bahkan saat error
+            
             await MainActor.run {
                 self.vlmLabels = self.labels.isEmpty ? ["Unknown"] : self.labels
                 self.isVLMDone = true
