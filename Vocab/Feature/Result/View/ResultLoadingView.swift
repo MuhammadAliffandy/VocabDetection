@@ -9,8 +9,8 @@ struct ResultLoadingView: View {
     @State private var fastVLMService = FastVLMService()
     
     @State private var navigateToResult = false
-    @State private var translationStatus: String = "Memuat model FastVLM..."
-    @State private var translationSubtitle: String = "Sedang menginisialisasi model deteksi objek..."
+    @State private var translationStatus: String = "Memindai kosa kata..."
+    @State private var translationSubtitle: String = "Menganalisis gambar untuk menemukan objek..."
     @State private var isDownloadingLanguage: Bool = false
     
     @State private var vlmLabels: [String] = []
@@ -157,8 +157,8 @@ struct ResultLoadingView: View {
         await fastVLMService.ensureLoaded()
         
         await MainActor.run {
-            translationStatus = "Mendeteksi objek..."
-            translationSubtitle = "Menganalisis gambar menggunakan model VLM"
+            translationStatus = "Memindai kosa kata..."
+            translationSubtitle = "Sedang memproses gambar Anda..."
         }
         
         do {

@@ -30,14 +30,16 @@ class AppleIntelligenceLLMService: LLMServiceProtocol {
         #if canImport(FoundationModels)
         // Inisialisasi LanguageModelSession dengan instruksi khusus (System Prompt)
         let systemPrompt = """
-        You are a creative English teacher. You will be given a word or phrase. 
-        Create exactly 4 very basic, simple, and easy-to-use English sentences that actively use that exact word.
+        You are a creative English teacher. You will be given a single word representing a physical object detected by a camera.
+        CRITICAL: The word is ALWAYS a NOUN representing a physical object (e.g. if the word is 'watch', it means a wristwatch, NOT the verb 'to watch').
+        
+        Create exactly 4 very basic, simple, and easy-to-use English sentences that actively use that exact noun.
         Provide exactly one Statement, one Question, one Command, and one Exclamation.
         Also, you MUST provide the Indonesian phonetic spelling (cara baca lokal) of the word. DO NOT just repeat the English word! 
         Examples of phonetic spelling: 
         - 'chair' -> 'ceir'
         - 'shoe' -> 'syu'
-        - 'computer keyboard' -> 'kompyuter kibord'
+        - 'watch' -> 'woc'
         Format your response EXACTLY like this with no extra text:
         PRONUNCIATION: [indonesian phonetic spelling]
         STATEMENT: [your simple sentence]

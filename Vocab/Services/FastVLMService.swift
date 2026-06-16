@@ -88,9 +88,11 @@ final class FastVLMService {
     func detectScene(in image: UIImage) async throws -> SceneResult {
         let reply = try await respond(
             to: """
-            Look at this photo. Identify ONLY the single most prominent, largest, and dominant foreground object (can be anything like an everyday item, person, animal, plant, etc.), and nothing else. Do NOT describe the setting or situation.
-            Answer in exactly this format and nothing else:
-            OBJECTS: this is [object]
+            Identify the single main object in this image.
+            Respond with EXACTLY ONE NOUN in English (e.g. 'cat', 'bottle', 'chair').
+            Do not include articles like 'a', 'an', or 'the'.
+            Do not write sentences or descriptions.
+            Just the one word name of the object.
             """,
             about: image
         )
@@ -127,17 +129,26 @@ final class FastVLMService {
     // MARK: - Parsing the model's text output
 
     private func parseScene(_ text: String) -> SceneResult {
-        let prefix = "OBJECTS: this is "
-        for line in text.components(separatedBy: .newlines) {
-            let cleanLine = line.trimmingCharacters(in: .whitespacesAndNewlines)
-            if cleanLine.lowercased().hasPrefix(prefix.lowercased()) {
-                let objectName = String(cleanLine.dropFirst(prefix.count))
-                    .trimmingCharacters(in: .whitespacesAndNewlines)
-                return SceneResult(object: objectName.replacingOccurrences(of: ".", with: ""))
-            }
-        }
-        // If exact format not found, return the raw text trimmed
-        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        return SceneResult(object: trimmed.isEmpty ? "Unknown" : trimmed)
+        // 1. Clean punctuation
+        let charactersToRemove = CharacterSet.punctuationCharacters
+        let cleaned = text.components(separatedBy: charactersToRemove).joined(separator: "")
+        
+        // 2. Split into words
+        let words = cleaned.components(separatedBy: .whitespacesAndNewlines)
+            .filter { !$0.isEmpty }
+            
+        // 3. Filter out common conversational/stop words that VLM might output if it ignores the prompt
+        let stopWords: Set<String> = [
+            "a", "an", "the", "this", "is", "object", "objects", "i", "see",
+            "picture", "image", "photo", "shows", "main", "prominent", "foreground", "it"
+        ]
+        
+        let meaningfulWords = words.filter { !stopWords.contains($0.lowercased()) }
+        
+        // 4. Use the last meaningful word as the object noun (e.g., "red apple" -> "apple")
+        // If empty (e.g. model outputted nothing useful), fallback to "Unknown"
+        let finalWord = meaningfulWords.last ?? "Unknown"
+        
+        return SceneResult(object: finalWord.capitalized)
     }
 }

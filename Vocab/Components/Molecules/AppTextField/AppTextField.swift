@@ -29,6 +29,9 @@ struct AppTextField: View {
             .padding(.trailing,AppPadding.shapePadding * 1.5 )
             .font(.appHeadline)
             .foregroundStyle(.primary)
+            .onAppear {
+                UITextField.appearance().clearButtonMode = .whileEditing
+            }
        
         
         }

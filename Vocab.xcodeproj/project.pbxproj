@@ -16,6 +16,9 @@
 		2FF9EAE42FE03417000F1FA8 /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = 2FF9EAE32FE03417000F1FA8 /* MLXLLM */; };
 		2FF9EAE92FE03419000F1FA8 /* HuggingFace in Frameworks */ = {isa = PBXBuildFile; productRef = 2FF9EAE72FE03419000F1FA8 /* HuggingFace */; };
 		2FF9EAEA2FE03419000F1FA8 /* Tokenizers in Frameworks */ = {isa = PBXBuildFile; productRef = 2FF9EAE82FE03419000F1FA8 /* Tokenizers */; };
+		302E45D5BE60D0C0F7110187 /* MLXNN in Frameworks */ = {isa = PBXBuildFile; productRef = C17443E8B98943344BC192DD /* MLXNN */; };
+		7FBC4041AA838E00128F0271 /* MLX in Frameworks */ = {isa = PBXBuildFile; productRef = 8D694218A05B39F6C6BD6137 /* MLX */; };
+		8F0C4F31A776926E79851199 /* MLXFast in Frameworks */ = {isa = PBXBuildFile; productRef = 66F14599A9DE085B0762D4B5 /* MLXFast */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,11 +26,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		2FC22EB52FDFF33000FB1398 /* FastVLMModel */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = FastVLMModel;
-			sourceTree = "<group>";
-		};
 		D09764172FD3AD8C00E6207A /* Vocab */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Vocab;
@@ -49,6 +47,9 @@
 				2FF9EAE22FE03417000F1FA8 /* MLXHuggingFace in Frameworks */,
 				2FF9EAE92FE03419000F1FA8 /* HuggingFace in Frameworks */,
 				2FF9EAEA2FE03419000F1FA8 /* Tokenizers in Frameworks */,
+				7FBC4041AA838E00128F0271 /* MLX in Frameworks */,
+				8F0C4F31A776926E79851199 /* MLXFast in Frameworks */,
+				302E45D5BE60D0C0F7110187 /* MLXNN in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -67,7 +68,6 @@
 			children = (
 				D09764172FD3AD8C00E6207A /* Vocab */,
 				D09764162FD3AD8C00E6207A /* Products */,
-				2FC22EB52FDFF33000FB1398 /* FastVLMModel */,
 				2FF9EADA2FE03417000F1FA8 /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -96,7 +96,6 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				2FC22EB52FDFF33000FB1398 /* FastVLMModel */,
 				D09764172FD3AD8C00E6207A /* Vocab */,
 			);
 			name = Vocab;
@@ -110,6 +109,9 @@
 				2FF9EAE32FE03417000F1FA8 /* MLXLLM */,
 				2FF9EAE72FE03419000F1FA8 /* HuggingFace */,
 				2FF9EAE82FE03419000F1FA8 /* Tokenizers */,
+				8D694218A05B39F6C6BD6137 /* MLX */,
+				66F14599A9DE085B0762D4B5 /* MLXFast */,
+				C17443E8B98943344BC192DD /* MLXNN */,
 			);
 			productName = Vocab;
 			productReference = D09764152FD3AD8C00E6207A /* Vocab.app */;
@@ -143,6 +145,8 @@
 				2FF9EAD52FE03312000F1FA8 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */,
 				2FF9EAE52FE03419000F1FA8 /* XCRemoteSwiftPackageReference "swift-huggingface" */,
 				2FF9EAE62FE03419000F1FA8 /* XCRemoteSwiftPackageReference "swift-transformers" */,
+				D0F966D92FE110A00015829F /* XCRemoteSwiftPackageReference "mlx-swift-examples" */,
+				498E4FF4A9C72DCF7B1701ED /* XCRemoteSwiftPackageReference "mlx-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D09764162FD3AD8C00E6207A /* Products */;
@@ -304,7 +308,7 @@
 				CODE_SIGN_ENTITLEMENTS = Vocab/Vocab.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4Z34RN4542;
+				DEVELOPMENT_TEAM = ZB4G54X6W4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Agar anda dapat mengambil foto data mendeteksi kosakata pada benda yang anda foto, aplikasi kami memerlukan akses ke kamera anda";
@@ -319,7 +323,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.dev.training.Vocab;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fandy.training.Vocab;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -339,7 +343,7 @@
 				CODE_SIGN_ENTITLEMENTS = Vocab/Vocab.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4Z34RN4542;
+				DEVELOPMENT_TEAM = ZB4G54X6W4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Agar anda dapat mengambil foto data mendeteksi kosakata pada benda yang anda foto, aplikasi kami memerlukan akses ke kamera anda";
@@ -354,7 +358,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.dev.training.Vocab;
+				PRODUCT_BUNDLE_IDENTIFIER = com.fandy.training.Vocab;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -405,6 +409,8 @@
 				kind = upToNextMajorVersion;
 				minimumVersion = 0.9.0;
 			};
+			traits = (
+			);
 		};
 		2FF9EAE62FE03419000F1FA8 /* XCRemoteSwiftPackageReference "swift-transformers" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -412,6 +418,24 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.3.0;
+			};
+			traits = (
+			);
+		};
+		498E4FF4A9C72DCF7B1701ED /* XCRemoteSwiftPackageReference "mlx-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ml-explore/mlx-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.31.4;
+			};
+		};
+		D0F966D92FE110A00015829F /* XCRemoteSwiftPackageReference "mlx-swift-examples" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ml-explore/mlx-swift-examples.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.29.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -461,6 +485,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2FF9EAE62FE03419000F1FA8 /* XCRemoteSwiftPackageReference "swift-transformers" */;
 			productName = Tokenizers;
+		};
+		66F14599A9DE085B0762D4B5 /* MLXFast */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 498E4FF4A9C72DCF7B1701ED /* XCRemoteSwiftPackageReference "mlx-swift" */;
+			productName = MLXFast;
+		};
+		8D694218A05B39F6C6BD6137 /* MLX */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 498E4FF4A9C72DCF7B1701ED /* XCRemoteSwiftPackageReference "mlx-swift" */;
+			productName = MLX;
+		};
+		C17443E8B98943344BC192DD /* MLXNN */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 498E4FF4A9C72DCF7B1701ED /* XCRemoteSwiftPackageReference "mlx-swift" */;
+			productName = MLXNN;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
