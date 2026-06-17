@@ -127,16 +127,28 @@ final class FastVLMService {
     // MARK: - Parsing the model's text output
 
     private func parseScene(_ text: String) -> SceneResult {
-        let prefix = "OBJECTS: this is "
         for line in text.components(separatedBy: .newlines) {
-            let cleanLine = line.trimmingCharacters(in: .whitespacesAndNewlines)
-            if cleanLine.lowercased().hasPrefix(prefix.lowercased()) {
-                let objectName = String(cleanLine.dropFirst(prefix.count))
-                    .trimmingCharacters(in: .whitespacesAndNewlines)
-                return SceneResult(object: objectName.replacingOccurrences(of: ".", with: ""))
+            var cleanLine = line.trimmingCharacters(in: .whitespacesAndNewlines)
+            if cleanLine.isEmpty { continue }
+            
+            let fullPrefix = "OBJECTS: this is "
+            let shortPrefix = "OBJECTS: "
+            let singlePrefix = "OBJECT: "
+            
+            if cleanLine.lowercased().hasPrefix(fullPrefix.lowercased()) {
+                cleanLine = String(cleanLine.dropFirst(fullPrefix.count))
+            } else if cleanLine.lowercased().hasPrefix(shortPrefix.lowercased()) {
+                cleanLine = String(cleanLine.dropFirst(shortPrefix.count))
+            } else if cleanLine.lowercased().hasPrefix(singlePrefix.lowercased()) {
+                cleanLine = String(cleanLine.dropFirst(singlePrefix.count))
             }
+            
+            cleanLine = cleanLine.trimmingCharacters(in: .whitespacesAndNewlines)
+            cleanLine = cleanLine.replacingOccurrences(of: ".", with: "")
+            
+            return SceneResult(object: cleanLine.isEmpty ? "Unknown" : cleanLine)
         }
-        // If exact format not found, return the raw text trimmed
+        
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         return SceneResult(object: trimmed.isEmpty ? "Unknown" : trimmed)
     }

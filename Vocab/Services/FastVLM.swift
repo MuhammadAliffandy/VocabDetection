@@ -11,7 +11,6 @@ import Foundation
 @preconcurrency import MLXLMCommon
 @preconcurrency import MLXNN
 @preconcurrency import MLXVLM
-import Tokenizers
 
 // FastVLM is Qwen2VL with a custom vision tower.
 
