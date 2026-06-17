@@ -22,7 +22,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		D09764152FD3AD8C00E6207A /* Vocab.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Vocab.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D09764152FD3AD8C00E6207A /* Nero.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Nero.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -75,7 +75,7 @@
 		D09764162FD3AD8C00E6207A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D09764152FD3AD8C00E6207A /* Vocab.app */,
+				D09764152FD3AD8C00E6207A /* Nero.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -114,7 +114,7 @@
 				C17443E8B98943344BC192DD /* MLXNN */,
 			);
 			productName = Vocab;
-			productReference = D09764152FD3AD8C00E6207A /* Vocab.app */;
+			productReference = D09764152FD3AD8C00E6207A /* Nero.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -145,7 +145,6 @@
 				2FF9EAD52FE03312000F1FA8 /* XCRemoteSwiftPackageReference "mlx-swift-lm" */,
 				2FF9EAE52FE03419000F1FA8 /* XCRemoteSwiftPackageReference "swift-huggingface" */,
 				2FF9EAE62FE03419000F1FA8 /* XCRemoteSwiftPackageReference "swift-transformers" */,
-				D0F966D92FE110A00015829F /* XCRemoteSwiftPackageReference "mlx-swift-examples" */,
 				498E4FF4A9C72DCF7B1701ED /* XCRemoteSwiftPackageReference "mlx-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -311,6 +310,7 @@
 				DEVELOPMENT_TEAM = ZB4G54X6W4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Nero;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Agar anda dapat mengambil foto data mendeteksi kosakata pada benda yang anda foto, aplikasi kami memerlukan akses ke kamera anda";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Aplikasi membutuhkan akses galeri untuk mengambil gambar yang ingin kamu pindai menjadi kosakata.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -324,7 +324,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fandy.training.Vocab;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Nero;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = "";
@@ -346,6 +346,7 @@
 				DEVELOPMENT_TEAM = ZB4G54X6W4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Nero;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Agar anda dapat mengambil foto data mendeteksi kosakata pada benda yang anda foto, aplikasi kami memerlukan akses ke kamera anda";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Aplikasi membutuhkan akses galeri untuk mengambil gambar yang ingin kamu pindai menjadi kosakata.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -359,7 +360,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.fandy.training.Vocab;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Nero;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = "";
@@ -428,14 +429,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 0.31.4;
-			};
-		};
-		D0F966D92FE110A00015829F /* XCRemoteSwiftPackageReference "mlx-swift-examples" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/ml-explore/mlx-swift-examples.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.29.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

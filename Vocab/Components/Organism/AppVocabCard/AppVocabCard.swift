@@ -55,30 +55,6 @@ struct AppVocabCard: View {
                         longPress()
                     }
                 }
-                .overlay(
-                    VStack{
-                        Spacer()
-                        
-                        Rectangle()
-                            .fill(
-                                LinearGradient(
-                                    colors: [.clear, Color.brandColorPrimaryTeal.opacity(0.5)],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                                
-                        )
-                        .frame(height: 60)
-                        .clipShape(
-                            .rect(
-                                topLeadingRadius: 0,
-                                bottomLeadingRadius: AppRadius.vocabShapeRadius,
-                                bottomTrailingRadius: AppRadius.vocabShapeRadius,
-                                topTrailingRadius: 0
-                            )
-                        )
-                    }
-                )
                 .overlay(alignment: .topTrailing) {
                     if isEditingMode {
                         Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")

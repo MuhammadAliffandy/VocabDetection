@@ -63,7 +63,13 @@ struct HomeView: View {
     
     var body: some View {
         NavigationStack {
-            ZStack {
+            // Set alignment to .top so the blur layer stays correctly at the status bar
+            ZStack(alignment: .top) {
+                
+                // Full screen background to prevent harsh color lines at the safe area boundary
+                Color(UIColor.systemGroupedBackground)
+                    .ignoresSafeArea()
+                
                 ScrollView {
                     VStack(spacing: AppSpacing.medium) {
                         if isEditing {
@@ -124,7 +130,6 @@ struct HomeView: View {
                                         withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
                                             isMagnifying = isClicked
                                         }
-                               
                                     },
                                     horizontalPadding: AppPadding.areaPadding
                                 )
@@ -196,7 +201,7 @@ struct HomeView: View {
                             
                         } else {
                             AppHeadline(
-                                title: isMagnifying && !typping.isEmpty ? "Hasil Pencarian" 
+                                title: isMagnifying && !typping.isEmpty ? "Hasil Pencarian"
                                        : (dashboardFilter == .today ? "Hari Ini" : "Terbaru"),
                                 subtitle: isMagnifying && !typping.isEmpty ? "" : "Foto terbaru yang anda tambahkan",
                                 titleStyle: .appHeadlinev2,
@@ -240,15 +245,16 @@ struct HomeView: View {
                                             }
                                         }
                                     )
-                                
+                                    
                                 }
                             }
                             .animation(.default, value: filteredVocabs)
                         }
                     }
+                    // Keep the padding inside the ScrollView so content scrolls completely
+                    .padding(AppPadding.areaPadding)
                 }
                 .scrollIndicators(.hidden)
-                .padding(AppPadding.areaPadding)
                 .onChange(of: typping) { _, newValue in
                     Task {
                         try? await Task.sleep(nanoseconds: 300_000_000) // 300ms debounce
@@ -259,10 +265,7 @@ struct HomeView: View {
                         }
                     }
                 }
-                .background(Color(UIColor.systemGroupedBackground))
                 .disabled(isDemo)
-                
-
                 
                 if isDemo {
                     Color.black.opacity(0.7)
@@ -282,10 +285,20 @@ struct HomeView: View {
                     .accessibilityLabel("Buka Kamera")
                     .accessibilityHint("Buka kamera untuk memfoto dan mendeteksi kosakata baru")
                     .appTooltip("Ketuk di sini untuk\nmembuka kamera dan\nmulai memfoto benda\ndisekitarmu",
-                        isVisible: isDemo ? true : false)
+                                isVisible: isDemo ? true : false)
                 }
                 .padding(AppPadding.areaPadding * 2)
                 .ignoresSafeArea(.keyboard)
+                
+                // Native blur layer directly over the status bar
+                // This will blend perfectly with the full screen background when at the top,
+                // and blur the content seamlessly when scrolling up.
+                Rectangle()
+                    .fill(.regularMaterial)
+                    .frame(height: 0)
+                    .blur(radius: 40)
+                    .ignoresSafeArea(.container, edges: .top)
+              
                 
             }
             .ignoresSafeArea(.container, edges: .bottom)
@@ -298,8 +311,8 @@ struct HomeView: View {
                 let sentences = vocab.sentences.map {
                     GeneratedSentence(type: $0.type, text: $0.text, meaning: $0.meaning)
                 }
-                let dictToInject = vocab.vocabDictionary.isEmpty 
-                    ? [vocab.textVocab.lowercased(): vocab.textMeaning] 
+                let dictToInject = vocab.vocabDictionary.isEmpty
+                    ? [vocab.textVocab.lowercased(): vocab.textMeaning]
                     : vocab.vocabDictionary
                     
                 ResultView(
