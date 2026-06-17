@@ -63,15 +63,18 @@ struct HomeView: View {
     
     var body: some View {
         NavigationStack {
-            // Set alignment to .top so the blur layer stays correctly at the status bar
+            // Using .top alignment to keep the custom blur layer pinned to the Status Bar
             ZStack(alignment: .top) {
                 
-                // Full screen background to prevent harsh color lines at the safe area boundary
+                // Full screen background color to prevent any white harsh lines at the safe area boundaries
                 Color(UIColor.systemGroupedBackground)
                     .ignoresSafeArea()
                 
                 ScrollView {
                     VStack(spacing: AppSpacing.medium) {
+                        // Extra top padding inside the scroll view so the original header stays clear of the Dynamic Island initially
+                        Color.clear.frame(height: 12)
+                        
                         if isEditing {
                             HStack {
                                 Button(action: {
@@ -251,10 +254,11 @@ struct HomeView: View {
                             .animation(.default, value: filteredVocabs)
                         }
                     }
-                    // Keep the padding inside the ScrollView so content scrolls completely
-                    .padding(AppPadding.areaPadding)
                 }
                 .scrollIndicators(.hidden)
+                // Changing to horizontal and bottom padding allows the ScrollView container to stretch fully to the top edge
+                .padding(.horizontal, AppPadding.areaPadding)
+                .padding(.bottom, AppPadding.areaPadding)
                 .onChange(of: typping) { _, newValue in
                     Task {
                         try? await Task.sleep(nanoseconds: 300_000_000) // 300ms debounce
@@ -290,15 +294,12 @@ struct HomeView: View {
                 .padding(AppPadding.areaPadding * 2)
                 .ignoresSafeArea(.keyboard)
                 
-                // Native blur layer directly over the status bar
-                // This will blend perfectly with the full screen background when at the top,
-                // and blur the content seamlessly when scrolling up.
+                // Native blur bar overlay that matches standard iPhone status bar height precisely
                 Rectangle()
-                    .fill(.regularMaterial)
-                    .frame(height: 0)
-                    .blur(radius: 40)
-                    .ignoresSafeArea(.container, edges: .top)
-              
+                    .fill(.ultraThinMaterial)
+                    .frame(height: 47)
+                    .ignoresSafeArea(edges: .top)
+                    
                 
             }
             .ignoresSafeArea(.container, edges: .bottom)
