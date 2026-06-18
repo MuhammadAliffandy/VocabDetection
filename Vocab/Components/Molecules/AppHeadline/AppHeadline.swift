@@ -41,8 +41,16 @@ struct AppHeadline: View {
         .padding(0)
         .frame(
             maxWidth: isFullWidth ? .infinity : nil,
-            alignment: .leading
+            alignment: frameAlignment
         )
+    }
+    
+    private var frameAlignment: Alignment {
+        switch aligment {
+        case .center: return .center
+        case .trailing: return .trailing
+        default: return .leading
+        }
     }
 }
 

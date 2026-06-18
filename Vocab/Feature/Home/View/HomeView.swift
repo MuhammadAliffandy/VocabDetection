@@ -1,5 +1,5 @@
 //
-//  Home.swift
+//  HomeView.swift
 //  Vocab
 //
 //  Created by Muhammad Aliffandy on 06/06/26.
@@ -12,150 +12,82 @@ struct HomeView: View {
     
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \VocabItem.createDate, order: .reverse) private var savedVocabs: [VocabItem]
+    @Query private var streaks: [DailyStreak]
     
     @AppStorage("showDemo") private var showDemo: Bool = false
     var isDemo: Bool { return showDemo }
-    @State private var isMagnifying: Bool = false
-    @State private var showDropdown: Bool = false
+    
+    @State private var isShowingFlashcard = false
     @State private var selectedVocab: VocabItem?
-    @State private var typping: String = ""
-    @State private var debouncedTypping: String = ""
-    @State private var isShowingCamera = false
-    @State private var capturedImage: UIImage?
-    @State private var isEditing: Bool = false
-    @State private var selectedItems: Set<VocabItem.ID> = []
 
-    enum DashboardFilterType {
-        case total
-        case today
+    @AppStorage("lastFlashcardDate") private var lastFlashcardDate: String = ""
+    @AppStorage("lastDragDropDate") private var lastDragDropDate: String = ""
+    @State private var isShowingDragDrop = false
+
+    var todayVocabs: [VocabItem] {
+        let calendar = Calendar.current
+        return savedVocabs.filter { calendar.isDateInToday($0.createDate) }
     }
     
-    @State private var dashboardFilter: DashboardFilterType = .total
-
-    var filteredVocabs: [VocabItem] {
-        let baseList: [VocabItem]
-        if dashboardFilter == .today {
-            let calendar = Calendar.current
-            baseList = savedVocabs.filter { calendar.isDateInToday($0.createDate) }
-        } else {
-            baseList = savedVocabs
-        }
-        
-        if debouncedTypping.isEmpty {
-            return baseList
-        } else {
-            return baseList.filter { item in
-                item.textVocab.lowercased().contains(debouncedTypping.lowercased()) ||
-                item.textMeaning.lowercased().contains(debouncedTypping.lowercased())
-            }
-        }
-    }
-
     var todayVocabCount: Int {
+        return todayVocabs.count
+    }
+    
+    // Streak Minggu Ini
+    var weeklyStreakCount: Int {
         let calendar = Calendar.current
-        return savedVocabs.filter { calendar.isDateInToday($0.createDate) }.count
+        guard let aWeekAgo = calendar.date(byAdding: .day, value: -7, to: .now) else { return 0 }
+        return streaks.filter { $0.timestamp >= aWeekAgo }.count
+    }
+    
+    // Aktivitas Minggu Ini (dummy count based on vocabs + streaks for now, since we only track completed days)
+    var weeklyActivityCount: Int {
+        let calendar = Calendar.current
+        guard let aWeekAgo = calendar.date(byAdding: .day, value: -7, to: .now) else { return 0 }
+        let vocabsThisWeek = savedVocabs.filter { $0.createDate >= aWeekAgo }.count
+        return vocabsThisWeek + weeklyStreakCount * 2
+    }
+    
+    var todayString: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter.string(from: .now)
+    }
+    
+    var hasPlayedFlashcardToday: Bool {
+        return lastFlashcardDate == todayString
+    }
+    
+    var hasPlayedDragDropToday: Bool {
+        return lastDragDropDate == todayString
     }
 
     let gridColumns = [
         GridItem(.flexible(), spacing: AppSpacing.medium),
         GridItem(.flexible(), spacing: AppSpacing.medium)
     ]
-    
+
     var body: some View {
         NavigationStack {
-            // Using .top alignment to keep the custom blur layer pinned to the Status Bar
             ZStack(alignment: .top) {
                 
-                // Full screen background color to prevent any white harsh lines at the safe area boundaries
                 Color(UIColor.systemGroupedBackground)
                     .ignoresSafeArea()
                 
                 ScrollView {
                     VStack(spacing: AppSpacing.medium) {
-                        // Extra top padding inside the scroll view so the original header stays clear of the Dynamic Island initially
                         Color.clear.frame(height: 12)
                         
-                        if isEditing {
-                            HStack {
-                                Button(action: {
-                                    withAnimation {
-                                        isEditing = false
-                                        selectedItems.removeAll()
-                                    }
-                                }) {
-                                    Text("Batal")
-                                        .font(.system(size: 17, weight: .regular))
-                                        .foregroundColor(.brandColorPrimaryTeal)
-                                }
-                                .accessibilityLabel("Batal edit")
-                                .accessibilityHint("Batalkan mode hapus kosakata")
-                                
-                                Spacer()
-                                
-                                Text("\(selectedItems.count) Terpilih")
-                                    .font(.system(size: 17, weight: .semibold))
-                                    .foregroundColor(.primary)
-                                
-                                Spacer()
-                                
-                                Button(action: {
-                                    deleteSelectedItems()
-                                }) {
-                                    Image(systemName: "trash")
-                                        .font(.system(size: 20))
-                                        .foregroundColor(selectedItems.isEmpty ? .gray : .red)
-                                }
-                                .disabled(selectedItems.isEmpty)
-                                .accessibilityLabel("Hapus kosakata terpilih")
-                                .accessibilityHint("Hapus kosakata yang sudah dipilih")
-                            }
-                            .padding(.top, 8)
-                            .padding(.bottom, 16)
-                            .transition(.opacity)
-                        } else {
-                            HStack(alignment: .top, spacing: AppSpacing.medium) {
-                                if !isMagnifying {
-                                    AppHeadline(
-                                        title: "Kosakata Kamu",
-                                        subtitle: "Jumlah kosakata yang sudah kamu simpan",
-                                        titleStyle: .appHeadlinev2,
-                                        subtitleStyle: .appHeadline,
-                                        titleColor: .primary,
-                                        aligment: .leading,
-                                        spacing: AppSpacing.textSpacing
-                                    )
-                                } else {
-                                    AppTextField(text: $typping)
-                                }
-                                
-                                AppToolbar(
-                                    onMagnifyingTap: { isClicked in
-                                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                                            isMagnifying = isClicked
-                                        }
-                                    },
-                                    horizontalPadding: AppPadding.areaPadding
-                                )
-                            }
-                            .transition(.opacity)
-                        }
-                        
-                        if !isMagnifying {
-                            HStack(spacing: AppSpacing.medium) {
+                        if !savedVocabs.isEmpty {
+                            WeeklyStreakTracker()
+                            
+                            LazyVGrid(columns: gridColumns, spacing: AppSpacing.medium) {
                                 AppVocabDashboardCard(
                                     icon: AppIcon.BookPagesIcon,
                                     title: "Total",
                                     subtitle: "Kosakata",
                                     count: "\(savedVocabs.count)"
                                 )
-                                .accessibilityElement(children: .combine)
-                                .accessibilityLabel("Total \(savedVocabs.count) Kosakata")
-                                .accessibilityHint("Tampilkan semua kosakata")
-                                .onTapGesture {
-                                    withAnimation {
-                                        dashboardFilter = .total
-                                    }
-                                }
                                 
                                 AppVocabDashboardCard(
                                     icon: AppIcon.ClockBadgeCheckmarkIcon,
@@ -163,112 +95,76 @@ struct HomeView: View {
                                     subtitle: "Hari ini",
                                     count: "\(todayVocabCount)"
                                 )
-                                .accessibilityElement(children: .combine)
-                                .accessibilityLabel("\(todayVocabCount) Kosakata Hari ini")
-                                .accessibilityHint("Tampilkan kosakata yang ditambahkan hari ini")
-                                .onTapGesture {
-                                    withAnimation {
-                                        dashboardFilter = .today
-                                    }
-                                }
-                            }
-                        }
-
-                        if savedVocabs.isEmpty {
-                            Spacer()
-                                .frame(height: 100)
-                            
-                            AppHeadline(
-                                title: "Belum ada Kosakata",
-                                subtitle: "Silahkan ambil gambar dengan kamera atau galeri untuk menemukan kosakata baru.",
-                                titleStyle: .appHeadlinev2,
-                                subtitleStyle: .appHeadline,
-                                titleColor: .primary,
-                                aligment: .center,
-                                spacing: AppSpacing.textSpacing,
-                                textAlign: .center
-                            )
-                            .padding(.horizontal, 20)
-                            
-                        } else if filteredVocabs.isEmpty {
-                            Spacer()
-                                .frame(height: 100)
                                 
-                            AppText(
-                                text: "Belum ada kosakata tersimpan\ndengan nama ini",
-                                fontStyle: .appSubheadline,
-                                textColor: .textColorSecondaryBlackGrey
-                            )
-                            .padding(.horizontal, 20)
-                            .multilineTextAlignment(.center)
-                            
-                        } else {
-                            AppHeadline(
-                                title: isMagnifying && !typping.isEmpty ? "Hasil Pencarian"
-                                       : (dashboardFilter == .today ? "Hari Ini" : "Terbaru"),
-                                subtitle: isMagnifying && !typping.isEmpty ? "" : "Foto terbaru yang anda tambahkan",
-                                titleStyle: .appHeadlinev2,
-                                subtitleStyle: .appHeadline,
-                                titleColor: .primary,
-                                aligment: .leading,
-                                spacing: AppSpacing.textSpacing
-                            )
-                            
-                            LazyVGrid(columns: gridColumns, spacing: AppSpacing.medium) {
-                                ForEach(filteredVocabs) { item in
-                                    AppVocabCard(
-                                        image: AppImageAsset.dummyImage,
-                                        imageData: item.imageData,
-                                        title: item.textVocab,
-                                        subtitle: item.textMeaning,
-                                        isEditingMode: isEditing,
-                                        isSelected: selectedItems.contains(item.id),
-                                        onTapGesture: {
-                                            if isEditing {
-                                                withAnimation {
-                                                    if selectedItems.contains(item.id) {
-                                                        selectedItems.remove(item.id)
-                                                    } else {
-                                                        selectedItems.insert(item.id)
-                                                    }
-                                                }
-                                            } else {
-                                                withAnimation(.easeInOut) {
-                                                    selectedVocab = item
-                                                }
-                                            }
-                                        },
-                                        onLongPressGesture: {
-                                            if !isEditing {
-                                                UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-                                                withAnimation {
-                                                    isEditing = true
-                                                    selectedItems.insert(item.id)
-                                                }
-                                            }
-                                        }
-                                    )
-                                    
-                                }
+                                AppVocabDashboardCard(
+                                    icon: "flame.fill",
+                                    title: "Streak",
+                                    subtitle: "Minggu ini",
+                                    count: "\(weeklyStreakCount)"
+                                )
+                                
+                                AppVocabDashboardCard(
+                                    icon: "gamecontroller.fill",
+                                    title: "Aktivitas",
+                                    subtitle: "Minggu ini",
+                                    count: "\(weeklyActivityCount)"
+                                )
                             }
-                            .animation(.default, value: filteredVocabs)
+                            
+                            VStack(alignment: .leading, spacing: AppSpacing.regular) {
+                                AppHeadline(
+                                    title: "Aktivitas Hari Ini",
+                                    subtitle: "Selesaikan 2 misi untuk streak!",
+                                    titleStyle: .appHeadlinev2,
+                                    subtitleStyle: .appHeadline,
+                                    titleColor: .primary,
+                                    aligment: .leading,
+                                    spacing: AppSpacing.textSpacing
+                                )
+                                .padding(.top, AppSpacing.regular)
+                                
+                                AppBigMissionCard(
+                                    title: "Flashcard",
+                                    subtitle: "Uji ingatanmu dengan tebak kartu.",
+                                    backgroundColor: .brandColorPrimaryTeal,
+                                    iconName: "brain.head.profile",
+                                    action: { isShowingFlashcard = true },
+                                    isCompleted: hasPlayedFlashcardToday
+                                )
+                                
+                                AppBigMissionCard(
+                                    title: "Tebak Kalimat",
+                                    subtitle: "Drag & drop kata yang hilang.",
+                                    backgroundColor: Color(red: 0.1, green: 0.6, blue: 0.4),
+                                    iconName: "text.cursor",
+                                    action: { isShowingDragDrop = true },
+                                    isCompleted: hasPlayedDragDropToday
+                                )
+                            }
+                        } else {
+                            // Show empty state for flashcard
+                            VStack(spacing: AppSpacing.medium) {
+                                AppHeadline(
+                                    title: "Mulai Bermain",
+                                    subtitle: "Ambil foto kosakata baru untuk bisa memainkan flashcard.",
+                                    titleStyle: .appHeadline,
+                                    subtitleStyle: .appSubheadline,
+                                    titleColor: .primary,
+                                    aligment: .center,
+                                    spacing: AppSpacing.textSpacing,
+                                    textAlign: .center
+                                )
+                                .padding(.top, AppSpacing.medium)
+                            }
                         }
+                        
+                        Spacer()
+                            .frame(height: 100)
                     }
                 }
                 .scrollIndicators(.hidden)
-                // Changing to horizontal and bottom padding allows the ScrollView container to stretch fully to the top edge
                 .padding(.horizontal, AppPadding.areaPadding)
                 .padding(.bottom, AppPadding.areaPadding)
-                .onChange(of: typping) { _, newValue in
-                    Task {
-                        try? await Task.sleep(nanoseconds: 300_000_000) // 300ms debounce
-                        if typping == newValue {
-                            await MainActor.run {
-                                debouncedTypping = newValue
-                            }
-                        }
-                    }
-                }
                 .disabled(isDemo)
                 
                 if isDemo {
@@ -277,37 +173,15 @@ struct HomeView: View {
                         .allowsHitTesting(true)
                 }
                 
-                VStack {
-                    Spacer()
-                    
-                    AppCameraButton(action: {
-                        withAnimation {
-                            showDemo = false
-                        }
-                        isShowingCamera = true
-                    })
-                    .accessibilityLabel("Buka Kamera")
-                    .accessibilityHint("Buka kamera untuk memfoto dan mendeteksi kosakata baru")
-                    .appTooltip("Ketuk di sini untuk\nmembuka kamera dan\nmulai memfoto benda\ndisekitarmu",
-                                isVisible: isDemo ? true : false)
-                }
-                .padding(AppPadding.areaPadding * 2)
-                .ignoresSafeArea(.keyboard)
-                
-                // Native blur bar overlay that matches standard iPhone status bar height precisely
-                Rectangle()
-                    .fill(.ultraThinMaterial)
-                    .frame(height: 47)
-                    .ignoresSafeArea(edges: .top)
-                    
-                
             }
             .ignoresSafeArea(.container, edges: .bottom)
-            .fullScreenCover(isPresented: $isShowingCamera) {
-                CameraView()
-                    .ignoresSafeArea()
+            .fullScreenCover(isPresented: $isShowingFlashcard) {
+                FlashcardView()
             }
             .navigationBarBackButtonHidden(true)
+            .fullScreenCover(isPresented: $isShowingDragDrop) {
+                DragDropGameView()
+            }
             .navigationDestination(item: $selectedVocab) { vocab in
                 let sentences = vocab.sentences.map {
                     GeneratedSentence(type: $0.type, text: $0.text, meaning: $0.meaning)
@@ -324,21 +198,6 @@ struct HomeView: View {
                     injectedVocab: dictToInject
                 )
             }
-        }
-    }
-    
-    private func deleteSelectedItems() {
-        withAnimation {
-            for item in savedVocabs where selectedItems.contains(item.id) {
-                modelContext.delete(item)
-            }
-            do {
-                try modelContext.save()
-            } catch {
-                print("Failed to save after deletion: \(error)")
-            }
-            selectedItems.removeAll()
-            isEditing = false
         }
     }
 }

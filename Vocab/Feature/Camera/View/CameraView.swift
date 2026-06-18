@@ -7,7 +7,6 @@ struct CameraView: View {
     @Environment(\.dismiss) var dismiss
     
     @State private var navigateToLoading = false
-    @State private var navigateToHome = false
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var currentZoom: CGFloat = 1.0
     
@@ -43,7 +42,7 @@ struct CameraView: View {
                         AppGlassButton(
                             icon: AppIcon.XmarkIcon,
                             action: {
-                                navigateToHome = true
+                                dismiss()
                             },
                             horizontalPadding: AppPadding.areaPadding / 1.7,
                             verticalPadding: AppPadding.areaPadding / 1.7
@@ -141,12 +140,10 @@ struct CameraView: View {
                     navigateToLoading = true
                 }
             }
-            .navigationBarHidden(true)
+            .toolbar(.hidden, for: .tabBar)
+            .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(isPresented: $navigateToLoading) {
                 ResultLoadingView(imageData: cameraManager.capturedImageData, labels: cameraManager.detectedLabels)
-            }
-            .navigationDestination(isPresented: $navigateToHome) {
-                HomeView()
             }
         }
     }

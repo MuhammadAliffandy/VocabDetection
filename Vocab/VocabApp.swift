@@ -12,7 +12,7 @@ import SwiftData
 struct VocabApp: App {
     
     let container: ModelContainer = {
-        let schema = Schema([VocabItem.self, VocabSentence.self])
+        let schema = Schema([VocabItem.self, VocabSentence.self, DailyStreak.self])
         // isAutosaveEnabled true + migration ringan otomatis
         let config = ModelConfiguration(
             schema: schema,

@@ -18,7 +18,7 @@ struct ResultView: View {
     
     @StateObject private var viewModel = ResultViewModel()
     
-    @State private var navigateBackToHome = false
+    @AppStorage("isCameraPresented") private var isCameraPresented: Bool = true
     @State var isRetake: Bool = false
     @State private var showAppleIntelligenceAlert: Bool = false
     
@@ -142,7 +142,7 @@ struct ResultView: View {
                                 } catch {
                                     print("❌ Gagal save SwiftData: \(error)")
                                 }
-                                navigateBackToHome = true
+                                isCameraPresented = false
                             }
                         )
                         .padding(AppPadding.areaPadding)
@@ -177,7 +177,7 @@ struct ResultView: View {
                         AppGlassButton(
                             icon: AppIcon.XmarkIcon,
                             action: {
-                                navigateBackToHome = true
+                                isCameraPresented = false
                             },
                             horizontalPadding: AppPadding.areaPadding / 1.5,
                             verticalPadding: AppPadding.areaPadding / 1.5
@@ -199,11 +199,9 @@ struct ResultView: View {
                 }
             }
             .background(Color(UIColor.systemGroupedBackground))
+            .toolbar(.hidden, for: .tabBar)
             .toolbar(.hidden, for: .navigationBar)
             .navigationBarBackButtonHidden(true)
-            .navigationDestination(isPresented: $navigateBackToHome) {
-                HomeView()
-            }
             .navigationDestination(isPresented: $isRetake) {
                 CameraView()
             }
