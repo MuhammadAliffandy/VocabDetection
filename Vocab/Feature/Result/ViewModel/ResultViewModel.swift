@@ -1,6 +1,8 @@
 import Foundation
 import Combine
 import Translation
+import UIKit
+
 
 struct GeneratedSentence: Identifiable {
     let id = UUID()
@@ -17,9 +19,15 @@ class ResultViewModel: ObservableObject {
     @Published var vocabDictionary: [String: String] = [:]
     @Published var dynamicPronunciation: String = ""
     
+    @Published var translationStatus: String = "Memindai kosa kata..."
+    @Published var translationSubtitle: String = "Menganalisis gambar untuk menemukan objek..."
+    @Published var isDownloadingLanguage: Bool = false
+    @Published var vlmLabels: [String] = []
+    
     private let llmService: LLMServiceProtocol
     private let translationService: TranslationServiceProtocol
     private let ttsService: TextToSpeechServiceProtocol
+    private let fastVLMService = FastVLMService()
     
     var isAppleIntelligenceAvailable: Bool {
         return llmService.isAvailable
@@ -39,6 +47,63 @@ class ResultViewModel: ObservableObject {
     func setTranslationSession(_ session: TranslationSession) {
         if let appleService = translationService as? AppleTranslationService {
             appleService.session = session
+        }
+    }
+    
+    func startProcessing(imageData: Data?, fallbackLabels: [String]) async {
+        isLoading = true
+        guard let data = imageData, let uiImage = UIImage(data: data) else {
+            self.vlmLabels = fallbackLabels.isEmpty ? ["Unknown"] : fallbackLabels
+            await self.checkTranslationAvailability()
+            await self.processDetectedObjects(self.vlmLabels)
+            return
+        }
+        
+        await fastVLMService.ensureLoaded()
+        
+        translationStatus = "Memindai kosa kata..."
+        translationSubtitle = "Sedang memproses gambar Anda..."
+        
+        do {
+            let result = try await fastVLMService.detectScene(in: uiImage)
+            fastVLMService.unload() // Bebaskan GPU
+            
+            self.vlmLabels = [result.object]
+            await self.checkTranslationAvailability()
+            await self.processDetectedObjects(self.vlmLabels)
+            
+        } catch {
+            print("FastVLM Error: \(error)")
+            fastVLMService.unload()
+            
+            self.vlmLabels = fallbackLabels.isEmpty ? ["Unknown"] : fallbackLabels
+            await self.checkTranslationAvailability()
+            await self.processDetectedObjects(self.vlmLabels)
+        }
+    }
+    
+    private func checkTranslationAvailability() async {
+        guard #available(iOS 17.4, *) else { return }
+        let availability = LanguageAvailability()
+        let status = await availability.status(
+            from: Locale.Language(identifier: "en-US"),
+            to: Locale.Language(identifier: "id-ID")
+        )
+        switch status {
+        case .installed:
+            isDownloadingLanguage = false
+            translationStatus = "Memindai kosa kata..."
+            translationSubtitle = "Memindai kata dari gambar yang sudah kamu ambil"
+        case .supported:
+            isDownloadingLanguage = true
+            translationStatus = "Mengunduh paket terjemahan"
+            translationSubtitle = "Paket bahasa Indonesia sedang diunduh. Harap tunggu sebentar..."
+        case .unsupported:
+            isDownloadingLanguage = false
+            translationStatus = "Terjemahan tidak tersedia"
+            translationSubtitle = "Perangkat ini tidak mendukung terjemahan Bahasa Inggris → Indonesia"
+        @unknown default:
+            break
         }
     }
     

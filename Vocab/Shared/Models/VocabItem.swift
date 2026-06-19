@@ -18,10 +18,8 @@ class VocabItem: Identifiable {
     @Relationship(deleteRule: .cascade) var sentences: [VocabSentence]
     var createDate: Date
 
-    /// Disimpan sebagai JSON string karena SwiftData tidak support Dictionary secara native
     private var vocabDictionaryData: String = "{}"
 
-    /// Accessor untuk vocabDictionary — encode/decode dari JSON string
     var vocabDictionary: [String: String] {
         get {
             guard let data = vocabDictionaryData.data(using: .utf8),

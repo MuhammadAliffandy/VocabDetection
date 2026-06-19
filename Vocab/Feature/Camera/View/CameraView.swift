@@ -3,7 +3,7 @@ import PhotosUI
 
 struct CameraView: View {
 
-    @StateObject private var cameraManager = CameraManager()
+    @StateObject private var viewModel = CameraViewModel()
     @Environment(\.dismiss) var dismiss
     
     @State private var navigateToLoading = false
@@ -22,19 +22,32 @@ struct CameraView: View {
             ZStack{
                 Color.black.ignoresSafeArea()
                 
-                CameraPreview(session: cameraManager.session)
-                    .ignoresSafeArea()
-                    .accessibilityLabel("Pratinjau Kamera")
-                    .accessibilityHint("Gunakan dua jari untuk memperbesar atau memperkecil")
-                    .gesture(
-                        MagnificationGesture()
-                            .onChanged { value in
-                                cameraManager.setZoom(factor: currentZoom * value)
-                            }
-                            .onEnded { value in
-                                currentZoom = cameraManager.zoomFactor
-                            }
-                    )
+                GeometryReader { geo in
+                    CameraPreview(session: viewModel.session)
+                        .ignoresSafeArea()
+                        .accessibilityLabel("Pratinjau Kamera")
+                        .accessibilityHint("Gunakan dua jari untuk memperbesar atau memperkecil, ketuk untuk fokus")
+                        .gesture(
+                            MagnificationGesture()
+                                .onChanged { value in
+                                    viewModel.setZoom(factor: currentZoom * value)
+                                }
+                                .onEnded { value in
+                                    currentZoom = viewModel.zoomFactor
+                                }
+                        )
+                        .onTapGesture(coordinateSpace: .local) { location in
+                            // Convert tap location to camera focus point
+                            let x = location.y / geo.size.height
+                            let y = 1.0 - (location.x / geo.size.width)
+                            let focusPoint = CGPoint(x: x, y: y)
+                            viewModel.setFocus(point: focusPoint)
+                            
+                            // Optional: Small haptic when focusing
+                            let generator = UIImpactFeedbackGenerator(style: .light)
+                            generator.impactOccurred()
+                        }
+                }
                 
                 VStack(spacing: 10) {
                     HStack {
@@ -52,22 +65,13 @@ struct CameraView: View {
                         .accessibilityHint("Tutup kamera dan kembali ke halaman utama")
                     }
                   
-                    
                     Spacer()
                 
-
-                    ViewfinderBrackets(isObjectReady: cameraManager.isObjectReady)
+                    ViewfinderBrackets(isObjectReady: viewModel.isObjectReady)
                         .frame(maxHeight: 500)
                         .padding(AppPadding.areaPadding)
-                        .scaleEffect(cameraManager.bracketScale)
-                        .animation(.easeInOut(duration: 0.25), value: cameraManager.bracketScale)
 
                     Spacer()
-
-                    AppToast(
-                        textToast: cameraManager.guidanceMessage
-                    )
-                    .padding(.bottom,20)
                     
                     HStack(){
                        
@@ -89,14 +93,14 @@ struct CameraView: View {
                                 Task {
                                     if let data = try? await newItem?.loadTransferable(type: Data.self),
                                        let image = UIImage(data: data) {
-                                        cameraManager.processGalleryImage(image)
+                                        viewModel.processGalleryImage(image)
                                     }
                                 }
                             }
                             
                             
                             Button(action: {
-                                cameraManager.capturePhoto()
+                                viewModel.capturePhoto()
                             }) {
                                 ZStack {
                                     Circle()
@@ -111,19 +115,19 @@ struct CameraView: View {
                             .accessibilityHint("Ambil foto objek yang ada di pratinjau kamera")
                             
                             Button(action: {
-                                cameraManager.toggleFlash()
+                                viewModel.toggleFlash()
                             }) {
                                 ZStack {
                                     Circle()
                                         .fill(Color.black.opacity(0.4))
                                         .frame(width: 50, height: 50)
-                                    Image(systemName: cameraManager.isFlashOn ? AppIcon.BoltIcon : AppIcon.BoltSlashIcon)
+                                    Image(systemName: viewModel.isFlashOn ? AppIcon.BoltIcon : AppIcon.BoltSlashIcon)
                                         .font(.system(size: 24))
-                                        .foregroundColor(cameraManager.isFlashOn ? .yellow : .white)
+                                        .foregroundColor(viewModel.isFlashOn ? .yellow : .white)
                                 }
                             }
                             .accessibilityLabel("Lampu Kilat")
-                            .accessibilityValue(cameraManager.isFlashOn ? "Menyala" : "Mati")
+                            .accessibilityValue(viewModel.isFlashOn ? "Menyala" : "Mati")
                             .accessibilityHint("Tekan untuk menyalakan atau mematikan lampu kilat")
                         }
                     }
@@ -131,19 +135,19 @@ struct CameraView: View {
                 .padding(AppPadding.areaPadding)
             }
             .onAppear {
-                cameraManager.checkPermissionsAndStart()
+                viewModel.checkPermissionsAndStart()
             }
             .onDisappear {
-                cameraManager.stopSession()
+                viewModel.stopSession()
             }
-            .onChange(of: cameraManager.isProcessingComplete) { _, isComplete in
+            .onChange(of: viewModel.isProcessingComplete) { _, isComplete in
                 if isComplete {
                     navigateToLoading = true
                 }
             }
             .navigationBarHidden(true)
             .navigationDestination(isPresented: $navigateToLoading) {
-                ResultLoadingView(imageData: cameraManager.capturedImageData, labels: cameraManager.detectedLabels)
+                ResultLoadingView(imageData: viewModel.capturedImageData, labels: viewModel.detectedLabels)
             }
             .navigationDestination(isPresented: $navigateToHome) {
                 HomeView()

@@ -9,7 +9,6 @@ import Translation
 @available(iOS 17.4, *)
 class AppleTranslationService: TranslationServiceProtocol {
     
-    // TranslationSession disediakan oleh UI layer melalui modifier .translationTask
     var session: TranslationSession?
     
     func translate(text: String) async throws -> String {

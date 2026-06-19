@@ -59,6 +59,7 @@ struct ResultView: View {
                                 }
                             )
                             .offset(y: 170)
+                            .AppShadowVocabCard()
                         }
                         
                         VStack(spacing: AppSpacing.regular) {
@@ -101,7 +102,7 @@ struct ResultView: View {
                 if isFromHome != nil && isFromHome == false {
                     VStack {
                         AppButton(
-                            textButton: "Simpan",
+                            textButton: "Simpan Kosakata",
                             textColor: Color.white,
                             backgroundColor: Color.brandColorPrimaryTeal,
                             action: {

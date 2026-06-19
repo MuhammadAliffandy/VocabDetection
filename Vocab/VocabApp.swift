@@ -11,6 +11,10 @@ import SwiftData
 @main
 struct VocabApp: App {
     
+    init() {
+        print("📁 LOKASI DATABASE SQLITE ANDA: \n\(URL.applicationSupportDirectory.path)/default.store\n")
+    }
+    
     let container: ModelContainer = {
         let schema = Schema([VocabItem.self, VocabSentence.self])
         // isAutosaveEnabled true + migration ringan otomatis

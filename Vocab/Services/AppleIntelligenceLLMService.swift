@@ -112,7 +112,6 @@ class AppleIntelligenceLLMService: LLMServiceProtocol {
             pronunciation = primaryWord
         }
         
-        // Fallback jika LLM berhalusinasi atau salah format
         if resultDict.isEmpty {
             resultDict = [
                 .statement: "This is a \(primaryWord).",
@@ -124,7 +123,6 @@ class AppleIntelligenceLLMService: LLMServiceProtocol {
         return (sentences: resultDict, pronunciation: pronunciation)
     }
     
-    // Fungsi bantuan Mock jika perangkat belum support Apple Intelligence
     private func generateMockResponse(for primaryWord: String) -> String {
         return """
         PRONUNCIATION: \(primaryWord)

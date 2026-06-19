@@ -6,16 +6,8 @@ struct ResultLoadingView: View {
     var labels: [String] = []
     
     @StateObject private var viewModel = ResultViewModel()
-    @State private var fastVLMService = FastVLMService()
     
     @State private var navigateToResult = false
-    @State private var translationStatus: String = "Memindai kosa kata..."
-    @State private var translationSubtitle: String = "Menganalisis gambar untuk menemukan objek..."
-    @State private var isDownloadingLanguage: Bool = false
-    
-    @State private var vlmLabels: [String] = []
-    @State private var isVLMDone: Bool = false
-    
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
@@ -42,7 +34,7 @@ struct ResultLoadingView: View {
             VStack {
                 Spacer()
                 
-                if isDownloadingLanguage {
+                if viewModel.isDownloadingLanguage {
                     // Tampilan khusus saat language pack sedang diunduh
                     VStack(spacing: 12) {
                         Image(systemName: "arrow.down.circle.fill")
@@ -64,8 +56,8 @@ struct ResultLoadingView: View {
                 Spacer()
                 
                 AppHeadline(
-                    title: translationStatus,
-                    subtitle: translationSubtitle,
+                    title: viewModel.translationStatus,
+                    subtitle: viewModel.translationSubtitle,
                     titleStyle: .appTitle,
                     subtitleStyle: .appHeadline,
                     titleColor: .primary,
@@ -81,7 +73,7 @@ struct ResultLoadingView: View {
         .navigationBarBackButtonHidden(true)
         .onAppear {
             Task {
-                await runFastVLM()
+                await viewModel.startProcessing(imageData: imageData, fallbackLabels: labels)
             }
         }
         .background {
@@ -94,96 +86,18 @@ struct ResultLoadingView: View {
         }
         .onChange(of: viewModel.isLoading) { _, loading in
             if !loading && !viewModel.generatedSentences.isEmpty {
-                // Reset status setelah selesai
-                isDownloadingLanguage = false
                 navigateToResult = true
             }
         }
         .navigationDestination(isPresented: $navigateToResult) {
             ResultView(
                 isFromHome: false,
-                detectedObjects: vlmLabels,
+                detectedObjects: viewModel.vlmLabels,
                 capturedImageData: imageData,
                 injectedSentences: viewModel.generatedSentences,
                 injectedVocab: viewModel.vocabDictionary,
                 injectedPronunciation: viewModel.dynamicPronunciation
             )
-        }
-    }
-    
-    private func checkTranslationAvailability() {
-        guard #available(iOS 17.4, *) else { return }
-        Task {
-            let availability = LanguageAvailability()
-            let status = await availability.status(
-                from: Locale.Language(identifier: "en-US"),
-                to: Locale.Language(identifier: "id-ID")
-            )
-            await MainActor.run {
-                switch status {
-                case .installed:
-                    isDownloadingLanguage = false
-                    translationStatus = "Memindai kosa kata..."
-                    translationSubtitle = "Memindai kata dari gambar yang sudah kamu ambil"
-                    
-                case .supported:
-                    isDownloadingLanguage = true
-                    translationStatus = "Mengunduh paket terjemahan"
-                    translationSubtitle = "Paket bahasa Indonesia sedang diunduh. Harap tunggu sebentar..."
-                    
-                case .unsupported:
-                    isDownloadingLanguage = false
-                    translationStatus = "Terjemahan tidak tersedia"
-                    translationSubtitle = "Perangkat ini tidak mendukung terjemahan Bahasa Inggris → Indonesia"
-                    
-                @unknown default:
-                    break
-                }
-            }
-        }
-    }
-    
-    private func runFastVLM() async {
-        guard let data = imageData, let uiImage = UIImage(data: data) else {
-            await MainActor.run {
-                self.vlmLabels = self.labels.isEmpty ? ["Unknown"] : self.labels
-                self.isVLMDone = true
-                self.checkTranslationAvailability()
-                Task { await self.viewModel.processDetectedObjects(self.vlmLabels) }
-            }
-            return
-        }
-        
-        await fastVLMService.ensureLoaded()
-        
-        await MainActor.run {
-            translationStatus = "Memindai kosa kata..."
-            translationSubtitle = "Sedang memproses gambar Anda..."
-        }
-        
-        do {
-            let result = try await fastVLMService.detectScene(in: uiImage)
-            fastVLMService.unload() // 🚀 Bebaskan memori GPU agar tidak crash!
-            
-            await MainActor.run {
-                self.vlmLabels = [result.object]
-                self.isVLMDone = true
-                // Now check translation status to update text
-                self.checkTranslationAvailability()
-                
-                Task { await self.viewModel.processDetectedObjects(self.vlmLabels) }
-            }
-        } catch {
-            print("FastVLM Error: \(error)")
-            fastVLMService.unload() // 🚀 Bebaskan memori GPU bahkan saat error
-            
-            await MainActor.run {
-                self.vlmLabels = self.labels.isEmpty ? ["Unknown"] : self.labels
-                self.isVLMDone = true
-                self.checkTranslationAvailability()
-                
-                Task { await self.viewModel.processDetectedObjects(self.vlmLabels) }
-            }
         }
     }
 }

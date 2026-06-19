@@ -19,7 +19,6 @@ struct HomeView: View {
     @State private var showDropdown: Bool = false
     @State private var selectedVocab: VocabItem?
     @State private var typping: String = ""
-    @State private var debouncedTypping: String = ""
     @State private var isShowingCamera = false
     @State private var capturedImage: UIImage?
     @State private var isEditing: Bool = false
@@ -41,12 +40,12 @@ struct HomeView: View {
             baseList = savedVocabs
         }
         
-        if debouncedTypping.isEmpty {
+        if typping.isEmpty {
             return baseList
         } else {
             return baseList.filter { item in
-                item.textVocab.lowercased().contains(debouncedTypping.lowercased()) ||
-                item.textMeaning.lowercased().contains(debouncedTypping.lowercased())
+                item.textVocab.lowercased().contains(typping.lowercased()) ||
+                item.textMeaning.lowercased().contains(typping.lowercased())
             }
         }
     }
@@ -63,18 +62,9 @@ struct HomeView: View {
     
     var body: some View {
         NavigationStack {
-            // Using .top alignment to keep the custom blur layer pinned to the Status Bar
-            ZStack(alignment: .top) {
-                
-                // Full screen background color to prevent any white harsh lines at the safe area boundaries
-                Color(UIColor.systemGroupedBackground)
-                    .ignoresSafeArea()
-                
+            ZStack {
                 ScrollView {
                     VStack(spacing: AppSpacing.medium) {
-                        // Extra top padding inside the scroll view so the original header stays clear of the Dynamic Island initially
-                        Color.clear.frame(height: 12)
-                        
                         if isEditing {
                             HStack {
                                 Button(action: {
@@ -132,6 +122,9 @@ struct HomeView: View {
                                     onMagnifyingTap: { isClicked in
                                         withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
                                             isMagnifying = isClicked
+                                            if !isClicked {
+                                                typping = ""
+                                            }
                                         }
                                     },
                                     horizontalPadding: AppPadding.areaPadding
@@ -248,7 +241,7 @@ struct HomeView: View {
                                             }
                                         }
                                     )
-                                    
+                                
                                 }
                             }
                             .animation(.default, value: filteredVocabs)
@@ -256,20 +249,11 @@ struct HomeView: View {
                     }
                 }
                 .scrollIndicators(.hidden)
-                // Changing to horizontal and bottom padding allows the ScrollView container to stretch fully to the top edge
-                .padding(.horizontal, AppPadding.areaPadding)
-                .padding(.bottom, AppPadding.areaPadding)
-                .onChange(of: typping) { _, newValue in
-                    Task {
-                        try? await Task.sleep(nanoseconds: 300_000_000) // 300ms debounce
-                        if typping == newValue {
-                            await MainActor.run {
-                                debouncedTypping = newValue
-                            }
-                        }
-                    }
-                }
+                .padding(AppPadding.areaPadding)
+                .background(Color(UIColor.systemGroupedBackground))
                 .disabled(isDemo)
+                
+
                 
                 if isDemo {
                     Color.black.opacity(0.7)
@@ -289,17 +273,10 @@ struct HomeView: View {
                     .accessibilityLabel("Buka Kamera")
                     .accessibilityHint("Buka kamera untuk memfoto dan mendeteksi kosakata baru")
                     .appTooltip("Ketuk di sini untuk\nmembuka kamera dan\nmulai memfoto benda\ndisekitarmu",
-                                isVisible: isDemo ? true : false)
+                        isVisible: isDemo ? true : false)
                 }
                 .padding(AppPadding.areaPadding * 2)
-                .ignoresSafeArea(.keyboard)
-                
-                // Native blur bar overlay that matches standard iPhone status bar height precisely
-                Rectangle()
-                    .fill(.ultraThinMaterial)
-                    .frame(height: 47)
-                    .ignoresSafeArea(edges: .top)
-                    
+
                 
             }
             .ignoresSafeArea(.container, edges: .bottom)

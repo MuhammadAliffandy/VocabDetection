@@ -4,7 +4,7 @@ import Combine
 import SwiftUI
 import Vision
 
-class CameraManager: NSObject, ObservableObject {
+class CameraViewModel: NSObject, ObservableObject {
     @Published var session = AVCaptureSession()
     private var photoOutput = AVCapturePhotoOutput()
     
@@ -12,8 +12,7 @@ class CameraManager: NSObject, ObservableObject {
     @Published var capturedImageData: Data?
     
     @Published var isProcessingComplete: Bool = false
-    
-    // Default messages since we don't have real-time guidance anymore
+
     @Published var guidanceMessage: String = "Silakan Ambil Foto"
     @Published var bracketScale: CGFloat = 1.0
     @Published var isObjectReady: Bool = true
@@ -53,10 +52,59 @@ class CameraManager: NSObject, ObservableObject {
             session.addOutput(photoOutput)
         }
         
+        // Setup initial continuous focus
+        if let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) {
+            do {
+                try device.lockForConfiguration()
+                if device.isFocusModeSupported(.continuousAutoFocus) {
+                    device.focusMode = .continuousAutoFocus
+                }
+                if device.isExposureModeSupported(.continuousAutoExposure) {
+                    device.exposureMode = .continuousAutoExposure
+                }
+                device.unlockForConfiguration()
+            } catch {
+                print("Failed to configure continuous focus: \(error)")
+            }
+        }
+        
         session.commitConfiguration()
         
         DispatchQueue.global(qos: .background).async {
             self.session.startRunning()
+        }
+    }
+    
+    func setFocus(point: CGPoint) {
+        guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else { return }
+        do {
+            try device.lockForConfiguration()
+            if device.isFocusPointOfInterestSupported && device.isFocusModeSupported(.autoFocus) {
+                device.focusPointOfInterest = point
+                device.focusMode = .autoFocus
+            }
+            if device.isExposurePointOfInterestSupported && device.isExposureModeSupported(.autoExpose) {
+                device.exposurePointOfInterest = point
+                device.exposureMode = .autoExpose
+            }
+            device.unlockForConfiguration()
+            
+            // Revert back to continuous after a short delay
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else { return }
+                do {
+                    try device.lockForConfiguration()
+                    if device.isFocusModeSupported(.continuousAutoFocus) {
+                        device.focusMode = .continuousAutoFocus
+                    }
+                    if device.isExposureModeSupported(.continuousAutoExposure) {
+                        device.exposureMode = .continuousAutoExposure
+                    }
+                    device.unlockForConfiguration()
+                } catch {}
+            }
+        } catch {
+            print("Failed to set focus: \(error)")
         }
     }
     
@@ -127,7 +175,7 @@ class CameraManager: NSObject, ObservableObject {
 }
 
 // MARK: - Photo Capture Delegate
-extension CameraManager: AVCapturePhotoCaptureDelegate {
+extension CameraViewModel: AVCapturePhotoCaptureDelegate {
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         if error != nil {
             return
