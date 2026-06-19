@@ -112,7 +112,7 @@ struct AppVocabCard: View {
                     title: "Chair ADKDASDJASAHJAKDJKDHJKSDJADHA",
                     subtitle: "Kursi",
                     onTapGesture: {
-                        print("test")
+                        // print("test")
                     }
                 )
      
@@ -121,7 +121,7 @@ struct AppVocabCard: View {
                     title: "Chair",
                     subtitle: "Kursi",
                     onTapGesture: {
-                        print("test")
+                        // print("test")
                     }
                 )
          

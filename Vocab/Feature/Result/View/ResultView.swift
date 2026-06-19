@@ -139,9 +139,9 @@ struct ResultView: View {
                                 modelContext.insert(newItem)
                                 do {
                                     try modelContext.save()
-                                    print("✅ VocabItem berhasil disimpan: \(newItem.textVocab) - \(newItem.textMeaning)")
+                                    // print("✅ VocabItem berhasil disimpan: \(newItem.textVocab) - \(newItem.textMeaning)")
                                 } catch {
-                                    print("❌ Gagal save SwiftData: \(error)")
+                                    // print("❌ Gagal save SwiftData: \(error)")
                                 }
                                 navigateBackToHome = true
                             }

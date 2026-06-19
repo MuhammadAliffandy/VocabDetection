@@ -36,8 +36,6 @@ struct AppToolbar: View {
     AppToolbar(
         onMagnifyingTap: {
             isClicked in
-            print(isClicked
-            )
         } ,
 
     )

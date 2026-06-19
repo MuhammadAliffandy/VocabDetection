@@ -312,7 +312,7 @@ struct HomeView: View {
             do {
                 try modelContext.save()
             } catch {
-                print("Failed to save after deletion: \(error)")
+                // print("Failed to save after deletion: \(error)")
             }
             selectedItems.removeAll()
             isEditing = false

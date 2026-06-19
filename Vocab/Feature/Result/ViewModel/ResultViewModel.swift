@@ -73,7 +73,7 @@ class ResultViewModel: ObservableObject {
             await self.processDetectedObjects(self.vlmLabels)
             
         } catch {
-            print("FastVLM Error: \(error)")
+            // print("FastVLM Error: \(error)")
             fastVLMService.unload()
             
             self.vlmLabels = fallbackLabels.isEmpty ? ["Unknown"] : fallbackLabels
@@ -172,7 +172,7 @@ class ResultViewModel: ObservableObject {
                 self.vocabDictionary = dict
                 self.isLoading = false
         } catch {
-            print("Error processing detected objects: \(error)")
+            // print("Error processing detected objects: \(error)")
             self.isLoading = false
         }
     }

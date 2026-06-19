@@ -12,7 +12,7 @@ import SwiftData
 struct VocabApp: App {
     
     init() {
-        print("📁 LOKASI DATABASE SQLITE ANDA: \n\(URL.applicationSupportDirectory.path)/default.store\n")
+        // print("📁 LOKASI DATABASE SQLITE ANDA: \n\(URL.applicationSupportDirectory.path)/default.store\n")
     }
     
     let container: ModelContainer = {
@@ -30,7 +30,7 @@ struct VocabApp: App {
             )
         } catch {
             // Jika schema conflict (misal ada field baru), hapus store lama dan buat ulang
-            print("❌ ModelContainer error: \(error). Mencoba reset store...")
+            // print("❌ ModelContainer error: \(error). Mencoba reset store...")
             let config2 = ModelConfiguration(
                 schema: schema,
                 isStoredInMemoryOnly: false

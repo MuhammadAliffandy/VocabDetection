@@ -15,7 +15,6 @@ class CameraViewModel: NSObject, ObservableObject {
 
     @Published var guidanceMessage: String = "Silakan Ambil Foto"
     @Published var bracketScale: CGFloat = 1.0
-    @Published var isObjectReady: Bool = true
     
     @Published var isFlashOn: Bool = false
     @Published var zoomFactor: CGFloat = 1.0
@@ -64,7 +63,7 @@ class CameraViewModel: NSObject, ObservableObject {
                 }
                 device.unlockForConfiguration()
             } catch {
-                print("Failed to configure continuous focus: \(error)")
+                // print("Failed to configure continuous focus: \(error)")
             }
         }
         
@@ -104,7 +103,7 @@ class CameraViewModel: NSObject, ObservableObject {
                 } catch {}
             }
         } catch {
-            print("Failed to set focus: \(error)")
+            // print("Failed to set focus: \(error)")
         }
     }
     
@@ -125,7 +124,7 @@ class CameraViewModel: NSObject, ObservableObject {
                 device.torchMode = isFlashOn ? .on : .off
                 device.unlockForConfiguration()
             } catch {
-                print("Failed to lock device for torch configuration: \(error)")
+                // print("Failed to lock device for torch configuration: \(error)")
             }
         }
     }
@@ -141,7 +140,7 @@ class CameraViewModel: NSObject, ObservableObject {
                 self.zoomFactor = device.videoZoomFactor
             }
         } catch {
-            print("Failed to lock device for zoom configuration: \(error)")
+            // print("Failed to lock device for zoom configuration: \(error)")
         }
     }
     
@@ -160,7 +159,7 @@ class CameraViewModel: NSObject, ObservableObject {
     }
     
     func processGalleryImage(_ image: UIImage) {
-        guard let cgImage = image.cgImage else { return }
+ 
         
         DispatchQueue.main.async {
             self.isProcessingComplete = false

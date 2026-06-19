@@ -67,7 +67,7 @@ struct CameraView: View {
                   
                     Spacer()
                 
-                    ViewfinderBrackets(isObjectReady: viewModel.isObjectReady)
+                    ViewfinderBrackets()
                         .frame(maxHeight: 500)
                         .padding(AppPadding.areaPadding)
 

@@ -44,7 +44,7 @@ final class FastVLMService {
         do {
             // Keep MLX's buffer cache small so an unload actually returns
             // memory to the OS instead of being held by the allocator.
-            MLX.GPU.set(cacheLimit: 20 * 1024 * 1024)
+            MLX.Memory.cacheLimit = 20 * 1024 * 1024
 
             await FastVLM.register(modelFactory: VLMModelFactory.shared)
 
@@ -78,7 +78,7 @@ final class FastVLMService {
     func unload() {
         container = nil
         // Returning unused GPU/Metal buffers to the OS.
-        MLX.GPU.set(cacheLimit: 0)
+        MLX.Memory.cacheLimit = 0
         loadState = .idle
     }
 

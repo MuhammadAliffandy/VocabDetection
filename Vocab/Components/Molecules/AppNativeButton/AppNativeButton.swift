@@ -65,17 +65,17 @@ struct AppGlassButton: View {
             
             AppGlassButton(
                 text: "Selesai",
-                action: { print("Done tapped") }
+                action: {}
             )
             AppGlassButton(
                 icon: "chevron.left",
-                action: { print("Back tapped") }
+                action: {}
             )
             
             AppGlassButton(
                 icon: "square.and.arrow.down.fill",
                 text: "Simpan Sketsa",
-                action: { print("Save tapped") }
+                action: {}
             )
             
         }

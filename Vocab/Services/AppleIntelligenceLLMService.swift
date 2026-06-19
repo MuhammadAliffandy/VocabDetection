@@ -6,7 +6,6 @@
 import Foundation
 import NaturalLanguage
 
-// Menggunakan Framework Apple Intelligence (iOS 18)
 #if canImport(FoundationModels)
 import FoundationModels
 #endif
@@ -28,7 +27,6 @@ class AppleIntelligenceLLMService: LLMServiceProtocol {
     
     init() {
         #if canImport(FoundationModels)
-        // Inisialisasi LanguageModelSession dengan instruksi khusus (System Prompt)
         let systemPrompt = """
         You are a creative English teacher. You will be given a single word representing a physical object detected by a camera.
         CRITICAL: The word is ALWAYS a NOUN representing a physical object (e.g. if the word is 'watch', it means a wristwatch, NOT the verb 'to watch').
@@ -48,9 +46,7 @@ class AppleIntelligenceLLMService: LLMServiceProtocol {
         EXCLAMATION: [your simple sentence]
         """
         self.session = LanguageModelSession(instructions: systemPrompt)
-        print("Apple Intelligence LanguageModelSession berhasil diinisialisasi!")
         #else
-        print("Framework FoundationModels tidak tersedia. Menggunakan fallback.")
         #endif
     }
     
@@ -78,7 +74,7 @@ class AppleIntelligenceLLMService: LLMServiceProtocol {
                 let response = try await session.respond(to: "The word is: \(primaryWord)")
                 rawResponse = response.content
             } catch {
-                print("Error Apple Intelligence: \(error.localizedDescription)")
+                // print("Error Apple Intelligence: \(error.localizedDescription)")
                 rawResponse = generateMockResponse(for: primaryWord)
             }
         } else {
@@ -87,8 +83,7 @@ class AppleIntelligenceLLMService: LLMServiceProtocol {
         #else
         rawResponse = generateMockResponse(for: primaryWord)
         #endif
-        
-        // Parser AI Response ke Dictionary Enum
+
         var resultDict: [AppSentenceType: String] = [:]
         var pronunciation: String = ""
         let lines = rawResponse.components(separatedBy: .newlines)
