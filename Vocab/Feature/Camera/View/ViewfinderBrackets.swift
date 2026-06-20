@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct ViewfinderBrackets: View {
-
     let iconSize: CGFloat = 50
     
     var body: some View {

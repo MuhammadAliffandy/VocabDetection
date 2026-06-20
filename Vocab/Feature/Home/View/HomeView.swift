@@ -276,6 +276,7 @@ struct HomeView: View {
                         isVisible: isDemo ? true : false)
                 }
                 .padding(AppPadding.areaPadding * 2)
+                .ignoresSafeArea(.keyboard, edges: .bottom)
 
                 
             }
