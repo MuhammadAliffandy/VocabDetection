@@ -43,14 +43,10 @@ struct AppVocabDashboardCard: View {
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.ultraThinMaterial)
-        .background(
-            RoundedRectangle(cornerRadius: AppRadius.shapeRadius)
-                .fill(Color.brandColorPrimaryTeal.opacity(0.04))
-        )
+        .background(.regularMaterial)
         .overlay(
             RoundedRectangle(cornerRadius: AppRadius.shapeRadius)
-                .strokeBorder(Color.brandColorPrimaryTeal.opacity(0.15), lineWidth: 1)
+                .strokeBorder(Color.primary.opacity(0.1), lineWidth: 0.5)
         )
         .clipShape(RoundedRectangle(cornerRadius: AppRadius.shapeRadius))
         .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 4)

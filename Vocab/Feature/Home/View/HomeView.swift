@@ -89,8 +89,8 @@ struct HomeView: View {
                                 Spacer().frame(height: 40)
                                 AppEmptyState(
                                     icon: AppIcon.CameraApertureIcon,
-                                    title: "Mulai Bermain",
-                                    subtitle: "Ambil foto benda di sekitarmu dengan kamera untuk bisa mulai belajar dan bermain."
+                                    title: "Mulai Belajar",
+                                    subtitle: "Ambil foto benda di sekitarmu dengan kamera untuk bisa mulai belajar."
                                 )
                             }
                         }

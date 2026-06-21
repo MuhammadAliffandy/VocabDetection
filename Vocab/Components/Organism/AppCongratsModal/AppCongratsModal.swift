@@ -10,6 +10,8 @@ struct AppCongratsModal: View {
     
     var body: some View {
         VStack(spacing: 24) {
+            Spacer().frame(height: 16)
+            
             Image(systemName: icon)
                 .font(.system(size: 80))
                 .foregroundColor(iconColor)
@@ -24,6 +26,8 @@ struct AppCongratsModal: View {
                 spacing: 8,
                 textAlign: .center
             )
+            
+            Spacer()
             
             VStack(spacing: 12) {
                 AppButton(
@@ -41,7 +45,7 @@ struct AppCongratsModal: View {
                         .frame(maxWidth: .infinity)
                 }
             }
-            .padding(.bottom, 16)
+            .padding(.bottom, 32)
         }
         .padding(32)
         .presentationDetents([.fraction(0.5)])

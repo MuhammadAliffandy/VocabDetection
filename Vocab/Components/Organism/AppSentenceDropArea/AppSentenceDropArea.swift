@@ -71,7 +71,7 @@ struct AppSentenceDropArea: View {
                                 text: wordText,
                                 tooltipText: tooltipMeaning ?? "",
                                 textStyle: .appHeadlinev2,
-                                textColor: .textColorPrimarySemiBlack,
+                                textColor: .primary,
                                 isPressed: activeWordIndex == index,
                                 isVocab: tooltipMeaning != nil
                             )
@@ -97,7 +97,7 @@ struct AppSentenceDropArea: View {
         .padding(.horizontal, 24)
         .background(
             RoundedRectangle(cornerRadius: AppRadius.shapeRadius)
-                .fill(Color.surfacePrimaryLightgrey)
+                .fill(Color(UIColor.secondarySystemGroupedBackground))
                 .shadow(color: Color.black.opacity(0.07), radius: 12, x: 0, y: 4)
         )
         .zIndex(activeWordIndex != nil ? 100 : 0)

@@ -33,19 +33,15 @@ class AppleIntelligenceLLMService: LLMServiceProtocol {
         You are a creative English teacher. You will be given a single word representing a physical object detected by a camera.
         CRITICAL: The word is ALWAYS a NOUN representing a physical object (e.g. if the word is 'watch', it means a wristwatch, NOT the verb 'to watch').
         
-        Create exactly 4 very basic, simple, and easy-to-use English sentences that actively use that exact noun.
+        Create exactly 4 very basic, simple, and easy-to-use ENGLISH sentences that actively use that exact noun.
+        ALL SENTENCES MUST BE STRICTLY IN ENGLISH.
         Provide exactly one Statement, one Question, one Command, and one Exclamation.
-        Also, you MUST provide the Indonesian phonetic spelling (cara baca lokal) of the word. DO NOT just repeat the English word! 
-        Examples of phonetic spelling: 
-        - 'chair' -> 'ceir'
-        - 'shoe' -> 'syu'
-        - 'watch' -> 'woc'
+        
         Format your response EXACTLY like this with no extra text:
-        PRONUNCIATION: [indonesian phonetic spelling]
-        STATEMENT: [your simple sentence]
-        QUESTION: [your simple sentence]
-        COMMAND: [your simple sentence]
-        EXCLAMATION: [your simple sentence]
+        STATEMENT: [your simple ENGLISH sentence]
+        QUESTION: [your simple ENGLISH sentence]
+        COMMAND: [your simple ENGLISH sentence]
+        EXCLAMATION: [your simple ENGLISH sentence]
         """
         self.session = LanguageModelSession(instructions: systemPrompt)
         #else
@@ -92,9 +88,7 @@ class AppleIntelligenceLLMService: LLMServiceProtocol {
         
         for line in lines {
             let cleanLine = line.trimmingCharacters(in: .whitespacesAndNewlines)
-            if cleanLine.hasPrefix("PRONUNCIATION:") {
-                pronunciation = String(cleanLine.dropFirst(14)).trimmingCharacters(in: .whitespaces)
-            } else if cleanLine.hasPrefix("STATEMENT:") {
+            if cleanLine.hasPrefix("STATEMENT:") {
                 resultDict[.statement] = String(cleanLine.dropFirst(10)).trimmingCharacters(in: .whitespaces)
             } else if cleanLine.hasPrefix("QUESTION:") {
                 resultDict[.question] = String(cleanLine.dropFirst(9)).trimmingCharacters(in: .whitespaces)
@@ -124,7 +118,6 @@ class AppleIntelligenceLLMService: LLMServiceProtocol {
     // Fungsi bantuan Mock jika perangkat belum support Apple Intelligence
     private func generateMockResponse(for primaryWord: String) -> String {
         return """
-        PRONUNCIATION: \(primaryWord)
         STATEMENT: The \(primaryWord) is big.
         QUESTION: Is that a \(primaryWord)?
         COMMAND: Show me the \(primaryWord).

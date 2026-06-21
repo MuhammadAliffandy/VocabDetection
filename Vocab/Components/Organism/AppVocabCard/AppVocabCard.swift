@@ -18,6 +18,9 @@ struct AppVocabCard: View {
     var onTapGesture: () -> Void = {}
     var onLongPressGesture: (() -> Void)? = nil
     
+    @State private var cachedImage: UIImage?
+    
+    
     
     var body: some View{
         VStack(
@@ -25,27 +28,25 @@ struct AppVocabCard: View {
             spacing: 8
         ){
             ZStack {
-                // Use systemBackground: White in Light Mode, Black in Dark Mode
-                Color(.systemBackground)
+                Color(UIColor.secondarySystemGroupedBackground)
                 
-                if let data = imageData, let uiImage = UIImage(data: data) {
+                if let uiImage = cachedImage {
                     Image(uiImage: uiImage)
                         .resizable()
                         .scaledToFill()
                         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-                        // Apply dynamic background color
-                        .background(Color(.systemBackground))
-                        // Apply corner radius specifically to the image
                         .clipShape(.rect(cornerRadius: 8))
-                        // Apply padding outside the rounded image
+                        .padding(8)
+                } else if imageData != nil {
+                    ProgressView()
+                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                        .clipShape(.rect(cornerRadius: 8))
                         .padding(8)
                 } else {
                     Image(image)
                         .resizable()
                         .scaledToFill()
                         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-                        // Apply dynamic background color
-                        .background(Color(.systemBackground))
                         // Apply corner radius specifically to the image
                         .clipShape(.rect(cornerRadius: 8))
                         // Apply padding outside the rounded image
@@ -100,6 +101,30 @@ struct AppVocabCard: View {
         .accessibilityHint(isEditingMode ? (isSelected ? "Ketuk untuk membatalkan pilihan" : "Ketuk untuk memilih") : "Ketuk untuk melihat detail kosakata")
         .accessibilityAddTraits(.isButton)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
+        .task(id: imageData) {
+            if let data = imageData, cachedImage == nil {
+                let image = await Task.detached(priority: .background) {
+                    let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
+                    guard let imageSource = CGImageSourceCreateWithData(data as CFData, imageSourceOptions) else {
+                        return UIImage(data: data)
+                    }
+                    let maxDimensionInPixels: CGFloat = 400
+                    let downsampleOptions = [
+                        kCGImageSourceCreateThumbnailFromImageAlways: true,
+                        kCGImageSourceShouldCacheImmediately: true,
+                        kCGImageSourceCreateThumbnailWithTransform: true,
+                        kCGImageSourceThumbnailMaxPixelSize: maxDimensionInPixels
+                    ] as CFDictionary
+                    guard let downsampledImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, downsampleOptions) else {
+                        return UIImage(data: data)
+                    }
+                    return UIImage(cgImage: downsampledImage)
+                }.value
+                await MainActor.run {
+                    self.cachedImage = image
+                }
+            }
+        }
         
     }
 }

@@ -122,6 +122,14 @@ class CameraManager: NSObject, ObservableObject {
             self.isProcessingComplete = true
         }
     }
+    
+    func reset() {
+        DispatchQueue.main.async {
+            self.isProcessingComplete = false
+            self.capturedImageData = nil
+            self.detectedLabels = []
+        }
+    }
 }
 
 // MARK: - Photo Capture Delegate

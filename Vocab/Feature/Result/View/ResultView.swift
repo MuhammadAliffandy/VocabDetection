@@ -188,6 +188,7 @@ struct ResultView: View {
                         AppGlassButton(
                             icon: AppIcon.XmarkIcon,
                             action: {
+                                inDemoFlow = false
                                 dismiss()
                                 if isFromHome == true {
                                     // Kembali ke Collections tab
@@ -249,7 +250,7 @@ struct TranslationTaskModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         if #available(iOS 17.4, *) {
-            content.translationTask(source: Locale.Language(identifier: "en-US"), target: Locale.Language(identifier: "id-ID")) { session in
+            content.translationTask(source: Locale.Language(identifier: "en-US"), target: Locale.Language(identifier: "id")) { session in
                 if shouldProcess {
                     viewModel.setTranslationSession(session)
                     await viewModel.processDetectedObjects(detectedObjects)

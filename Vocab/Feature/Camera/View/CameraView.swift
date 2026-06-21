@@ -137,6 +137,11 @@ struct CameraView: View {
                     navigateToLoading = true
                 }
             }
+            .onChange(of: navigateToLoading) { _, isNavigating in
+                if !isNavigating {
+                    cameraManager.reset()
+                }
+            }
             .toolbar(.hidden, for: .tabBar)
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(isPresented: $navigateToLoading) {

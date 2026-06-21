@@ -45,7 +45,7 @@ struct FlashcardView: View {
                 AppEmptyState(
                     icon: "lanyardcard",
                     title: "Belum Ada Kosakata",
-                    subtitle: "Kamu butuh setidaknya 1 kosakata untuk bermain flashcard."
+                    subtitle: "Kamu butuh setidaknya 1 kosakata untuk belajar flashcard."
                 )
             } else {
                 VStack {
@@ -68,7 +68,10 @@ struct FlashcardView: View {
                         
                         Spacer()
                         
-                        Button(action: { dismiss() }) {
+                        Button(action: { 
+                            inDemoFlow = false
+                            dismiss() 
+                        }) {
                             Image(systemName: "xmark")
                                 .font(.system(size: 16, weight: .semibold))
                                 .foregroundColor(.primary)
@@ -93,8 +96,12 @@ struct FlashcardView: View {
                             let dragOffset = offsetStates[index] ?? .zero
                             let cardIndex = index - currentIndex
                             
-                            let scale = 1.0 - CGFloat(cardIndex) * 0.05
-                            let yOffset = CGFloat(cardIndex) * 15.0
+                            let rotation = cardIndex == 1 ? 4.0 : (cardIndex == 2 ? -4.0 : 0.0)
+                            let xOffset = cardIndex == 1 ? 16.0 : (cardIndex == 2 ? -16.0 : 0.0)
+                            let yOffset = CGFloat(cardIndex) * 8.0
+                            
+                            let scale = 1.0 - CGFloat(cardIndex) * 0.02
+                            let opacity = 1.0 - Double(cardIndex) * 0.3
                             
                             FlashcardSingleCard(
                                 vocab: vocab,
@@ -103,10 +110,10 @@ struct FlashcardView: View {
                             )
                             .frame(width: 320, height: 460)
                             .scaleEffect(scale)
-                            .offset(y: yOffset)
+                            .offset(x: xOffset, y: yOffset)
                             .offset(x: dragOffset.width, y: dragOffset.height)
-                            .rotationEffect(.degrees(Double(dragOffset.width / 15)))
-                            .opacity(cardIndex > 2 ? 0 : 1)
+                            .rotationEffect(.degrees(cardIndex == 0 ? Double(dragOffset.width / 15) : rotation))
+                            .opacity(cardIndex > 2 ? 0 : opacity)
                             .animation(.spring(), value: offsetStates[index])
                             .gesture(
                                 DragGesture()
@@ -144,8 +151,8 @@ struct FlashcardView: View {
                                 .font(.system(size: 24, weight: .bold))
                                 .foregroundColor(.colorRedWarning)
                                 .padding(16)
-                                // Use systemBackground for White in Light Mode, Black in Dark Mode
-                                .background(Color(.systemBackground))
+                                // Elevated surface color that works in both modes
+                                .background(Color(UIColor.secondarySystemGroupedBackground))
                                 .clipShape(Circle())
                                 .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
                         }
@@ -167,8 +174,8 @@ struct FlashcardView: View {
                                 .font(.system(size: 24, weight: .bold))
                                 .foregroundColor(.brandColorPrimaryTeal)
                                 .padding(16)
-                                // Use systemBackground for White in Light Mode, Black in Dark Mode
-                                .background(Color(.systemBackground))
+                                // Elevated surface color that works in both modes
+                                .background(Color(UIColor.secondarySystemGroupedBackground))
                                 .clipShape(Circle())
                                 .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 4)
                         }
@@ -358,7 +365,7 @@ struct FlashcardSingleCard: View {
             // Back of Card (Photo with AppVocabSpeech)
             ZStack {
                 RoundedRectangle(cornerRadius: 24)
-                    .fill(Color.surfacePrimaryLightgrey)
+                    .fill(Color(UIColor.secondarySystemGroupedBackground))
                     .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
                 
                 // Photo filling the card

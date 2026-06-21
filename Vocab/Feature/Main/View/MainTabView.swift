@@ -66,7 +66,7 @@ struct MainTabView: View {
                     .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
                 }
                 .buttonStyle(ScaleButtonStyle())
-                .appTooltip("Ayo mulai deteksi!", isVisible: showDemo, x: -40, y: -70)
+                .appTooltip("Ketuk di sini untuk\nmembuka kamera dan\nmulai memfoto benda\ndisekitarmu", isVisible: showDemo, x: -70, y: -90)
             }
             .padding(.horizontal, AppPadding.areaPadding)
             .padding(.bottom, 0)

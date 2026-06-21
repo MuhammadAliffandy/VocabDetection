@@ -9,11 +9,16 @@ struct DragDropGameView: View {
     
     @State private var rounds: [(vocab: VocabItem, sentence: VocabSentence)] = []
     @State private var roundStates: [RoundState] = []
-    @State private var sharedOptions: [String] = []
+    struct DragOption: Identifiable, Hashable {
+        let id = UUID()
+        let word: String
+    }
+    
+    @State private var sharedOptions: [DragOption] = []
     
     // Manual Drag and Drop state
     @State private var dropZoneFrames: [Int: CGRect] = [:]
-    @State private var activeDragOption: String? = nil
+    @State private var activeDragOption: DragOption? = nil
     @State private var activeDragPosition: CGPoint = .zero
     
     @State private var showCongratsModal = false
@@ -24,6 +29,7 @@ struct DragDropGameView: View {
     var onComplete: () -> Void = {}
     
     struct RoundState {
+        var droppedOptionId: UUID? = nil
         var droppedWord: String? = nil
         var isDropped: Bool = false
         var isCorrect: Bool = false
@@ -55,13 +61,18 @@ struct DragDropGameView: View {
                     AppHeadline(
                         title: "Lengkapi Kalimat",
                         subtitle: "Lengkapi kalimatnya! Tekan, tahan, lalu seret kata yang tepat ke kotak yang kosong",
+                        titleColor: .primary,
+                        subtitleColor: .primary,
                         aligment: .center,
                         textAlign: .center
                     )
                     
                     Spacer()
                     
-                    AppGlassButton(icon: AppIcon.XmarkIcon, action: { dismiss() }, horizontalPadding: 12, verticalPadding: 12)
+                    AppGlassButton(icon: AppIcon.XmarkIcon, action: { 
+                        inDemoFlow = false
+                        dismiss() 
+                    }, horizontalPadding: 12, verticalPadding: 12)
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 24)
@@ -85,6 +96,7 @@ struct DragDropGameView: View {
                                     onRemove: {
                                         withAnimation(.spring()) {
                                             if i < roundStates.count {
+                                                roundStates[i].droppedOptionId = nil
                                                 roundStates[i].droppedWord = nil
                                                 roundStates[i].isDropped = false
                                                 roundStates[i].isCorrect = false
@@ -103,11 +115,11 @@ struct DragDropGameView: View {
                     // Sticky Bottom Options
                     VStack(spacing: 10) {
                         AppFlowLayout(spacing: 12) {
-                            ForEach(sharedOptions, id: \.self) { option in
-                                let isUsed = roundStates.contains { $0.droppedWord?.lowercased() == option.lowercased() && $0.isCorrect }
+                            ForEach(sharedOptions) { option in
+                                let isUsed = roundStates.contains { $0.droppedOptionId == option.id && $0.isCorrect }
                                 
                                 if !isUsed {
-                                    AppDraggableWordOption(word: option)
+                                    AppDraggableWordOption(word: option.word)
                                         .opacity(activeDragOption == option ? 0.0 : 1.0)
                                         .gesture(
                                             DragGesture(coordinateSpace: .named("GameSpace"))
@@ -152,14 +164,17 @@ struct DragDropGameView: View {
                             subtitle: "Silakan deteksi vocab dan kalimat terlebih dahulu dari kamera."
                         )
                         
-                        AppGlassButton(icon: AppIcon.XmarkIcon, action: { dismiss() }, horizontalPadding: 20, verticalPadding: 15)
+                        AppGlassButton(icon: AppIcon.XmarkIcon, action: { 
+                            inDemoFlow = false
+                            dismiss() 
+                        }, horizontalPadding: 20, verticalPadding: 15)
                     }
                 }
             } // VStack
             
             // Drag Overlay
             if let draggedOption = activeDragOption {
-                AppDraggableWordOption(word: draggedOption)
+                AppDraggableWordOption(word: draggedOption.word)
                     .position(activeDragPosition)
                     .allowsHitTesting(false)
                     .transition(.identity)
@@ -205,31 +220,32 @@ struct DragDropGameView: View {
     private func setupGame() {
         let availableVocabs = savedVocabs.filter { !$0.sentences.isEmpty }.shuffled()
         var newRounds: [(vocab: VocabItem, sentence: VocabSentence)] = []
-        let maxRounds = min(3, availableVocabs.count)
         
-        for i in 0..<maxRounds {
-            let vocab = availableVocabs[i]
+        for vocab in availableVocabs {
+            if newRounds.count >= 3 { break }
             if let randomSentence = vocab.sentences.randomElement() {
                 newRounds.append((vocab: vocab, sentence: randomSentence))
             }
         }
         
-        if newRounds.isEmpty { return }
+        guard !newRounds.isEmpty else { return }
         
         self.rounds = newRounds
         self.roundStates = Array(repeating: RoundState(), count: newRounds.count)
         
+        // Buat opsi jawaban (bisa kembar kata-katanya kalau dari vocab yang sama)
         let allAnswers = newRounds.map { $0.vocab.textVocab }
-        self.sharedOptions = Array(Set(allAnswers)).shuffled()
+        self.sharedOptions = allAnswers.map { DragOption(word: $0) }.shuffled()
     }
     
-    private func handleDropForRound(roundIndex: Int, option: String) {
+    private func handleDropForRound(roundIndex: Int, option: DragOption) {
         guard roundIndex < rounds.count, roundIndex < roundStates.count else { return }
         let correctWord = rounds[roundIndex].vocab.textVocab
-        let correct = option.lowercased() == correctWord.lowercased()
+        let correct = option.word.lowercased() == correctWord.lowercased()
         
         withAnimation(.spring()) {
-            roundStates[roundIndex].droppedWord = option
+            roundStates[roundIndex].droppedOptionId = option.id
+            roundStates[roundIndex].droppedWord = option.word
             roundStates[roundIndex].isDropped = true
             roundStates[roundIndex].isCorrect = correct
         }
