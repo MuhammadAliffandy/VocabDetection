@@ -26,7 +26,6 @@ struct VocabApp: App {
             )
         } catch {
             // Jika schema conflict (misal ada field baru), hapus store lama dan buat ulang
-            print("❌ ModelContainer error: \(error). Mencoba reset store...")
             let config2 = ModelConfiguration(
                 schema: schema,
                 isStoredInMemoryOnly: false

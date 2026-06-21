@@ -23,6 +23,7 @@ struct AppWordTip: View {
     var text: String
     var tooltipText: String
     var textStyle: Font = .appHeadline
+    var textColor: Color = .primary
     var isPressed: Bool = false
     var isVocab: Bool = false
     
@@ -30,7 +31,7 @@ struct AppWordTip: View {
         AppText(
             text: text,
             fontStyle: textStyle ,
-            textColor: Color.brandColorPrimaryTeal
+            textColor: textColor
         )
         .appTooltip(tooltipText, isVisible: isPressed , y: -55)
         .overlay(

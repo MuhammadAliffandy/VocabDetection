@@ -60,7 +60,6 @@ struct AppVocabCardDateGroup<Component: View , TrailingComponent: View>: View {
                 title: "Chair",
                 subtitle: "Kursi",
                 onTapGesture: {
-                    print("test")
                 }
             )
             
@@ -69,7 +68,6 @@ struct AppVocabCardDateGroup<Component: View , TrailingComponent: View>: View {
                 title: "Chair",
                 subtitle: "Kursi",
                 onTapGesture: {
-                    print("test")
                 }
             )
             AppVocabCard(
@@ -77,7 +75,6 @@ struct AppVocabCardDateGroup<Component: View , TrailingComponent: View>: View {
                 title: "Chair",
                 subtitle: "Kursi",
                 onTapGesture: {
-                    print("test")
                 }
             )
         }

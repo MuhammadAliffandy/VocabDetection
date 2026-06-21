@@ -14,7 +14,6 @@ class AppleTranslationService: TranslationServiceProtocol {
     
     func translate(text: String) async throws -> String {
         guard let session = session else {
-            print("AppleTranslationService: No TranslationSession provided. Returning original text.")
             return text
         }
         
@@ -22,7 +21,6 @@ class AppleTranslationService: TranslationServiceProtocol {
             let response = try await session.translate(text)
             return response.targetText
         } catch {
-            print("AppleTranslationService Error: \(error.localizedDescription)")
             return text // Fallback jika gagal
         }
     }

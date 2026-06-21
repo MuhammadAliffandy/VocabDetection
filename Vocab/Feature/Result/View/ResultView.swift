@@ -15,10 +15,14 @@ struct ResultView: View {
 
     
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) private var dismiss
     
     @StateObject private var viewModel = ResultViewModel()
     
     @AppStorage("isCameraPresented") private var isCameraPresented: Bool = true
+    @AppStorage("mainSelectedTab") private var mainSelectedTab: Int = 0
+    @AppStorage("inDemoFlow") private var inDemoFlow: Bool = false
+    @AppStorage("isShowingFlashcardDemo") private var isShowingFlashcardDemo: Bool = false
     @State var isRetake: Bool = false
     @State private var showAppleIntelligenceAlert: Bool = false
     
@@ -58,7 +62,7 @@ struct ResultView: View {
                                     viewModel.speakSentence(text: firstWord)
                                 }
                             )
-                            .offset(y: 170)
+                            .offset(y: 200)
                         }
                         
                         VStack(spacing: AppSpacing.regular) {
@@ -83,7 +87,8 @@ struct ResultView: View {
                                         meaningSentence: sentence.meaning,
                                         vocabDictionary: viewModel.vocabDictionary,
                                         selectedType: sentence.type,
-                                        isAppleIntelligence: viewModel.isAppleIntelligenceAvailable
+                                        isAppleIntelligence: viewModel.isAppleIntelligenceAvailable,
+                                        mainVocabWord: detectedObjects.first
                                     )
                                 }
                             }
@@ -101,7 +106,7 @@ struct ResultView: View {
                 if isFromHome != nil && isFromHome == false {
                     VStack {
                         AppButton(
-                            textButton: "Simpan",
+                            textButton: "Simpan Kosakata",
                             textColor: Color.white,
                             backgroundColor: Color.brandColorPrimaryTeal,
                             action: {
@@ -138,11 +143,17 @@ struct ResultView: View {
                                 modelContext.insert(newItem)
                                 do {
                                     try modelContext.save()
-                                    print("✅ VocabItem berhasil disimpan: \(newItem.textVocab) - \(newItem.textMeaning)")
                                 } catch {
-                                    print("❌ Gagal save SwiftData: \(error)")
                                 }
-                                isCameraPresented = false
+                                
+                                if inDemoFlow {
+                                    isCameraPresented = false
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                                        isShowingFlashcardDemo = true
+                                    }
+                                } else {
+                                    isCameraPresented = false
+                                }
                             }
                         )
                         .padding(AppPadding.areaPadding)
@@ -177,12 +188,15 @@ struct ResultView: View {
                         AppGlassButton(
                             icon: AppIcon.XmarkIcon,
                             action: {
+                                dismiss()
+                                if isFromHome == true {
+                                    // Kembali ke Collections tab
+                                    mainSelectedTab = 1
+                                }
                                 isCameraPresented = false
                             },
                             horizontalPadding: AppPadding.areaPadding / 1.5,
                             verticalPadding: AppPadding.areaPadding / 1.5
-                            
-                            
                         )
                         .accessibilityLabel("Tutup")
                         .accessibilityHint("Tutup halaman ini dan kembali")

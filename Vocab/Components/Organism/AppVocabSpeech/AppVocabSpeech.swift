@@ -21,13 +21,38 @@ struct AppVocabSpeech: View {
     var body: some View {
         AppWrapButton(action: action ){
             ZStack(alignment: .bottom){
-                AppVocabText(
-                    vocabText: formattedVocabText ,
-                    meaningText: meaningText,
-                )
-                AppIconSpeech()
-                .offset(y: 20)
+                // LAYER 1: Unified White Outline
+                ZStack(alignment: .bottom) {
+                    AppVocabText(vocabText: formattedVocabText, meaningText: meaningText)
+                        .opacity(0)
+                        .background(
+                            RoundedRectangle(cornerRadius: AppRadius.vocabShapeRadius + 6)
+                                .fill(Color.white)
+                                .padding(-6)
+                        )
+                    
+                    AppIconSpeech()
+                        .opacity(0)
+                        .background(
+                            Circle()
+                                .fill(Color.white)
+                                .padding(-6)
+                        )
+                        .offset(y: 20)
+                }
+                
+                // LAYER 2: Unified Teal Foreground
+                ZStack(alignment: .bottom) {
+                    AppVocabText(
+                        vocabText: formattedVocabText ,
+                        meaningText: meaningText
+                    )
+                    
+                    AppIconSpeech()
+                        .offset(y: 20)
+                }
             }
+            .padding(.bottom, 20) // make room for the overflowing icon
         }
     }
 }

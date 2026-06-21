@@ -6,7 +6,7 @@ protocol TextToSpeechServiceProtocol {
     func stopSpeaking()
 }
 
-class TextToSpeechService: NSObject, TextToSpeechServiceProtocol, AVSpeechSynthesizerDelegate {
+class TextToSpeechService: NSObject, TextToSpeechServiceProtocol, AVSpeechSynthesizerDelegate, @unchecked Sendable {
     private let synthesizer = AVSpeechSynthesizer()
     
     override init() {
@@ -18,7 +18,6 @@ class TextToSpeechService: NSObject, TextToSpeechServiceProtocol, AVSpeechSynthe
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio, options: .duckOthers)
             try AVAudioSession.sharedInstance().setActive(true)
         } catch {
-            print("Failed to set audio session category. Error: \(error)")
         }
     }
     

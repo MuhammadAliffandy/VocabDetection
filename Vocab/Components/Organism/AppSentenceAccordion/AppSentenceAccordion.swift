@@ -17,6 +17,7 @@ struct AppSentenceAccordion: View {
     ]
     var selectedType: AppSentenceType = .command
     var isAppleIntelligence: Bool = true
+    var mainVocabWord: String? = nil
     
     var body: some View {
         AppAccordion(
@@ -49,7 +50,8 @@ struct AppSentenceAccordion: View {
                         AppSentenceGroup(
                             rawSentence: rawSentence,
                             meaningSentence: meaningSentence,
-                            vocabDictionary: vocabDictionary
+                            vocabDictionary: vocabDictionary,
+                            mainVocabWord: mainVocabWord
                         )
                         .padding(
                             .horizontal,22

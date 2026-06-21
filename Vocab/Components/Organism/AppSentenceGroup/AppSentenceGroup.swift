@@ -15,6 +15,7 @@ struct AppSentenceGroup: View {
         "rock": "Batujhfjfkshj",
         "hard": "Keras"
     ]
+    var mainVocabWord: String? = nil
     
     var body: some View {
         VStack(alignment: .leading ) {
@@ -30,9 +31,9 @@ struct AppSentenceGroup: View {
                 
                 AppSentenceContent(
                     rawSentence: rawSentence,
-                    vocabDictionary: vocabDictionary ,
-                    textStyle: .appHeadline
-                    
+                    vocabDictionary: vocabDictionary,
+                    textStyle: .appHeadline,
+                    mainVocabWord: mainVocabWord
                 )
 
    

@@ -48,9 +48,7 @@ class AppleIntelligenceLLMService: LLMServiceProtocol {
         EXCLAMATION: [your simple sentence]
         """
         self.session = LanguageModelSession(instructions: systemPrompt)
-        print("Apple Intelligence LanguageModelSession berhasil diinisialisasi!")
         #else
-        print("Framework FoundationModels tidak tersedia. Menggunakan fallback.")
         #endif
     }
     
@@ -78,7 +76,6 @@ class AppleIntelligenceLLMService: LLMServiceProtocol {
                 let response = try await session.respond(to: "The word is: \(primaryWord)")
                 rawResponse = response.content
             } catch {
-                print("Error Apple Intelligence: \(error.localizedDescription)")
                 rawResponse = generateMockResponse(for: primaryWord)
             }
         } else {

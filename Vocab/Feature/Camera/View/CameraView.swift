@@ -63,10 +63,7 @@ struct CameraView: View {
 
                     Spacer()
 
-                    AppToast(
-                        textToast: cameraManager.guidanceMessage
-                    )
-                    .padding(.bottom,20)
+                    // Removed toast as requested
                     
                     HStack(){
                        

@@ -16,34 +16,40 @@ struct AppSentenceContent: View {
 
     let rawSentence: String
     let vocabDictionary: [String: String]
-    let textStyle: Font = .appHeadline
-    
+    var textStyle: Font = .appHeadline
+    var mainVocabWord: String? = nil
     @State private var activeWordID: UUID? = nil
     
     let splittedWords: [WordItem]
     
     init(rawSentence: String,
          vocabDictionary: [String: String],
-         textStyle: Font
+         textStyle: Font = .appHeadline,
+         mainVocabWord: String? = nil
     ) {
         self.rawSentence = rawSentence
         self.vocabDictionary = vocabDictionary
+        self.textStyle = textStyle
+        self.mainVocabWord = mainVocabWord
         self.splittedWords = rawSentence.split(separator: " ").map { WordItem(text: String($0)) }
     }
     
     var body: some View {
         
         // Replace HStack with our new custom FlowLayout
-        AppFlowLayout(spacing: 6) {
+        AppFlowLayout(spacing: 6, alignment: .leading) {
             
             ForEach(splittedWords) { item in
                 let cleanWord = item.text.trimmingCharacters(in: .punctuationCharacters).lowercased()
                 
                 if let meaning = vocabDictionary[cleanWord] {
+                    let isMainVocab = (mainVocabWord != nil && cleanWord == mainVocabWord?.lowercased())
+                    
                     AppWordTip(
                         text: item.text,
                         tooltipText: meaning,
-                        textStyle: .appHeadlinev2,
+                        textStyle: isMainVocab ? .appHeadlinev2 : textStyle,
+                        textColor: .brandColorPrimaryTeal,
                         isPressed: activeWordID == item.id,
                         isVocab: true
                     )
@@ -64,6 +70,7 @@ struct AppSentenceContent: View {
                         text: item.text,
                         tooltipText: "",
                         textStyle: .appHeadline,
+                        textColor: .brandColorPrimaryTeal,
                         isPressed: false,
                         isVocab: false
                     )

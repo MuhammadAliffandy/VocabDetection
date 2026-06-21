@@ -23,7 +23,7 @@ struct AppVocabDashboardCard: View {
                 .font(.system(size: AppIconSize.Small))
                 .foregroundColor(Color.brandColorPrimaryTeal)
             
-            VStack ( alignment: .leading, spacing: 4){
+            VStack(alignment: .leading, spacing: 4) {
                 AppHeadline(
                     title: title,
                     subtitle: subtitle,
@@ -34,18 +34,26 @@ struct AppVocabDashboardCard: View {
                     spacing: AppSpacing.textSpacing
                 )
                 
-        
                 AppText(
                     text: count,
                     fontStyle: .appLargeTitle,
                     textColor: .primary
-                   
                 )
             }
         }
         .padding(20)
-        .adaptiveBackground()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.ultraThinMaterial)
+        .background(
+            RoundedRectangle(cornerRadius: AppRadius.shapeRadius)
+                .fill(Color.brandColorPrimaryTeal.opacity(0.04))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: AppRadius.shapeRadius)
+                .strokeBorder(Color.brandColorPrimaryTeal.opacity(0.15), lineWidth: 1)
+        )
         .clipShape(RoundedRectangle(cornerRadius: AppRadius.shapeRadius))
+        .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 4)
     }
 }
 

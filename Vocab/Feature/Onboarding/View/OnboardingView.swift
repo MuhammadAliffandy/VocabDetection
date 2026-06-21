@@ -10,6 +10,7 @@ struct OnboardingView: View{
     
     @AppStorage("hasSeenOnboarding") private var hasSeenOnboarding: Bool = false
     @AppStorage("showDemo") private var showDemo: Bool = false
+    @AppStorage("inDemoFlow") private var inDemoFlow: Bool = false
     
     var body: some View{
         NavigationStack{
@@ -43,6 +44,7 @@ struct OnboardingView: View{
                         action: {
                            hasSeenOnboarding = true
                            showDemo = true
+                           inDemoFlow = true
                         }
                     )
                 }

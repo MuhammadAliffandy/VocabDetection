@@ -28,6 +28,7 @@ struct TriangleDown: Shape {
 struct TooltipModifier: ViewModifier {
     var text: String
     var isVisible: Bool
+    var x: CGFloat = 0
     var y: CGFloat = -95
     
     func body(content: Content) -> some View {
@@ -51,6 +52,7 @@ struct TooltipModifier: ViewModifier {
                                 .environment(\.colorScheme, .light)
                                 .cornerRadius(12)
                                 .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
+                                .offset(x: x)
                             
                             // ==========================================
                             // THE TRIANGLE TAIL
@@ -77,7 +79,7 @@ struct TooltipModifier: ViewModifier {
 
 
 extension View {
-    func appTooltip(_ text: String, isVisible: Bool = true , y:CGFloat = -105) -> some View {
-        self.modifier(TooltipModifier(text: text, isVisible: isVisible , y: y))
+    func appTooltip(_ text: String, isVisible: Bool = true , x: CGFloat = 0, y:CGFloat = -105) -> some View {
+        self.modifier(TooltipModifier(text: text, isVisible: isVisible , x: x, y: y))
     }
 }

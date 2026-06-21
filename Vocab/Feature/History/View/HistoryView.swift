@@ -8,6 +8,13 @@
 import SwiftUI
 import SwiftData
 
+struct ScrollOffsetKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value += nextValue()
+    }
+}
+
 struct HistoryView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \VocabItem.createDate, order: .reverse) private var savedVocabs: [VocabItem]
@@ -18,6 +25,7 @@ struct HistoryView: View {
     @State private var isEditing: Bool = false
     @State private var selectedItems: Set<VocabItem.ID> = []
     @State private var selectedVocab: VocabItem?
+    @State private var scrollOffset: CGFloat = 0
     
     var filteredVocabs: [VocabItem] {
         if debouncedTypping.isEmpty {
@@ -43,101 +51,33 @@ struct HistoryView: View {
                     .ignoresSafeArea()
                 
                 ScrollView {
+                    GeometryReader { geo in
+                        Color.clear.preference(key: ScrollOffsetKey.self, value: geo.frame(in: .named("scroll")).minY)
+                    }
+                    .frame(height: 0)
+                    
                     VStack(spacing: AppSpacing.medium) {
-                        Color.clear.frame(height: 12)
-                        
-                        if isEditing {
-                            HStack {
-                                Button(action: {
-                                    withAnimation {
-                                        isEditing = false
-                                        selectedItems.removeAll()
-                                    }
-                                }) {
-                                    Text("Batal")
-                                        .font(.system(size: 17, weight: .regular))
-                                        .foregroundColor(.brandColorPrimaryTeal)
-                                }
-                                .accessibilityLabel("Batal edit")
-                                .accessibilityHint("Batalkan mode hapus kosakata")
-                                
-                                Spacer()
-                                
-                                Text("\(selectedItems.count) Terpilih")
-                                    .font(.system(size: 17, weight: .semibold))
-                                    .foregroundColor(.primary)
-                                
-                                Spacer()
-                                
-                                Button(action: {
-                                    deleteSelectedItems()
-                                }) {
-                                    Image(systemName: "trash")
-                                        .font(.system(size: 20))
-                                        .foregroundColor(selectedItems.isEmpty ? .gray : .red)
-                                }
-                                .disabled(selectedItems.isEmpty)
-                                .accessibilityLabel("Hapus kosakata terpilih")
-                                .accessibilityHint("Hapus kosakata yang sudah dipilih")
-                            }
-                            .padding(.top, 8)
-                            .padding(.bottom, 16)
-                            .transition(.opacity)
-                        } else {
-                            HStack(alignment: .top, spacing: AppSpacing.medium) {
-                                if !isMagnifying {
-                                    AppHeadline(
-                                        title: "Koleksi Kosakata",
-                                        subtitle: "Jumlah kosakata yang sudah kamu simpan",
-                                        titleStyle: .appHeadlinev2,
-                                        subtitleStyle: .appHeadline,
-                                        titleColor: .primary,
-                                        aligment: .leading,
-                                        spacing: AppSpacing.textSpacing
-                                    )
-                                } else {
-                                    AppTextField(text: $typping)
-                                }
-                                
-                                AppToolbar(
-                                    onMagnifyingTap: { isClicked in
-                                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                                            isMagnifying = isClicked
-                                        }
-                                    },
-                                    horizontalPadding: AppPadding.areaPadding
-                                )
-                            }
-                            .transition(.opacity)
-                        }
+                        // Grid content only
                         
                         if savedVocabs.isEmpty {
                             Spacer()
-                                .frame(height: 100)
+                                .frame(height: 60)
                             
-                            AppHeadline(
+                            AppEmptyState(
+                                icon: "tray",
                                 title: "Belum ada Kosakata",
-                                subtitle: "Kosakata yang kamu ambil akan tersimpan di sini.",
-                                titleStyle: .appHeadlinev2,
-                                subtitleStyle: .appHeadline,
-                                titleColor: .primary,
-                                aligment: .center,
-                                spacing: AppSpacing.textSpacing,
-                                textAlign: .center
+                                subtitle: "Kosakata yang kamu pelajari akan otomatis tersimpan di sini."
                             )
-                            .padding(.horizontal, 20)
                             
                         } else if filteredVocabs.isEmpty {
                             Spacer()
-                                .frame(height: 100)
+                                .frame(height: 60)
                                 
-                            AppText(
-                                text: "Belum ada kosakata tersimpan\ndengan nama ini",
-                                fontStyle: .appSubheadline,
-                                textColor: .textColorSecondaryBlackGrey
+                            AppEmptyState(
+                                icon: "magnifyingglass",
+                                title: "Kosakata Tidak Ditemukan",
+                                subtitle: "Coba cari dengan nama atau arti yang berbeda."
                             )
-                            .padding(.horizontal, 20)
-                            .multilineTextAlignment(.center)
                             
                         } else {
                             LazyVGrid(columns: gridColumns, spacing: AppSpacing.medium) {
@@ -180,9 +120,123 @@ struct HistoryView: View {
                         }
                     }
                 }
+                .coordinateSpace(name: "scroll")
+                .onPreferenceChange(ScrollOffsetKey.self) { value in
+                    scrollOffset = value
+                }
                 .scrollIndicators(.hidden)
                 .padding(.horizontal, AppPadding.areaPadding)
                 .padding(.bottom, AppPadding.areaPadding)
+                .safeAreaInset(edge: .top) {
+                    Group {
+                        if isEditing {
+                            // Editing mode: floating glass pills
+                            HStack(spacing: 12) {
+                                Button(action: {
+                                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                                        isEditing = false
+                                        selectedItems.removeAll()
+                                    }
+                                }) {
+                                    Text("Batal")
+                                        .font(.system(size: 15, weight: .semibold))
+                                        .foregroundColor(.primary)
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 10)
+                                        .background(.regularMaterial)
+                                        .clipShape(Capsule())
+                                        .overlay(Capsule().stroke(Color.primary.opacity(0.1), lineWidth: 0.5))
+                                }
+                                .buttonStyle(.plain)
+                                .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
+                                
+                                Spacer()
+                                
+                                Text(selectedItems.isEmpty ? "Pilih item" : "\(selectedItems.count) Terpilih")
+                                    .font(.system(size: 15, weight: .semibold))
+                                    .foregroundColor(.primary)
+                                
+                                Spacer()
+                                
+                                Button(action: { deleteSelectedItems() }) {
+                                    Image(systemName: "trash")
+                                        .font(.system(size: 17, weight: .semibold))
+                                        .foregroundColor(selectedItems.isEmpty ? Color.primary.opacity(0.3) : .red)
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 10)
+                                        .background(.regularMaterial)
+                                        .clipShape(Capsule())
+                                        .overlay(Capsule().stroke(Color.primary.opacity(0.1), lineWidth: 0.5))
+                                }
+                                .buttonStyle(.plain)
+                                .disabled(selectedItems.isEmpty)
+                                .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
+                            }
+                            .padding(.horizontal, AppPadding.areaPadding)
+                            .padding(.top, 12)
+                            .padding(.bottom, 8)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                        } else {
+                            // Normal mode: title left, search glass button right
+                            HStack(alignment: .center, spacing: AppSpacing.medium) {
+                                if isMagnifying {
+                                    AppTextField(text: $typping)
+                                } else {
+                                    AppHeadline(
+                                        title: "Koleksi Kosakata",
+                                        subtitle: "Jumlah kosakata yang sudah kamu simpan",
+                                        titleStyle: .appHeadlinev2,
+                                        subtitleStyle: .appHeadline,
+                                        titleColor: .primary,
+                                        aligment: .leading,
+                                        spacing: AppSpacing.textSpacing
+                                    )
+                                    .opacity(Double(1.0 + (scrollOffset / 50.0)))
+                                    .animation(.linear(duration: 0.1), value: scrollOffset)
+                                    
+                                    Spacer()
+                                }
+                                
+                                AppToolbar(
+                                    onMagnifyingTap: { isClicked in
+                                        withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                                            isMagnifying = isClicked
+                                            if !isClicked {
+                                                typping = ""
+                                            }
+                                        }
+                                    },
+                                    horizontalPadding: AppPadding.areaPadding,
+                                    verticalPadding: AppPadding.areaPadding
+                                )
+                            }
+                            .padding(.horizontal, AppPadding.areaPadding)
+                            .padding(.top, 12)
+                            .padding(.bottom, 16)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                        }
+                    }
+                    .padding(.bottom, 8)
+                    .background(
+                        Rectangle()
+                            .fill(.ultraThinMaterial)
+                            .mask(
+                                LinearGradient(
+                                    stops: [
+                                        .init(color: .black, location: 0.0),
+                                        .init(color: .black.opacity(0.8), location: 0.4),
+                                        .init(color: .clear, location: 1.0)
+                                    ],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                            )
+                            .ignoresSafeArea(edges: .top)
+                            .opacity(min(1.0, max(0.0, -scrollOffset / 15.0)))
+                    )
+                    .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isEditing)
+                    .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isMagnifying)
+                }
                 .onChange(of: typping) { _, newValue in
                     Task {
                         try? await Task.sleep(nanoseconds: 300_000_000)
@@ -193,11 +247,6 @@ struct HistoryView: View {
                         }
                     }
                 }
-                
-                Rectangle()
-                    .fill(.ultraThinMaterial)
-                    .frame(height: 47)
-                    .ignoresSafeArea(edges: .top)
             }
             .ignoresSafeArea(.container, edges: .bottom)
             .navigationBarBackButtonHidden(true)
@@ -228,7 +277,6 @@ struct HistoryView: View {
             do {
                 try modelContext.save()
             } catch {
-                print("Failed to save after deletion: \(error)")
             }
             selectedItems.removeAll()
             isEditing = false

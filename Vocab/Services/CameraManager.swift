@@ -77,7 +77,6 @@ class CameraManager: NSObject, ObservableObject {
                 device.torchMode = isFlashOn ? .on : .off
                 device.unlockForConfiguration()
             } catch {
-                print("Failed to lock device for torch configuration: \(error)")
             }
         }
     }
@@ -93,7 +92,6 @@ class CameraManager: NSObject, ObservableObject {
                 self.zoomFactor = device.videoZoomFactor
             }
         } catch {
-            print("Failed to lock device for zoom configuration: \(error)")
         }
     }
     

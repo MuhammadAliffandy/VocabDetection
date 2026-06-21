@@ -25,27 +25,35 @@ struct AppVocabCard: View {
             spacing: 8
         ){
             ZStack {
-                Color.white
-                    .clipShape(.rect(cornerRadius: 16))
+                // Use systemBackground: White in Light Mode, Black in Dark Mode
+                Color(.systemBackground)
+                
                 if let data = imageData, let uiImage = UIImage(data: data) {
                     Image(uiImage: uiImage)
                         .resizable()
                         .scaledToFill()
                         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-                        .foregroundColor(.black)
-                        .clipped()
+                        // Apply dynamic background color
+                        .background(Color(.systemBackground))
+                        // Apply corner radius specifically to the image
+                        .clipShape(.rect(cornerRadius: 8))
+                        // Apply padding outside the rounded image
+                        .padding(8)
                 } else {
                     Image(image)
                         .resizable()
                         .scaledToFill()
                         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-                        .foregroundColor(.black)
-                        .clipped()
+                        // Apply dynamic background color
+                        .background(Color(.systemBackground))
+                        // Apply corner radius specifically to the image
+                        .clipShape(.rect(cornerRadius: 8))
+                        // Apply padding outside the rounded image
+                        .padding(8)
                 }
-
-                      
             }
             .clipShape(.rect(cornerRadius: AppRadius.vocabShapeRadius))
+            .AppShadowVocabCard()
             .aspectRatio(1.0, contentMode: .fit)
                 .onTapGesture {
                     onTapGesture()
@@ -78,12 +86,12 @@ struct AppVocabCard: View {
                 subtitleColor: .textColorSecondaryBlackGrey,
                 spacing: AppSpacing.textSpacing
             )
-            .padding(.leading ,11)
             .padding(.bottom, 8)
+            .padding(.horizontal , 12)
             
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .padding(4)
+
         .adaptiveBackground()
         .clipShape(RoundedRectangle(cornerRadius: AppRadius.shapeRadius))
         .AppShadowVocabCard()
@@ -112,7 +120,6 @@ struct AppVocabCard: View {
                     title: "Chair ADKDASDJASAHJAKDJKDHJKSDJADHA",
                     subtitle: "Kursi",
                     onTapGesture: {
-                        print("test")
                     }
                 )
      
@@ -121,7 +128,6 @@ struct AppVocabCard: View {
                     title: "Chair",
                     subtitle: "Kursi",
                     onTapGesture: {
-                        print("test")
                     }
                 )
          

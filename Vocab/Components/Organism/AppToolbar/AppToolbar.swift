@@ -32,13 +32,12 @@ struct AppToolbar: View {
     }
 }
 
-#Preview {
-    AppToolbar(
-        onMagnifyingTap: {
-            isClicked in
-            print(isClicked
-            )
-        } ,
-
-    )
-}
+//#Preview {
+//    AppToolbar(
+//        onMagnifyingTap: {
+//            isClicked in
+//            )
+//        } ,
+//
+//    )
+//}

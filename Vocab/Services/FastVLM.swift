@@ -326,7 +326,7 @@ private enum Vision {
 /// FastVLM `UserInputProcessor`.
 ///
 /// This is meant to be used with ``FastVLM`` and is typically created by ``VLMModelFactory``.
-public class FastVLMProcessor: UserInputProcessor {
+public final class FastVLMProcessor: UserInputProcessor, @unchecked Sendable {
 
     private let config: FastVLMProcessorConfiguration
     private let imageProcessingConfig: FastVLMPreProcessorConfiguration

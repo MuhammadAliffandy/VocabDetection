@@ -174,7 +174,6 @@ struct ResultLoadingView: View {
                 Task { await self.viewModel.processDetectedObjects(self.vlmLabels) }
             }
         } catch {
-            print("FastVLM Error: \(error)")
             fastVLMService.unload() // 🚀 Bebaskan memori GPU bahkan saat error
             
             await MainActor.run {

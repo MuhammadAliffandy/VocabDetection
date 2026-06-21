@@ -1,258 +1,257 @@
-//
-//  DragDropGameView.swift
-//  Vocab
-//
-//  Created by Muhammad Aliffandy on 18/06/26.
-//
-
 import SwiftUI
 import SwiftData
+import UniformTypeIdentifiers
 
 struct DragDropGameView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @Query private var savedVocabs: [VocabItem]
     
-    @State private var currentVocab: VocabItem?
-    @State private var currentSentence: VocabSentence?
-    @State private var options: [String] = []
+    @State private var rounds: [(vocab: VocabItem, sentence: VocabSentence)] = []
+    @State private var roundStates: [RoundState] = []
+    @State private var sharedOptions: [String] = []
     
-    @State private var isDropped: Bool = false
-    @State private var isCorrect: Bool = false
-    @State private var showFeedback: Bool = false
-    @State private var droppedWord: String? = nil
+    // Manual Drag and Drop state
+    @State private var dropZoneFrames: [Int: CGRect] = [:]
+    @State private var activeDragOption: String? = nil
+    @State private var activeDragPosition: CGPoint = .zero
     
-    @State private var gameCompleted: Bool = false
-    
+    @State private var showCongratsModal = false
     @AppStorage("lastDragDropDate") private var lastDragDropDate: String = ""
     @AppStorage("lastFlashcardDate") private var lastFlashcardDate: String = ""
-    
-    // For Confetti & Toast Notification logic
+    @AppStorage("inDemoFlow") private var inDemoFlow: Bool = false
+    @AppStorage("isShowingDragDropDemo") private var isShowingDragDropDemo: Bool = false
     var onComplete: () -> Void = {}
     
+    struct RoundState {
+        var droppedWord: String? = nil
+        var isDropped: Bool = false
+        var isCorrect: Bool = false
+    }
+    
+    var allCompleted: Bool {
+        !roundStates.isEmpty && roundStates.allSatisfy { $0.isCorrect }
+    }
+    
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Color(UIColor.systemGroupedBackground).ignoresSafeArea()
+        ZStack {
+            Color(UIColor.systemGroupedBackground).ignoresSafeArea()
+            
+            let todayStr = {
+                let formatter = DateFormatter()
+                formatter.dateFormat = "yyyy-MM-dd"
+                return formatter.string(from: .now)
+            }()
+            let showConfetti = (lastFlashcardDate == todayStr)
+            
+            VStack(spacing: 0) {
+                // Header
+                HStack(alignment: .top) {
+                    // Balancer for centering
+                    Color.clear.frame(width: 44, height: 44)
+                    
+                    Spacer()
+                    
+                    AppHeadline(
+                        title: "Lengkapi Kalimat",
+                        subtitle: "Lengkapi kalimatnya! Tekan, tahan, lalu seret kata yang tepat ke kotak yang kosong",
+                        aligment: .center,
+                        textAlign: .center
+                    )
+                    
+                    Spacer()
+                    
+                    AppGlassButton(icon: AppIcon.XmarkIcon, action: { dismiss() }, horizontalPadding: 12, verticalPadding: 12)
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 24)
+                .padding(.bottom, 16)
                 
-                let todayStr = {
-                    let formatter = DateFormatter()
-                    formatter.dateFormat = "yyyy-MM-dd"
-                    return formatter.string(from: .now)
-                }()
-                let showConfetti = (lastFlashcardDate == todayStr)
-                
-                if gameCompleted {
-                    VStack(spacing: AppSpacing.medium) {
-                        if showConfetti {
-                            Image(systemName: "flame.fill")
-                                .font(.system(size: 80))
-                                .foregroundColor(.brandColorPrimaryTeal)
-                            
-                            AppHeadline(
-                                title: "Streak Tercapai! 🔥",
-                                subtitle: "Luar biasa! Kamu menyelesaikan 2/2 aktivitas hari ini.",
-                                titleStyle: .appHeadlinev2,
-                                subtitleStyle: .appHeadline,
-                                titleColor: .primary,
-                                aligment: .center,
-                                spacing: 8,
-                                textAlign: .center
-                            )
-                        } else {
-                            Image(systemName: "star.circle.fill")
-                                .font(.system(size: 80))
-                                .foregroundColor(.brandColorPrimaryTeal)
-                            
-                            AppHeadline(
-                                title: "1/2 Aktivitas Selesai",
-                                subtitle: "Hebat! Lanjutkan ke Flashcard untuk menjaga streak.",
-                                titleStyle: .appHeadlinev2,
-                                subtitleStyle: .appHeadline,
-                                titleColor: .primary,
-                                aligment: .center,
-                                spacing: 8,
-                                textAlign: .center
-                            )
-                        }
-                        
-                        AppGlassButton(
-                            icon: AppIcon.XmarkIcon,
-                            text: "Tutup",
-                            action: {
-                                markCompletedAndDismiss()
-                            },
-                            horizontalPadding: 30,
-                            verticalPadding: 15
-                        )
-                        .padding(.top, 24)
-                    }
-                    .padding(.horizontal, 24)
-                } else if let vocab = currentVocab, let sentence = currentSentence {
-                    VStack(spacing: 30) {
-                        
-                        Text("Lengkapi Kalimat")
-                            .font(.headline)
-                            .foregroundColor(.gray)
-                            .padding(.top, 20)
-                        
-                        // Sentence Target Area
-                        SentenceDropArea(
-                            sentence: sentence.text,
-                            vocabWord: vocab.textVocab,
-                            droppedWord: droppedWord,
-                            isDropped: isDropped,
-                            isCorrect: isCorrect,
-                            onRemove: {
-                                withAnimation(.spring()) {
-                                    self.droppedWord = nil
-                                    self.isDropped = false
-                                    self.showFeedback = false
-                                }
-                            }
-                        )
-                        .padding(.horizontal, 20)
-                        
-                        Spacer()
-                        
-                        if showFeedback {
-                            Text(isCorrect ? "Benar! Luar biasa 🎉" : "Salah, coba lagi!")
-                                .font(.headline)
-                                .foregroundColor(isCorrect ? .green : .red)
-                                .animation(.spring(), value: showFeedback)
-                                
-                            if isCorrect {
-                                Text(sentence.meaning)
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
-                                    .multilineTextAlignment(.center)
-                                    .padding(.top, 5)
-                            }
-                        }
-                        
-                        // Options Area
-                        HStack(spacing: 15) {
-                            ForEach(options, id: \.self) { option in
-                                if option != droppedWord {
-                                    DraggableWordOption(word: option) {
-                                        handleDrop(option: option, correctWord: vocab.textVocab)
+                if !rounds.isEmpty {
+                    ScrollView {
+                        VStack(spacing: 16) {
+                            ForEach(Array(rounds.enumerated()), id: \.offset) { i, round in
+                                let state = i < roundStates.count ? roundStates[i] : RoundState()
+                                AppSentenceDropArea(
+                                    roundIndex: i,
+                                    sentence: round.sentence.text,
+                                    vocabWord: round.vocab.textVocab,
+                                    missingWordMeaning: round.vocab.textMeaning,
+                                    meaning: round.sentence.meaning,
+                                    droppedWord: state.droppedWord,
+                                    isDropped: state.isDropped,
+                                    isCorrect: state.isCorrect,
+                                    vocabDictionary: round.vocab.vocabDictionary,
+                                    onRemove: {
+                                        withAnimation(.spring()) {
+                                            if i < roundStates.count {
+                                                roundStates[i].droppedWord = nil
+                                                roundStates[i].isDropped = false
+                                                roundStates[i].isCorrect = false
+                                            }
+                                        }
                                     }
-                                } else {
-                                    // Placeholder
-                                    Color.clear
-                                        .frame(width: 100, height: 50)
+                                )
+                            }
+                        }
+                        .padding(.top, 40)
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 140)
+                    }
+                    .scrollIndicators(.hidden)
+                    
+                    // Sticky Bottom Options
+                    VStack(spacing: 10) {
+                        AppFlowLayout(spacing: 12) {
+                            ForEach(sharedOptions, id: \.self) { option in
+                                let isUsed = roundStates.contains { $0.droppedWord?.lowercased() == option.lowercased() && $0.isCorrect }
+                                
+                                if !isUsed {
+                                    AppDraggableWordOption(word: option)
+                                        .opacity(activeDragOption == option ? 0.0 : 1.0)
+                                        .gesture(
+                                            DragGesture(coordinateSpace: .named("GameSpace"))
+                                                .onChanged { value in
+                                                    activeDragOption = option
+                                                    activeDragPosition = value.location
+                                                }
+                                                .onEnded { value in
+                                                    let dropPoint = value.location
+                                                    var droppedIdx: Int? = nil
+                                                    
+                                                    for (idx, frame) in dropZoneFrames {
+                                                        if frame.contains(dropPoint) {
+                                                            droppedIdx = idx
+                                                            break
+                                                        }
+                                                    }
+                                                    
+                                                    if let idx = droppedIdx {
+                                                        handleDropForRound(roundIndex: idx, option: option)
+                                                    }
+                                                    
+                                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                                        activeDragOption = nil
+                                                    }
+                                                }
+                                        )
                                 }
                             }
                         }
-                        .frame(height: 50)
-                        .padding(.bottom, 50)
                     }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 16)
+                    .frame(maxWidth: .infinity)
                 } else {
-                    VStack(spacing: 15) {
-                        Text("Tidak ada data cukup.")
-                            .font(.headline)
-                        Text("Silakan deteksi vocab dan kalimat terlebih dahulu.")
-                            .foregroundColor(.gray)
-                            .multilineTextAlignment(.center)
-                            .padding()
+                    VStack(spacing: 32) {
+                        Spacer().frame(height: 40)
+                        
+                        AppEmptyState(
+                            icon: "text.insert",
+                            title: "Tidak ada data cukup",
+                            subtitle: "Silakan deteksi vocab dan kalimat terlebih dahulu dari kamera."
+                        )
                         
                         AppGlassButton(icon: AppIcon.XmarkIcon, action: { dismiss() }, horizontalPadding: 20, verticalPadding: 15)
                     }
                 }
+            } // VStack
+            
+            // Drag Overlay
+            if let draggedOption = activeDragOption {
+                AppDraggableWordOption(word: draggedOption)
+                    .position(activeDragPosition)
+                    .allowsHitTesting(false)
+                    .transition(.identity)
             }
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Tutup") { dismiss() }
-                }
-            }
-            .onAppear {
-                setupGame()
-            }
+        } // ZStack
+        .coordinateSpace(name: "GameSpace")
+        .onPreferenceChange(DropZoneFramePreferenceKey.self) { frames in
+            dropZoneFrames = frames
         }
-    }
-    
-    @State private var rounds: [(vocab: VocabItem, sentence: VocabSentence)] = []
-    @State private var currentRoundIndex: Int = 0
+        .onAppear {
+            setupGame()
+        }
+        .sheet(isPresented: $showCongratsModal) {
+            let todayStr = {
+                let formatter = DateFormatter()
+                formatter.dateFormat = "yyyy-MM-dd"
+                return formatter.string(from: .now)
+            }()
+            let showConfetti = (lastFlashcardDate == todayStr)
+            
+            AppCongratsModal(
+                title: "Luar Biasa!",
+                subtitle: "Kamu berhasil menyelesaikan semua soal.",
+                icon: "checkmark.circle.fill",
+                iconColor: Color.brandColorPrimaryTeal,
+                onSelesai: {
+                    showCongratsModal = false
+                    if inDemoFlow && isShowingDragDropDemo {
+                        isShowingDragDropDemo = false
+                        inDemoFlow = false
+                    } else {
+                        dismiss()
+                    }
+                },
+                onCobaLagi: {
+                    showCongratsModal = false
+                    setupGame()
+                }
+            )
+        }
+    } // body
     
     private func setupGame() {
-        // Find vocabs that have sentences
         let availableVocabs = savedVocabs.filter { !$0.sentences.isEmpty }.shuffled()
-        
-        var newRounds: [(VocabItem, VocabSentence)] = []
-        let maxRounds = min(5, availableVocabs.count)
+        var newRounds: [(vocab: VocabItem, sentence: VocabSentence)] = []
+        let maxRounds = min(3, availableVocabs.count)
         
         for i in 0..<maxRounds {
             let vocab = availableVocabs[i]
             if let randomSentence = vocab.sentences.randomElement() {
-                newRounds.append((vocab, randomSentence))
+                newRounds.append((vocab: vocab, sentence: randomSentence))
             }
         }
         
-        if newRounds.isEmpty {
-            return
-        }
+        if newRounds.isEmpty { return }
         
         self.rounds = newRounds
-        self.currentRoundIndex = 0
-        loadRound(index: 0)
+        self.roundStates = Array(repeating: RoundState(), count: newRounds.count)
+        
+        let allAnswers = newRounds.map { $0.vocab.textVocab }
+        self.sharedOptions = Array(Set(allAnswers)).shuffled()
     }
     
-    private func loadRound(index: Int) {
-        let round = rounds[index]
-        self.currentVocab = round.vocab
-        self.currentSentence = round.sentence
+    private func handleDropForRound(roundIndex: Int, option: String) {
+        guard roundIndex < rounds.count, roundIndex < roundStates.count else { return }
+        let correctWord = rounds[roundIndex].vocab.textVocab
+        let correct = option.lowercased() == correctWord.lowercased()
         
-        var newOptions = [round.vocab.textVocab]
-        let otherVocabs = savedVocabs.filter { $0.id != round.vocab.id }.shuffled()
-        for v in otherVocabs.prefix(2) {
-            newOptions.append(v.textVocab)
-        }
-        
-        self.options = newOptions.shuffled()
-        
-        withAnimation {
-            self.droppedWord = nil
-            self.isDropped = false
-            self.isCorrect = false
-            self.showFeedback = false
-        }
-    }
-    
-    private func handleDrop(option: String, correctWord: String) {
         withAnimation(.spring()) {
-            droppedWord = option
-            isDropped = true
-            isCorrect = (option.lowercased() == correctWord.lowercased())
-            showFeedback = true
+            roundStates[roundIndex].droppedWord = option
+            roundStates[roundIndex].isDropped = true
+            roundStates[roundIndex].isCorrect = correct
         }
         
-        if isCorrect {
-            // Sukses
+        if correct {
             let generator = UINotificationFeedbackGenerator()
             generator.notificationOccurred(.success)
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-                if currentRoundIndex < rounds.count - 1 {
-                    currentRoundIndex += 1
-                    loadRound(index: currentRoundIndex)
-                } else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                if roundStates.allSatisfy({ $0.isCorrect }) {
                     finishSession()
                 }
             }
         } else {
-            // Salah, biarkan di atas sejenak, lalu beri feedback dan bisa diturunkan,
-            // atau otomatis snap back setelah 1.5 detik
             let generator = UINotificationFeedbackGenerator()
             generator.notificationOccurred(.error)
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                // If it wasn't already removed manually by user
-                if droppedWord == option {
+                if roundIndex < roundStates.count && !roundStates[roundIndex].isCorrect {
                     withAnimation(.spring()) {
-                        droppedWord = nil
-                        isDropped = false
-                        showFeedback = false
+                        roundStates[roundIndex].droppedWord = nil
+                        roundStates[roundIndex].isDropped = false
                     }
                 }
             }
@@ -260,163 +259,14 @@ struct DragDropGameView: View {
     }
     
     private func finishSession() {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        let todayStr = formatter.string(from: .now)
-        lastDragDropDate = todayStr
-        
-        if lastFlashcardDate == todayStr {
-            // Both completed! Save streak
-            saveStreak()
-        }
-        
         withAnimation {
-            gameCompleted = true
+            self.showCongratsModal = true
         }
-    }
-    
-    private func saveStreak() {
+        
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
-        let todayStr = formatter.string(from: .now)
+        self.lastDragDropDate = formatter.string(from: .now)
         
-        let descriptor = FetchDescriptor<DailyStreak>()
-        if let streaks = try? modelContext.fetch(descriptor) {
-            if !streaks.contains(where: { $0.dateString == todayStr }) {
-                let newStreak = DailyStreak(date: .now)
-                modelContext.insert(newStreak)
-                try? modelContext.save()
-            }
-        }
+        onComplete()
     }
-    
-    private func markCompletedAndDismiss() {
-        dismiss()
-    }
-}
-
-struct SentenceDropArea: View {
-    var sentence: String
-    var vocabWord: String
-    var droppedWord: String?
-    var isDropped: Bool
-    var isCorrect: Bool
-    var onRemove: () -> Void
-    
-    var body: some View {
-        // Split sentence to find where the vocab word is and replace it with blank
-        let components = sentence.lowercased().components(separatedBy: vocabWord.lowercased())
-        
-        VStack(spacing: 20) {
-            if components.count > 1 {
-                // If the word was found perfectly
-                VStack(spacing: 10) {
-                    Text(components[0].capitalized)
-                        .font(.title2)
-                    
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(isDropped ? (isCorrect ? Color.green.opacity(0.2) : Color.red.opacity(0.2)) : Color.gray.opacity(0.1))
-                            .frame(width: 150, height: 50)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .stroke(isDropped ? (isCorrect ? Color.green : Color.red) : Color.gray.opacity(0.5), style: StrokeStyle(lineWidth: 2, dash: isDropped ? [] : [5]))
-                            )
-                        
-                        if isDropped, let text = droppedWord {
-                            Text(text)
-                                .font(.title2).bold()
-                                .foregroundColor(isCorrect ? .green : .red)
-                                .onTapGesture {
-                                    if !isCorrect {
-                                        onRemove()
-                                    }
-                                }
-                        } else {
-                            Text("Tarik Kesini")
-                                .font(.footnote)
-                                .foregroundColor(.gray)
-                        }
-                    }
-                    
-                    Text(components[1])
-                        .font(.title2)
-                }
-                .multilineTextAlignment(.center)
-            } else {
-                // Fallback if exact word not matched due to punctuation
-                Text(sentence)
-                    .font(.title2)
-                    .blur(radius: isDropped ? 0 : 5)
-                
-                ZStack {
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(isDropped ? (isCorrect ? Color.green.opacity(0.2) : Color.red.opacity(0.2)) : Color.gray.opacity(0.1))
-                        .frame(width: 150, height: 50)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(isDropped ? (isCorrect ? Color.green : Color.red) : Color.gray.opacity(0.5), style: StrokeStyle(lineWidth: 2, dash: isDropped ? [] : [5]))
-                        )
-                    
-                    if isDropped, let text = droppedWord {
-                        Text(text)
-                            .font(.title2).bold()
-                            .foregroundColor(isCorrect ? .green : .red)
-                            .onTapGesture {
-                                if !isCorrect {
-                                    onRemove()
-                                }
-                            }
-                    } else {
-                        Text("Tarik Kesini")
-                            .font(.footnote)
-                            .foregroundColor(.gray)
-                    }
-                }
-            }
-        }
-        .padding(30)
-        .background(Color(UIColor.systemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: AppRadius.shapeRadius))
-        .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
-    }
-}
-
-struct DraggableWordOption: View {
-    var word: String
-    var onDrop: () -> Void
-    
-    @State private var dragOffset: CGSize = .zero
-    
-    var body: some View {
-        Text(word)
-            .font(.headline)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 15)
-            .background(Color.brandColorPrimaryTeal)
-            .foregroundColor(.white)
-            .clipShape(Capsule())
-            .shadow(color: .brandColorPrimaryTeal.opacity(0.3), radius: 5, x: 0, y: 5)
-            .offset(dragOffset)
-            .gesture(
-                DragGesture()
-                    .onChanged { value in
-                        dragOffset = value.translation
-                    }
-                    .onEnded { value in
-                        // Simple drop zone detection based on vertical drag
-                        if value.translation.height < -100 {
-                            onDrop()
-                        }
-                        withAnimation(.spring()) {
-                            dragOffset = .zero
-                        }
-                    }
-            )
-            .zIndex(dragOffset == .zero ? 0 : 1)
-    }
-}
-
-#Preview {
-    DragDropGameView()
 }

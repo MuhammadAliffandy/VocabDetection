@@ -107,7 +107,6 @@ class ResultViewModel: ObservableObject {
                 self.vocabDictionary = dict
                 self.isLoading = false
         } catch {
-            print("Error processing detected objects: \(error)")
             self.isLoading = false
         }
     }
