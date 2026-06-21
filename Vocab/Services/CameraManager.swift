@@ -110,16 +110,18 @@ class CameraManager: NSObject, ObservableObject {
     }
     
     func processGalleryImage(_ image: UIImage) {
-        guard let cgImage = image.cgImage else { return }
+        guard let _ = image.cgImage else { return }
         
-        DispatchQueue.main.async {
-            self.isProcessingComplete = false
-            self.detectedLabels = []
-            // Menggunakan JPEG data agar tidak terlalu besar
-            self.capturedImageData = image.jpegData(compressionQuality: 0.8)
+        autoreleasepool {
+            guard let optimizedData = self.downsampleImage(image) else { return }
             
-            // Navigate directly; ResultLoadingView will handle FastVLM detection
-            self.isProcessingComplete = true
+            DispatchQueue.main.async {
+                self.isProcessingComplete = false
+                self.detectedLabels = []
+                self.capturedImageData = optimizedData
+                
+                self.isProcessingComplete = true
+            }
         }
     }
     
@@ -130,6 +132,25 @@ class CameraManager: NSObject, ObservableObject {
             self.detectedLabels = []
         }
     }
+    
+    private func downsampleImage(_ image: UIImage, maxDimension: CGFloat = 800) -> Data? {
+        let size = image.size
+        let ratio = min(maxDimension / size.width, maxDimension / size.height)
+        if ratio >= 1.0 {
+            return image.jpegData(compressionQuality: 0.7)
+        }
+        
+        let newSize = CGSize(width: size.width * ratio, height: size.height * ratio)
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1.0
+        let renderer = UIGraphicsImageRenderer(size: newSize, format: format)
+        
+        let resizedImage = renderer.image { _ in
+            image.draw(in: CGRect(origin: .zero, size: newSize))
+        }
+        
+        return resizedImage.jpegData(compressionQuality: 0.7)
+    }
 }
 
 // MARK: - Photo Capture Delegate
@@ -139,14 +160,18 @@ extension CameraManager: AVCapturePhotoCaptureDelegate {
             return
         }
         
-        guard let data = photo.fileDataRepresentation() else {
+        guard let data = photo.fileDataRepresentation(),
+              let originalImage = UIImage(data: data) else {
             return
         }
         
-        DispatchQueue.main.async {
-            self.capturedImageData = data
-            // Navigate directly; ResultLoadingView will handle FastVLM detection
-            self.isProcessingComplete = true
+        autoreleasepool {
+            guard let optimizedData = self.downsampleImage(originalImage) else { return }
+            
+            DispatchQueue.main.async {
+                self.capturedImageData = optimizedData
+                self.isProcessingComplete = true
+            }
         }
     }
 }
