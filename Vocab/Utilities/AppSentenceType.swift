@@ -25,6 +25,15 @@ enum AppSentenceType: String, Codable, CaseIterable, Identifiable {
         }
     }
 
+    var sortOrder: Int {
+        switch self {
+            case .statement: return 0
+            case .question: return 1
+            case .command: return 2
+            case .exclamation: return 3
+        }
+    }
+
     var iconName: String {
         switch self {
             case .statement: return "info.bubble.fill"

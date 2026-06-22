@@ -100,7 +100,7 @@ class ResultViewModel: ObservableObject {
                 }
                 
                 // Sort by predefined order
-                generatedList.sort { $0.type.rawValue < $1.type.rawValue }
+                generatedList.sort { $0.type.sortOrder < $1.type.sortOrder }
                 
                 // Update State
                 self.generatedSentences = generatedList

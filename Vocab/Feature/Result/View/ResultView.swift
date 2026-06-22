@@ -222,7 +222,7 @@ struct ResultView: View {
             }
             .onAppear {
                 if let injectedSentences = injectedSentences, let injectedVocab = injectedVocab {
-                    viewModel.generatedSentences = injectedSentences
+                    viewModel.generatedSentences = injectedSentences.sorted { $0.type.sortOrder < $1.type.sortOrder }
                     viewModel.vocabDictionary = injectedVocab
                 } else if viewModel.generatedSentences.isEmpty && !viewModel.isLoading {
                     if #unavailable(iOS 17.4) {
