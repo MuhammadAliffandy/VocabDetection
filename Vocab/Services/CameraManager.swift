@@ -37,6 +37,15 @@ class CameraManager: NSObject, ObservableObject {
     }
     
     private func setupCamera() {
+        guard session.inputs.isEmpty else {
+            DispatchQueue.global(qos: .background).async {
+                if !self.session.isRunning {
+                    self.session.startRunning()
+                }
+            }
+            return
+        }
+        
         session.beginConfiguration()
         
         guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back),

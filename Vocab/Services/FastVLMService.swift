@@ -79,6 +79,7 @@ final class FastVLMService {
         container = nil
         // Returning unused GPU/Metal buffers to the OS.
         MLX.GPU.set(cacheLimit: 0)
+        MLX.GPU.clearCache()
         loadState = .idle
     }
 
