@@ -105,8 +105,25 @@ final class FastVLMService {
     private func respond(to prompt: String, about image: UIImage) async throws -> String {
         guard let container else { throw ServiceError.notLoaded }
         guard let ciImage = Self.ciImage(from: image) else { throw ServiceError.badImage }
-        let session = ChatSession(container)
-        return try await session.respond(to: prompt, image: .ciImage(ciImage))
+        
+        // Create ChatSession in its own scope so it can be released promptly
+        // after inference, freeing KV-cache and activation buffers from GPU memory.
+        let reply: String = try await withCheckedThrowingContinuation { continuation in
+            Task {
+                do {
+                    let session = ChatSession(container)
+                    let result = try await session.respond(to: prompt, image: .ciImage(ciImage))
+                    continuation.resume(returning: result)
+                } catch {
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+        
+        // Flush any MLX intermediate buffers accumulated during inference
+        MLX.GPU.clearCache()
+        
+        return reply
     }
 
     enum ServiceError: LocalizedError {

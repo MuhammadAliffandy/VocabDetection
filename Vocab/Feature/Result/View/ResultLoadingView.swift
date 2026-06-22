@@ -6,6 +6,7 @@ struct ResultLoadingView: View {
     var labels: [String] = []
     
     @StateObject private var viewModel = ResultViewModel()
+    // Use @State (value) wrapper — FastVLMService is @Observable, keep reference stable via class box
     @State private var fastVLMService = FastVLMService()
     
     @State private var navigateToResult = false
@@ -15,6 +16,7 @@ struct ResultLoadingView: View {
     
     @State private var vlmLabels: [String] = []
     @State private var isVLMDone: Bool = false
+    @State private var taskIsRunning: Bool = false
     
     @Environment(\.dismiss) var dismiss
     
@@ -80,9 +82,15 @@ struct ResultLoadingView: View {
         }
         .navigationBarBackButtonHidden(true)
         .onAppear {
+            guard !taskIsRunning else { return }
+            taskIsRunning = true
             Task {
                 await runFastVLM()
             }
+        }
+        .onDisappear {
+            // Safety net: free any lingering GPU memory when leaving this screen
+            fastVLMService.unload()
         }
         .background {
             if #available(iOS 17.4, *) {
@@ -144,13 +152,30 @@ struct ResultLoadingView: View {
     }
     
     private func runFastVLM() async {
-        guard let data = imageData, let uiImage = UIImage(data: data) else {
+        // --- Path A: no image, use fallback labels ---
+        guard let data = imageData else {
+            let labels = self.labels.isEmpty ? ["Unknown"] : self.labels
             await MainActor.run {
-                self.vlmLabels = self.labels.isEmpty ? ["Unknown"] : self.labels
+                self.vlmLabels = labels
                 self.isVLMDone = true
                 self.checkTranslationAvailability()
-                Task { await self.viewModel.processDetectedObjects(self.vlmLabels) }
             }
+            await self.viewModel.processDetectedObjects(vlmLabels)
+            return
+        }
+        
+        // --- Path B: decode image in autoreleasepool to limit peak memory ---
+        let uiImage: UIImage? = autoreleasepool {
+            UIImage(data: data)
+        }
+        guard let uiImage else {
+            let labels = self.labels.isEmpty ? ["Unknown"] : self.labels
+            await MainActor.run {
+                self.vlmLabels = labels
+                self.isVLMDone = true
+                self.checkTranslationAvailability()
+            }
+            await self.viewModel.processDetectedObjects(vlmLabels)
             return
         }
         
@@ -162,27 +187,31 @@ struct ResultLoadingView: View {
         }
         
         do {
+            // Run inference — UIImage is released immediately after this scope
             let result = try await fastVLMService.detectScene(in: uiImage)
-            fastVLMService.unload() // 🚀 Bebaskan memori GPU agar tidak crash!
             
+            // ✅ Free model + GPU memory BEFORE navigating to result
+            fastVLMService.unload()
+            
+            let detectedLabels = [result.object]
             await MainActor.run {
-                self.vlmLabels = [result.object]
+                self.vlmLabels = detectedLabels
                 self.isVLMDone = true
-                // Now check translation status to update text
                 self.checkTranslationAvailability()
-                
-                Task { await self.viewModel.processDetectedObjects(self.vlmLabels) }
             }
+            // processDetectedObjects is async — call it directly (no nested Task)
+            await self.viewModel.processDetectedObjects(detectedLabels)
         } catch {
-            fastVLMService.unload() // 🚀 Bebaskan memori GPU bahkan saat error
+            // ✅ Free model + GPU even on error
+            fastVLMService.unload()
             
+            let fallback = self.labels.isEmpty ? ["Unknown"] : self.labels
             await MainActor.run {
-                self.vlmLabels = self.labels.isEmpty ? ["Unknown"] : self.labels
+                self.vlmLabels = fallback
                 self.isVLMDone = true
                 self.checkTranslationAvailability()
-                
-                Task { await self.viewModel.processDetectedObjects(self.vlmLabels) }
             }
+            await self.viewModel.processDetectedObjects(fallback)
         }
     }
 }

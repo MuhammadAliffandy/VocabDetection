@@ -30,7 +30,7 @@ struct AppTextField: View {
             .font(.appHeadline)
             .foregroundStyle(.primary)
             .onAppear {
-                UITextField.appearance().clearButtonMode = .whileEditing
+                UITextField.appearance().clearButtonMode = .never
             }
        
         

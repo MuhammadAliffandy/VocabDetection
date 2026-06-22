@@ -12,6 +12,7 @@ class CameraManager: NSObject, ObservableObject {
     @Published var capturedImageData: Data?
     
     @Published var isProcessingComplete: Bool = false
+    private var isCapturing: Bool = false
     
     // Default messages since we don't have real-time guidance anymore
     @Published var guidanceMessage: String = "Silakan Ambil Foto"
@@ -105,6 +106,9 @@ class CameraManager: NSObject, ObservableObject {
     }
     
     func capturePhoto() {
+        guard !isCapturing else { return }
+        isCapturing = true
+        
         DispatchQueue.main.async {
             self.isProcessingComplete = false
             self.detectedLabels = []
@@ -165,6 +169,8 @@ class CameraManager: NSObject, ObservableObject {
 // MARK: - Photo Capture Delegate
 extension CameraManager: AVCapturePhotoCaptureDelegate {
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+        isCapturing = false
+        
         if error != nil {
             return
         }

@@ -23,7 +23,7 @@ struct ResultView: View {
     @AppStorage("mainSelectedTab") private var mainSelectedTab: Int = 0
     @AppStorage("inDemoFlow") private var inDemoFlow: Bool = false
     @AppStorage("isShowingFlashcardDemo") private var isShowingFlashcardDemo: Bool = false
-    @State var isRetake: Bool = false
+    @AppStorage("shouldRetakeCamera") private var shouldRetakeCamera: Bool = false
     @State private var showAppleIntelligenceAlert: Bool = false
     
     var body: some View {
@@ -173,7 +173,9 @@ struct ResultView: View {
                                 icon: AppIcon.ChevronLeftIcon,
                                 text: "Retake",
                                 action: { 
-                                   isRetake = true
+                                    // Signal MainTabView to reopen camera AFTER this cover is fully dismissed
+                                    shouldRetakeCamera = true
+                                    isCameraPresented = false
                                 },
                                 horizontalPadding: AppPadding.areaPadding ,
                                 verticalPadding: AppPadding.areaPadding / 1.5
@@ -217,9 +219,6 @@ struct ResultView: View {
             .toolbar(.hidden, for: .tabBar)
             .toolbar(.hidden, for: .navigationBar)
             .navigationBarBackButtonHidden(true)
-            .navigationDestination(isPresented: $isRetake) {
-                CameraView()
-            }
             .onAppear {
                 if let injectedSentences = injectedSentences, let injectedVocab = injectedVocab {
                     viewModel.generatedSentences = injectedSentences.sorted { $0.type.sortOrder < $1.type.sortOrder }

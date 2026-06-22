@@ -13,6 +13,7 @@ struct MainTabView: View {
     @AppStorage("showDemo") private var showDemo: Bool = false
     @AppStorage("isShowingFlashcardDemo") private var isShowingFlashcardDemo: Bool = false
     @AppStorage("isShowingDragDropDemo") private var isShowingDragDropDemo: Bool = false
+    @AppStorage("shouldRetakeCamera") private var shouldRetakeCamera: Bool = false
     @Namespace private var animation
 
     var body: some View {
@@ -81,6 +82,16 @@ struct MainTabView: View {
         }
         .fullScreenCover(isPresented: $isShowingDragDropDemo) {
             DragDropGameView()
+        }
+        // When isCameraPresented goes false and shouldRetakeCamera is true,
+        // wait for the dismiss animation to finish then re-present the camera.
+        .onChange(of: isCameraPresented) { _, isPresented in
+            if !isPresented && shouldRetakeCamera {
+                shouldRetakeCamera = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.55) {
+                    isCameraPresented = true
+                }
+            }
         }
     }
 }
