@@ -42,17 +42,25 @@ final class FastVLMService {
 
         loadState = .loading
         do {
+            // Meminta pengunduhan / akses model ODR dari server Apple
+            try await ODRManager.shared.requestResource(with: "vlm_model")
+            
             // Keep MLX's buffer cache small so an unload actually returns
             // memory to the OS instead of being held by the allocator.
             MLX.GPU.set(cacheLimit: 20 * 1024 * 1024)
 
             await FastVLM.register(modelFactory: VLMModelFactory.shared)
 
-            var modelURL: URL? = Bundle.main.url(forResource: Self.modelFolderName, withExtension: nil)
+            // Cek lokasi FastVLMModel, baik sebagai .bundle (ODR) maupun folder biasa
+            var modelURL: URL? = Bundle.main.url(forResource: Self.modelFolderName, withExtension: "bundle")
             if modelURL == nil {
-                if let configURL = Bundle.main.url(forResource: "config", withExtension: "json", subdirectory: Self.modelFolderName) {
+                modelURL = Bundle.main.url(forResource: Self.modelFolderName, withExtension: nil)
+            }
+            
+            if modelURL == nil {
+                if let configURL = Bundle.main.url(forResource: "config", withExtension: "json", subdirectory: Self.modelFolderName + ".bundle") {
                     modelURL = configURL.deletingLastPathComponent()
-                } else if let configURL = Bundle.main.url(forResource: "config", withExtension: "json") {
+                } else if let configURL = Bundle.main.url(forResource: "config", withExtension: "json", subdirectory: Self.modelFolderName) {
                     modelURL = configURL.deletingLastPathComponent()
                 }
             }

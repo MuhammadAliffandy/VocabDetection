@@ -9,6 +9,8 @@ struct ResultLoadingView: View {
     // Use @State (value) wrapper — FastVLMService is @Observable, keep reference stable via class box
     @State private var fastVLMService = FastVLMService()
     
+    @ObservedObject private var odrManager = ODRManager.shared
+    
     @State private var navigateToResult = false
     @State private var translationStatus: String = "Memindai kosa kata..."
     @State private var translationSubtitle: String = "Menganalisis gambar untuk menemukan objek..."
@@ -43,8 +45,25 @@ struct ResultLoadingView: View {
             
             VStack {
                 Spacer()
-                
-                if isDownloadingLanguage {
+                if odrManager.isDownloading {
+                    // Tampilan khusus saat model VLM sedang diunduh via ODR
+                    VStack(spacing: 12) {
+                        Image(systemName: "icloud.and.arrow.down.fill")
+                            .font(.system(size: 40))
+                            .foregroundColor(.white)
+                            .symbolEffect(.bounce, options: .repeating)
+                        
+                        Text("Mengunduh Model AI (\(Int(odrManager.progress * 100))%)...")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.white.opacity(0.8))
+                        
+                        ProgressView(value: odrManager.progress, total: 1.0)
+                            .progressViewStyle(.linear)
+                            .tint(.brandColorPrimaryTeal)
+                            .frame(width: 200)
+                    }
+                    .padding(.bottom, 20)
+                } else if isDownloadingLanguage {
                     // Tampilan khusus saat language pack sedang diunduh
                     VStack(spacing: 12) {
                         Image(systemName: "arrow.down.circle.fill")
@@ -182,8 +201,25 @@ struct ResultLoadingView: View {
         await fastVLMService.ensureLoaded()
         
         await MainActor.run {
-            translationStatus = "Memindai kosa kata..."
-            translationSubtitle = "Sedang memproses gambar Anda..."
+            if odrManager.error != nil {
+                translationStatus = "Gagal Mengunduh Model"
+                translationSubtitle = "Periksa koneksi internet Anda lalu coba lagi."
+            } else {
+                translationStatus = "Memindai kosa kata..."
+                translationSubtitle = "Sedang memproses gambar Anda..."
+            }
+        }
+        
+        guard odrManager.error == nil else {
+            // Jika download gagal, kembalikan ke ResultView dengan label fallback
+            let fallback = self.labels.isEmpty ? ["Unknown"] : self.labels
+            await MainActor.run {
+                self.vlmLabels = fallback
+                self.isVLMDone = true
+                self.checkTranslationAvailability()
+            }
+            await self.viewModel.processDetectedObjects(fallback)
+            return
         }
         
         do {
